@@ -3,8 +3,10 @@ package com.coffeecode.core.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import com.coffeecode.core.util.DistanceCalclator;
+
 import java.util.UUID;
+
+import com.coffeecode.core.util.DistanceCalclator;
 
 @Data
 @Builder

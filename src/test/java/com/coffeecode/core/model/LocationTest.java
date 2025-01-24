@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
-import java.util.UUID;
 import com.coffeecode.core.util.CoordinateValidator;
 
-public class LocationTest {
+class LocationTest {
 
     @Test
-    public void testCreateNew_ValidLocation() {
+    void testCreateNew_ValidLocation() {
         // Arrange
         String name = "Test Location";
         double longitude = 100.0;
@@ -29,7 +28,7 @@ public class LocationTest {
     }
 
     @Test
-    public void testCreateNew_InvalidName() {
+    void testCreateNew_InvalidName() {
         // Arrange
         String name = "";
         double longitude = 100.0;
@@ -41,7 +40,7 @@ public class LocationTest {
     }
 
     @Test
-    public void testCreateNew_InvalidCoordinates() {
+    void testCreateNew_InvalidCoordinates() {
         // Arrange
         String name = "Test Location";
         double longitude = 200.0;
@@ -51,6 +50,7 @@ public class LocationTest {
 
         // Act & Assert
         Executable executable = () -> Location.createNew(name, longitude, latitude);
-        Assertions.assertThrows(IllegalArgumentException.class, executable, "Invalid latitude or longitude");
+        IllegalArgumentException exception = Assertions.assertThrows(IllegalArgumentException.class, executable, "Invalid latitude or longitude");
+        Assertions.assertEquals("Invalid latitude or longitude", exception.getMessage());
     }
 }

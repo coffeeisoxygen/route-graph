@@ -3,7 +3,7 @@ package com.coffeecode.core.util;
 public class CoordinateValidator {
 
     private CoordinateValidator() {
-        throw new IllegalStateException("Utility class");
+        // Private constructor to prevent instantiation
     }
 
     // Method to validate latitude
