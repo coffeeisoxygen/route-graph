@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.UUID;
 
@@ -13,8 +14,10 @@ import com.coffeecode.core.util.CoordinateValidator;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Location {
 
+    @EqualsAndHashCode.Include
     private UUID idLocation;
     private String name;
     private double longitude;

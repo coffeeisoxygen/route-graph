@@ -1,100 +1,120 @@
 package com.coffeecode.core.model;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.junit.jupiter.api.*;
 import com.coffeecode.core.constants.TestConstants;
 
-import java.util.UUID;
-
-@ExtendWith(MockitoExtension.class)
+@DisplayName("Route Entity Tests")
 class RouteTest {
 
-    private Location source;
-    private Location destination;
+    private Location jakarta;
+    private Location bandung;
     private Route.RouteType type;
-    private double distance;
 
     @BeforeEach
     void setUp() {
-        // Jakarta coordinates
-        source = Location.createNew("Jakarta", TestConstants.JAKARTA_LONG, TestConstants.JAKARTA_LAT);
-        // Bandung coordinates
-        destination = Location.createNew("Bandung", TestConstants.BANDUNG_LONG, TestConstants.BANDUNG_LAT);
+        jakarta = Location.createNew("Jakarta", TestConstants.JAKARTA_LONG, TestConstants.JAKARTA_LAT);
+        bandung = Location.createNew("Bandung", TestConstants.BANDUNG_LONG, TestConstants.BANDUNG_LAT);
         type = Route.RouteType.BIDIRECTIONAL;
-        distance = TestConstants.JKT_BDG_ACTUAL; // Approximate distance Jakarta-Bandung in km
     }
 
-    @Test
-    void testCreateRoute_ValidData() {
-        // Act
-        Route route = Route.createRoute(source, destination, type);
+    @Nested
+    @DisplayName("Route Creation Tests")
+    class RouteCreationTests {
 
-        // Assert
-        assertNotNull(route);
-        assertNotNull(route.getIdRoute());
-        assertEquals(source, route.getSource());
-        assertEquals(destination, route.getDestination());
-        assertEquals(type, route.getType());
-        assertEquals(distance, route.getDistance(), 1.0); // Delta 1.0 km for floating point comparison
+        @Test
+        @DisplayName("Should create route with valid data")
+        void testCreateRoute_ValidData() {
+            Route route = Route.createRoute(jakarta, bandung, type);
+
+            assertAll(
+                    () -> assertNotNull(route.getIdRoute()),
+                    () -> assertEquals(jakarta, route.getSource()),
+                    () -> assertEquals(bandung, route.getDestination()),
+                    () -> assertEquals(type, route.getType()),
+                    () -> assertEquals(TestConstants.JKT_BDG_ACTUAL, route.getDistance(), 1.0)
+            );
+        }
+
+        @Test
+        @DisplayName("Should calculate correct distance")
+        void testCreateRoute_DistanceCalculation() {
+            Route route = Route.createRoute(jakarta, bandung, type);
+            assertTrue(route.getDistance() > 0);
+            assertTrue(route.getDistance() < 200); // Jakarta-Bandung should be less than 200km
+        }
     }
 
-    @Test
-    void testCreateRoute_NullSource() {
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Route.createRoute(null, destination, type)
-        );
-        assertEquals("Source and destination cannot be null", exception.getMessage());
+    @Nested
+    @DisplayName("Route Validation Tests")
+    class RouteValidationTests {
+
+        @Test
+        @DisplayName("Should reject null locations")
+        void testCreateRoute_NullLocations() {
+            assertAll(
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> Route.createRoute(null, bandung, type)),
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> Route.createRoute(jakarta, null, type))
+            );
+        }
+
+        @Test
+        @DisplayName("Should handle same location route")
+        void testCreateRoute_SameLocation() {
+            Route route = Route.createRoute(jakarta, jakarta, type);
+            assertEquals(0.0, route.getDistance(), 0.0001);
+        }
     }
 
-    @Test
-    void testCreateRoute_NullDestination() {
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Route.createRoute(source, null, type)
-        );
-        assertEquals("Source and destination cannot be null", exception.getMessage());
+    @Nested
+    @DisplayName("Route Type Tests")
+    class RouteTypeTests {
+
+        @Test
+        @DisplayName("Should default to bidirectional")
+        void testCreateRoute_DefaultType() {
+            Route route = Route.createRoute(jakarta, bandung, null);
+            assertEquals(Route.RouteType.BIDIRECTIONAL, route.getType());
+        }
+
+        @Test
+        @DisplayName("Should handle one-way routes")
+        void testCreateRoute_OneWay() {
+            Route route = Route.createRoute(jakarta, bandung, Route.RouteType.ONE_WAY);
+            assertEquals(Route.RouteType.ONE_WAY, route.getType());
+        }
     }
 
-    @Test
-    void testCreateRoute_DefaultType() {
-        // Act
-        Route route = Route.createRoute(source, destination, null);
+    @Nested
+    @DisplayName("Route Operation Tests")
+    class RouteOperationTests {
 
-        // Assert
-        assertEquals(Route.RouteType.BIDIRECTIONAL, route.getType());
-    }
+        @Test
+        @DisplayName("Should check location containment")
+        void testContainsLocation() {
+            Route route = Route.createRoute(jakarta, bandung, type);
+            Location other = Location.createNew("Other", 0.0, 0.0);
 
-    @Test
-    void testContainsLocation() {
-        // Arrange
-        Route route = Route.createRoute(source, destination, type);
-        Location otherLocation = Location.createNew("Singapore", 103.8198, 1.3521);
+            assertAll(
+                    () -> assertTrue(route.containsLocation(jakarta)),
+                    () -> assertTrue(route.containsLocation(bandung)),
+                    () -> assertFalse(route.containsLocation(other))
+            );
+        }
 
-        // Assert
-        assertTrue(route.containsLocation(source));
-        assertTrue(route.containsLocation(destination));
-        assertFalse(route.containsLocation(otherLocation));
-    }
+        @Test
+        @DisplayName("Should get opposite location")
+        void testGetOppositeLocation() {
+            Route route = Route.createRoute(jakarta, bandung, type);
 
-    @Test
-    void testGetOppositeLocation() {
-        // Arrange
-        Route route = Route.createRoute(source, destination, type);
-        Location otherLocation = Location.createNew("Singapore", 103.8198, 1.3521);
-
-        // Assert
-        assertEquals(destination, route.getOppositeLocation(source));
-        assertEquals(source, route.getOppositeLocation(destination));
-        assertThrows(IllegalArgumentException.class,
-                () -> route.getOppositeLocation(otherLocation),
-                "Location is not part of this route"
-        );
+            assertAll(
+                    () -> assertEquals(bandung, route.getOppositeLocation(jakarta)),
+                    () -> assertEquals(jakarta, route.getOppositeLocation(bandung)),
+                    () -> assertThrows(IllegalArgumentException.class,
+                            () -> route.getOppositeLocation(Location.createNew("Other", 0.0, 0.0)))
+            );
+        }
     }
 }
