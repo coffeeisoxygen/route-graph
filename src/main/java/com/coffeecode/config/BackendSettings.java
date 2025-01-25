@@ -1,5 +1,5 @@
 package com.coffeecode.config;
 
-public class AppConfig {
+public class BackendSettings {
 
 }
