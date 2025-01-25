@@ -1,14 +1,14 @@
 package com.coffeecode.core.model;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
-
 import java.util.UUID;
 
-import com.coffeecode.core.util.CoordinateValidator;
+import com.coffeecode.util.CoordinateValidator;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

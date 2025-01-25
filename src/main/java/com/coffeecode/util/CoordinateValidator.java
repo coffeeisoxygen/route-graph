@@ -1,4 +1,4 @@
-package com.coffeecode.core.util;
+package com.coffeecode.util;
 
 public class CoordinateValidator {
 

@@ -1,12 +1,12 @@
 package com.coffeecode.core.model;
 
+import java.util.UUID;
+
+import com.coffeecode.util.DistanceCalclator;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.UUID;
-
-import com.coffeecode.core.util.DistanceCalclator;
 
 @Data
 @Builder
