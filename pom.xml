@@ -242,6 +242,10 @@
                   </limits>
                 </rule>
               </rules>
+              <excludes>
+                <exclude>com/coffeecode/App.class</exclude>
+                <exclude>com/coffeecode/**/ui/**/*</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
