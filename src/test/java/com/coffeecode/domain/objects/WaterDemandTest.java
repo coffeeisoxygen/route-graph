@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.validation.exceptions.ValidationException;
+
 @DisplayName("WaterDemand Tests")
 class WaterDemandTest {
 
@@ -19,21 +21,21 @@ class WaterDemandTest {
 
         assertNotNull(waterDemand);
         assertEquals(dailyVolume, waterDemand.getDailyDemand());
-    }
+        }
 
-    @Test
-    @DisplayName("Should throw exception for null daily demand")
-    void shouldThrowExceptionForNullDailyDemand() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> WaterDemand.of(null)
+        @Test
+        @DisplayName("Should throw ValidationException for null daily demand")
+        void shouldThrowValidationExceptionForNullDailyDemand() {
+        ValidationException exception = assertThrows(
+            ValidationException.class,
+            () -> WaterDemand.of(null)
         );
-        assertEquals("Daily demand cannot be null!", exception.getMessage());
-    }
+        assertEquals("Daily demand cannot be null", exception.getMessage());
+        }
 
-    @Test
-    @DisplayName("Should properly implement equals and hashCode")
-    void shouldImplementEqualsAndHashCode() {
+        @Test
+        @DisplayName("Should properly implement equals and hashCode")
+        void shouldImplementEqualsAndHashCode() {
         Volume dailyVolume1 = Volume.of(100);
         Volume dailyVolume2 = Volume.of(100);
         Volume dailyVolume3 = Volume.of(200);

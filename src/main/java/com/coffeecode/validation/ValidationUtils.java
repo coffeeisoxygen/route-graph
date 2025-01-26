@@ -33,12 +33,14 @@ public class ValidationUtils {
     public static <T> T validate(T object) {
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
-            StringBuilder errorMessage = new StringBuilder("Validation failed: ");
+            StringBuilder errorMessage = new StringBuilder();
             for (ConstraintViolation<T> violation : violations) {
-                errorMessage.append(violation.getPropertyPath())
-                        .append(" ")
-                        .append(violation.getMessage())
+                errorMessage.append(violation.getMessage())
                         .append("; ");
+            }
+            // Remove the trailing "; " from the error message
+            if (errorMessage.length() > 0) {
+                errorMessage.setLength(errorMessage.length() - 2);
             }
             log.info(errorMessage.toString());
             throw new ValidationException(errorMessage.toString());

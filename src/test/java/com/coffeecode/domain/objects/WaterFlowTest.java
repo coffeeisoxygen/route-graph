@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("WaterFlow Tests")
 class WaterFlowTest {
@@ -21,13 +24,13 @@ class WaterFlowTest {
     }
 
     @Test
-    @DisplayName("Should throw exception for negative flow rate")
-    void shouldThrowExceptionForNegativeFlowRate() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+    @DisplayName("Should throw ValidationException for negative flow rate")
+    void shouldThrowValidationExceptionForNegativeFlowRate() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
                 () -> WaterFlow.of(-1.0)
         );
-        assertEquals("Flow rate cannot be negative!", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Flow rate cannot be negative"));
     }
 
     @Test

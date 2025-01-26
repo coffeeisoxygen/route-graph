@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.coffeecode.validation.exceptions.ValidationException;
+
 @DisplayName("Distance Tests")
 class DistanceTest {
 
@@ -21,10 +23,10 @@ class DistanceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception for negative distance")
-    void shouldThrowExceptionForNegativeDistance() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+    @DisplayName("Should throw ValidationException for negative distance")
+    void shouldThrowValidationExceptionForNegativeDistance() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
                 () -> Distance.of(-1.0)
         );
         assertEquals("Distance cannot be negative!", exception.getMessage());
