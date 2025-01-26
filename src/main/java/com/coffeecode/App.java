@@ -1,14 +1,19 @@
 package com.coffeecode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.swing.SwingUtilities;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class App {
 
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
-
     public static void main(String[] args) {
-        logger.info("Just starting apps");
-        System.out.println("Hello World!");
+        SwingUtilities.invokeLater(() -> {
+            try {
+            } catch (Exception e) {
+                log.error("Error starting application", e);
+            }
+        });
     }
+
 }
