@@ -2,8 +2,6 @@ package com.coffeecode.domain.entity;
 
 import com.coffeecode.domain.objects.WaterDemand;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,14 +14,13 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Customer extends NetworkNode {
 
-    @NotBlank(message = "Customer name cannot be empty")
     private final String name;
-
-    @NotNull(message = "Water demand cannot be null")
     private final WaterDemand waterDemand;
 
     private Customer(CustomerBuilder builder) {
         super(builder);
+        CustomerValidation.validateName(builder.name);
+        CustomerValidation.validateWaterDemand(builder.waterDemand);
         this.name = builder.name;
         this.waterDemand = builder.waterDemand;
     }
@@ -50,8 +47,7 @@ public class Customer extends NetworkNode {
         @Override
         public Customer build() {
             this.type(NodeType.CUSTOMER); // Set type automatically
-            Customer customer = new Customer(this);
-            return (Customer) validate(customer);
+            return new Customer(this);
         }
     }
 }

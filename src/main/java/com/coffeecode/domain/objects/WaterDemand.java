@@ -1,8 +1,7 @@
 package com.coffeecode.domain.objects;
 
-import com.coffeecode.validation.ValidationUtils;
+import com.coffeecode.validation.exceptions.ValidationException;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,16 +14,20 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class WaterDemand {
 
-    @NotNull(message = "Daily demand cannot be null")
     private final Volume dailyDemand;
 
     private WaterDemand(Volume dailyDemand) {
+        validateDailyDemand(dailyDemand);
         this.dailyDemand = dailyDemand;
     }
 
     public static WaterDemand of(Volume dailyDemand) {
-        WaterDemand waterDemand = new WaterDemand(dailyDemand);
-        ValidationUtils.validate(waterDemand);
-        return waterDemand;
+        return new WaterDemand(dailyDemand);
+    }
+
+    private static void validateDailyDemand(Volume dailyDemand) {
+        if (dailyDemand == null) {
+            throw new ValidationException("Daily demand cannot be null");
+        }
     }
 }

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.entity.NetworkNode.NodeType;
 import com.coffeecode.domain.objects.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 
@@ -19,10 +18,23 @@ class NetworkNodeTest {
 
     private Coordinate location;
 
-    // Test implementation class
     private static class TestNode extends NetworkNode {
-        TestNode(Coordinate location, NodeType type) {
-            super(location, type);
+
+        private TestNode(TestNodeBuilder builder) {
+            super(builder);
+        }
+
+        public static TestNodeBuilder builder() {
+            return new TestNodeBuilder();
+        }
+
+        private static class TestNodeBuilder extends AbstractNodeBuilder<TestNodeBuilder> {
+
+            @Override
+            public TestNode build() {
+                TestNode node = new TestNode(this);
+                return (TestNode) validate(node);
+            }
         }
     }
 
@@ -34,7 +46,10 @@ class NetworkNodeTest {
     @Test
     @DisplayName("Should create node with valid parameters")
     void shouldCreateNodeWithValidParameters() {
-        TestNode node = new TestNode(location, NodeType.JUNCTION);
+        TestNode node = TestNode.builder()
+                .location(location)
+                .type(NodeType.JUNCTION)
+                .build();
 
         assertNotNull(node.getId());
         assertEquals(location, node.getLocation());
@@ -45,8 +60,10 @@ class NetworkNodeTest {
     @DisplayName("Should throw ValidationException for null location")
     void shouldThrowValidationExceptionForNullLocation() {
         ValidationException exception = assertThrows(
-            ValidationException.class,
-            () -> new TestNode(null, NodeType.JUNCTION)
+                ValidationException.class,
+                () -> TestNode.builder()
+                        .type(NodeType.JUNCTION)
+                        .build()
         );
         assertTrue(exception.getMessage().contains("Location cannot be null"));
     }
@@ -55,8 +72,10 @@ class NetworkNodeTest {
     @DisplayName("Should throw ValidationException for null type")
     void shouldThrowValidationExceptionForNullType() {
         ValidationException exception = assertThrows(
-            ValidationException.class,
-            () -> new TestNode(location, null)
+                ValidationException.class,
+                () -> TestNode.builder()
+                        .location(location)
+                        .build()
         );
         assertTrue(exception.getMessage().contains("Node type cannot be null"));
     }
@@ -64,21 +83,35 @@ class NetworkNodeTest {
     @Test
     @DisplayName("Should generate unique IDs")
     void shouldGenerateUniqueIds() {
-        TestNode node1 = new TestNode(location, NodeType.JUNCTION);
-        TestNode node2 = new TestNode(location, NodeType.JUNCTION);
+        TestNode node1 = TestNode.builder()
+                .location(location)
+                .type(NodeType.JUNCTION)
+                .build();
+        TestNode node2 = TestNode.builder()
+                .location(location)
+                .type(NodeType.JUNCTION)
+                .build();
 
         assertNotEquals(node1.getId(), node2.getId());
     }
 
     @Test
-    @DisplayName("Should implement equals and hashCode correctly")
+    @DisplayName("Should implement equals and hashCode")
     void shouldImplementEqualsAndHashCode() {
-        TestNode node1 = new TestNode(location, NodeType.JUNCTION);
-        TestNode node2 = new TestNode(location, NodeType.JUNCTION);
+        TestNode node1 = TestNode.builder()
+                .location(location)
+                .type(NodeType.JUNCTION)
+                .build();
+        TestNode node2 = TestNode.builder()
+                .location(location)
+                .type(NodeType.JUNCTION)
+                .build();
 
-        // Different objects with same data should not be equal (due to UUID)
+        // Different instances should not be equal (due to UUID)
         assertNotEquals(node1, node2);
-        // Same object should be equal to itself
+        // Same instance should be equal to itself
         assertEquals(node1, node1);
+        // Different types should not be equal
+        assertNotEquals(node1, "not a node");
     }
 }

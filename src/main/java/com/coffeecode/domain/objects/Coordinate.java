@@ -1,9 +1,7 @@
 package com.coffeecode.domain.objects;
 
-import com.coffeecode.validation.ValidationUtils;
+import com.coffeecode.validation.exceptions.ValidationException;
 
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -17,21 +15,29 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Coordinate {
 
-    @DecimalMin(value = "-90.0", message = "Latitude must be between -90 and 90 degrees!")
-    @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90 degrees!")
     private final double latitude;
-
-    @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180 degrees!")
-    @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180 degrees!")
     private final double longitude;
 
     private Coordinate(double latitude, double longitude) {
+        validateLatitude(latitude);
+        validateLongitude(longitude);
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
     public static Coordinate of(double latitude, double longitude) {
-        Coordinate coordinate = new Coordinate(latitude, longitude);
-        return ValidationUtils.validate(coordinate);
+        return new Coordinate(latitude, longitude);
+    }
+
+    private static void validateLatitude(double latitude) {
+        if (latitude < -90.0 || latitude > 90.0) {
+            throw new ValidationException("Latitude must be between -90 and 90 degrees");
+        }
+    }
+
+    private static void validateLongitude(double longitude) {
+        if (longitude < -180.0 || longitude > 180.0) {
+            throw new ValidationException("Longitude must be between -180 and 180 degrees");
+        }
     }
 }

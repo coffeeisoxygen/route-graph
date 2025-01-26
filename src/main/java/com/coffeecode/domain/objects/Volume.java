@@ -1,8 +1,7 @@
 package com.coffeecode.domain.objects;
 
-import com.coffeecode.validation.ValidationUtils;
+import com.coffeecode.validation.exceptions.ValidationException;
 
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,16 +14,20 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Volume {
 
-    @PositiveOrZero(message = "Volume cannot be negative!")
     private final double cubicMeters;
 
     private Volume(double cubicMeters) {
+        validateCubicMeters(cubicMeters);
         this.cubicMeters = cubicMeters;
     }
 
     public static Volume of(double cubicMeters) {
-        Volume volume = new Volume(cubicMeters);
-        ValidationUtils.validate(volume);
-        return volume;
+        return new Volume(cubicMeters);
+    }
+
+    private static void validateCubicMeters(double cubicMeters) {
+        if (cubicMeters < 0) {
+            throw new ValidationException("Volume cannot be negative!");
+        }
     }
 }

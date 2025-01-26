@@ -1,11 +1,7 @@
 package com.coffeecode.domain.entity;
 
-import com.coffeecode.domain.objects.Coordinate;
 import com.coffeecode.domain.objects.Volume;
-import com.coffeecode.validation.ValidationUtils;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,20 +11,40 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class WaterSource extends NetworkNode {
 
-    @NotBlank(message = "Source name cannot be empty")
     private final String name;
-
-    @NotNull(message = "Capacity cannot be null")
     private final Volume capacity;
 
-    public WaterSource(String name, Coordinate location, Volume capacity) {
-        super(location, NodeType.SOURCE);
-        this.name = name;
-        this.capacity = capacity;
-        validate();
+    private WaterSource(WaterSourceBuilder builder) {
+        super(builder);
+        WaterSourceValidation.validateName(builder.name);
+        WaterSourceValidation.validateCapacity(builder.capacity);
+        this.name = builder.name;
+        this.capacity = builder.capacity;
     }
 
-    private void validate() {
-        ValidationUtils.validate(this);
+    public static WaterSourceBuilder builder() {
+        return new WaterSourceBuilder();
+    }
+
+    public static class WaterSourceBuilder extends AbstractNodeBuilder<WaterSourceBuilder> {
+
+        private String name;
+        private Volume capacity;
+
+        public WaterSourceBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public WaterSourceBuilder capacity(Volume capacity) {
+            this.capacity = capacity;
+            return this;
+        }
+
+        @Override
+        public WaterSource build() {
+            this.type(NodeType.SOURCE);
+            return new WaterSource(this);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.coffeecode.domain.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,24 +44,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-public class WaterDistribution {
+public final class WaterDistribution {
 
-    private final Map<UUID, NetworkNode> nodes;
-    private final Map<UUID, Pipe> pipes;
+    private final Map<UUID, NetworkNode> nodes = new HashMap<>();
+    private final Map<UUID, Pipe> pipes = new HashMap<>();
+    private final List<Customer> customers = new ArrayList<>();
     private final WaterSource source;
-    private final List<Customer> customers;
 
-    public WaterDistribution(WaterSource source) {
-        this.source = source;
-        this.nodes = new HashMap<>();
-        this.pipes = new HashMap<>();
-        this.customers = new ArrayList<>();
-
-        // Add source as first node
-        addNode(source);
+    private WaterDistribution(WaterDistributionBuilder builder) {
+        WaterDistributionValidation.validateSource(builder.source);
+        this.source = builder.source;
     }
 
-    public void addNode(NetworkNode node) {
+    public static WaterDistributionBuilder builder() {
+        return new WaterDistributionBuilder();
+    }
+
+    public synchronized void addNode(NetworkNode node) {
+        WaterDistributionValidation.validateNode(node);
         nodes.put(node.getId(), node);
         if (node instanceof Customer customer) {
             customers.add(customer);
@@ -67,20 +69,64 @@ public class WaterDistribution {
         log.info("Added node: {}", node);
     }
 
-    public Optional<Pipe> connectNodes(NetworkNode from, NetworkNode to, PipeProperties properties) {
-        if (!nodes.containsKey(from.getId()) || !nodes.containsKey(to.getId())) {
-            log.error("Cannot connect: one or both nodes not in network");
+    public synchronized Optional<Pipe> connectNodes(NetworkNode from, NetworkNode to, PipeProperties properties) {
+        try {
+            WaterDistributionValidation.validateConnection(from, to, properties);
+            validateNodesPresent(from, to);
+
+            Pipe pipe = Pipe.builder()
+                    .source(from)
+                    .destination(to)
+                    .properties(properties)
+                    .build();
+
+            pipes.put(pipe.getId(), pipe);
+            log.info("Connected nodes with pipe: {}", pipe);
+            return Optional.of(pipe);
+        } catch (ValidationException e) {
+            log.error("Failed to connect nodes: {}", e.getMessage());
             return Optional.empty();
         }
-
-        Pipe pipe = new Pipe(from, to, properties);
-        pipes.put(pipe.getId(), pipe);
-        log.info("Connected nodes with pipe: {}", pipe);
-        return Optional.of(pipe);
     }
 
-    private void addNode(WaterSource source) {
-        nodes.put(source.getId(), source);
-        log.info("Added source: {}", source);
+    private void validateNodesPresent(NetworkNode from, NetworkNode to) {
+        if (!nodes.containsKey(from.getId())) {
+            throw new ValidationException("Source node not in network");
+        }
+        if (!nodes.containsKey(to.getId())) {
+            throw new ValidationException("Destination node not in network");
+        }
+    }
+
+    public static final class WaterDistributionBuilder {
+
+        private WaterSource source;
+
+        private WaterDistributionBuilder() {
+        }
+
+        public WaterDistributionBuilder source(WaterSource source) {
+            this.source = source;
+            return this;
+        }
+
+        public WaterDistribution build() {
+            WaterDistribution distribution = new WaterDistribution(this);
+            distribution.addNode(distribution.source);
+            return distribution;
+        }
+    }
+
+    // Immutable view getters
+    public Map<UUID, NetworkNode> getNodes() {
+        return Collections.unmodifiableMap(nodes);
+    }
+
+    public Map<UUID, Pipe> getPipes() {
+        return Collections.unmodifiableMap(pipes);
+    }
+
+    public List<Customer> getCustomers() {
+        return Collections.unmodifiableList(customers);
     }
 }

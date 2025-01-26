@@ -3,9 +3,7 @@ package com.coffeecode.domain.entity;
 import java.util.UUID;
 
 import com.coffeecode.domain.objects.Coordinate;
-import com.coffeecode.validation.ValidationUtils;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,11 +18,7 @@ import lombok.ToString;
 public abstract class NetworkNode {
 
     private final UUID id;
-
-    @NotNull(message = "Location cannot be null")
     private final Coordinate location;
-
-    @NotNull(message = "Node type cannot be null")
     private final NodeType type;
 
     /**
@@ -34,6 +28,9 @@ public abstract class NetworkNode {
      * @param type must not be null
      */
     protected NetworkNode(AbstractNodeBuilder<?> builder) {
+        NodeValidation.validateLocation(builder.location);
+        NodeValidation.validateType(builder.type);
+
         this.id = UUID.randomUUID();
         this.location = builder.location;
         this.type = builder.type;
@@ -41,8 +38,8 @@ public abstract class NetworkNode {
 
     public abstract static class AbstractNodeBuilder<T extends AbstractNodeBuilder<T>> {
 
-        private Coordinate location;
-        private NodeType type;
+        protected Coordinate location;
+        protected NodeType type;
 
         protected abstract NetworkNode build();
 
@@ -51,18 +48,18 @@ public abstract class NetworkNode {
             return (T) this;
         }
 
-        public T location(Coordinate location) {
+        public final T location(Coordinate location) {
             this.location = location;
             return self();
         }
 
-        public T type(NodeType type) {
+        public final T type(NodeType type) {
             this.type = type;
             return self();
         }
 
         protected final NetworkNode validate(NetworkNode node) {
-            return ValidationUtils.validate(node);
+            return node; // Validation happens in constructor
         }
     }
 }

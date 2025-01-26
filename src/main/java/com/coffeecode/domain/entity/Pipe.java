@@ -3,8 +3,6 @@ package com.coffeecode.domain.entity;
 import java.util.UUID;
 
 import com.coffeecode.domain.objects.PipeProperties;
-import com.coffeecode.validation.ValidationUtils;
-import com.coffeecode.validation.exceptions.ValidationException;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -40,21 +38,45 @@ public class Pipe {
     @NotNull(message = "Pipe properties cannot be null")
     private final PipeProperties properties;
 
-    public Pipe(NetworkNode source, NetworkNode destination, PipeProperties properties) {
+    private Pipe(PipeBuilder builder) {
+        PipeValidation.validateSource(builder.source);
+        PipeValidation.validateDestination(builder.destination);
+        PipeValidation.validateProperties(builder.properties);
+        PipeValidation.validateSameNode(builder.source, builder.destination);
+
         this.id = UUID.randomUUID();
-        this.source = source;
-        this.destination = destination;
-        this.properties = properties;
-        validateSameNode();
-        validate();
+        this.source = builder.source;
+        this.destination = builder.destination;
+        this.properties = builder.properties;
     }
 
-    private void validate() {
-        validateSameNode();
-        ValidationUtils.validate(this);
+    public static PipeBuilder builder() {
+        return new PipeBuilder();
     }
 
-    private void validateSameNode() {
-        throw new ValidationException("Source and destination cannot be the same node");
+    public static class PipeBuilder {
+
+        private NetworkNode source;
+        private NetworkNode destination;
+        private PipeProperties properties;
+
+        public PipeBuilder source(NetworkNode source) {
+            this.source = source;
+            return this;
+        }
+
+        public PipeBuilder destination(NetworkNode destination) {
+            this.destination = destination;
+            return this;
+        }
+
+        public PipeBuilder properties(PipeProperties properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public Pipe build() {
+            return new Pipe(this);
+        }
     }
 }
