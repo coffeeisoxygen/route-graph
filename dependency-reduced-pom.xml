@@ -158,6 +158,9 @@
                   <excludes>
                     <exclude>*Test</exclude>
                     <exclude>*IT</exclude>
+                    <exclude>sun/util/**/*</exclude>
+                    <exclude>com/sun/**/*</exclude>
+                    <exclude>**/ui/**/*</exclude>
                     <exclude>com/coffeecode/App.class</exclude>
                     <exclude>com/coffeecode/**/ui/**/*</exclude>
                   </excludes>
