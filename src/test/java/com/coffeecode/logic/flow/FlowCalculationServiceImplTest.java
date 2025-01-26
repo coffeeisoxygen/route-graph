@@ -29,6 +29,7 @@ import com.coffeecode.validation.exceptions.ValidationException;
 class FlowCalculationServiceImplTest {
 
     private static class TestVelocityCalculator extends VelocityCalculator {
+
         private double velocityResult = 2.0;
         private double reynoldsResult = 100000.0;
 
@@ -44,6 +45,7 @@ class FlowCalculationServiceImplTest {
     }
 
     private static class TestHeadLossCalculator extends HeadLossCalculator {
+
         private double frictionFactor = 0.02;
         private double headLoss = 5.0;
 
@@ -59,6 +61,7 @@ class FlowCalculationServiceImplTest {
     }
 
     private static class TestPressureCalculator extends PressureCalculator {
+
         private double pressureOutResult = 40000.0;
 
         @Override
@@ -80,9 +83,9 @@ class FlowCalculationServiceImplTest {
         pressureCalculator = new TestPressureCalculator();
 
         service = new FlowCalculationServiceImpl(
-            velocityCalculator,
-            headLossCalculator,
-            pressureCalculator
+                velocityCalculator,
+                headLossCalculator,
+                pressureCalculator
         );
 
         setupTestPipe();
