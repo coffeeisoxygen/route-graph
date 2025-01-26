@@ -1,8 +1,6 @@
 package com.coffeecode.domain.entity;
 
-import com.coffeecode.domain.objects.Coordinate;
 import com.coffeecode.domain.objects.WaterDemand;
-import com.coffeecode.validation.ValidationUtils;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,33 +9,10 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Represents a customer in the network node system. This class extends the
- * {@link NetworkNode} class and includes additional attributes specific to a
- * customer, such as name and water demand.
- *
- * <p>
- * The {@code Customer} class is immutable and thread-safe.
- * </p>
- *
- * <p>
- * Example usage:
- * </p>
- * <pre>
- * {@code
- * Coordinate location = new Coordinate(10, 20);
- * WaterDemand waterDemand = new WaterDemand(100);
- * Customer customer = new Customer("John Doe", location, waterDemand);
- * }
- * </pre>
- *
- * @see NetworkNode
- * @see Coordinate
- * @see WaterDemand
- *
- *
+ * Represents a customer node in the water distribution network.
  */
 @Getter
-@ToString(callSuper = true, includeFieldNames = true)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Customer extends NetworkNode {
 
@@ -47,14 +22,36 @@ public class Customer extends NetworkNode {
     @NotNull(message = "Water demand cannot be null")
     private final WaterDemand waterDemand;
 
-    public Customer(String name, Coordinate location, WaterDemand waterDemand) {
-        super(location, NodeType.CUSTOMER);
-        this.name = name;
-        this.waterDemand = waterDemand;
-        validate();
+    private Customer(CustomerBuilder builder) {
+        super(builder);
+        this.name = builder.name;
+        this.waterDemand = builder.waterDemand;
     }
 
-    private void validate() {
-        ValidationUtils.validate(this);
+    public static CustomerBuilder builder() {
+        return new CustomerBuilder();
+    }
+
+    public static class CustomerBuilder extends AbstractNodeBuilder<CustomerBuilder> {
+
+        private String name;
+        private WaterDemand waterDemand;
+
+        public CustomerBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public CustomerBuilder waterDemand(WaterDemand waterDemand) {
+            this.waterDemand = waterDemand;
+            return this;
+        }
+
+        @Override
+        public Customer build() {
+            this.type(NodeType.CUSTOMER); // Set type automatically
+            Customer customer = new Customer(this);
+            return (Customer) validate(customer);
+        }
     }
 }

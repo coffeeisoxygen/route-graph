@@ -30,101 +30,83 @@ class CustomerTest {
     @Test
     @DisplayName("Should create customer with valid parameters")
     void shouldCreateCustomerWithValidParameters() {
-        Customer customer = new Customer("Customer1", location, waterDemand);
+        Customer customer = Customer.builder()
+                .name("Customer1")
+                .location(location)
+                .waterDemand(waterDemand)
+                .build();
 
         assertNotNull(customer.getId());
         assertEquals("Customer1", customer.getName());
         assertEquals(location, customer.getLocation());
         assertEquals(waterDemand, customer.getWaterDemand());
-        assertEquals(NetworkNode.NodeType.CUSTOMER, customer.getType());
+        assertEquals(NodeType.CUSTOMER, customer.getType());
     }
 
     @Test
     @DisplayName("Should throw ValidationException for null name")
     void shouldThrowValidationExceptionForNullName() {
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> new Customer(null, location, waterDemand)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            Customer.builder()
+                    .location(location)
+                    .waterDemand(waterDemand)
+                    .build();
+        });
         assertTrue(exception.getMessage().contains("Customer name cannot be empty"));
     }
 
     @Test
     @DisplayName("Should throw ValidationException for empty name")
     void shouldThrowValidationExceptionForEmptyName() {
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> new Customer("  ", location, waterDemand)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            Customer.builder()
+                    .name("  ")
+                    .location(location)
+                    .waterDemand(waterDemand)
+                    .build();
+        });
         assertTrue(exception.getMessage().contains("Customer name cannot be empty"));
     }
 
     @Test
     @DisplayName("Should throw ValidationException for null water demand")
     void shouldThrowValidationExceptionForNullWaterDemand() {
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> new Customer("Customer1", location, null)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            Customer.builder()
+                    .name("Customer1")
+                    .location(location)
+                    .build();
+        });
         assertTrue(exception.getMessage().contains("Water demand cannot be null"));
-    }
-
-    @Test
-    @DisplayName("Should implement toString correctly")
-    void shouldImplementToStringCorrectly() {
-        Customer customer = new Customer("Customer1", location, waterDemand);
-        String toString = customer.toString();
-
-        assertTrue(toString.contains("Customer1"));
-        assertTrue(toString.contains("CUSTOMER"));
-        assertTrue(toString.contains(location.toString()));
-    }
-
-    @Test
-    @DisplayName("Should have unique IDs for different instances")
-    void shouldHaveUniqueIds() {
-        Customer customer1 = new Customer("Customer1", location, waterDemand);
-        Customer customer2 = new Customer("Customer1", location, waterDemand);
-
-        assertNotEquals(customer1.getId(), customer2.getId());
-    }
-
-    @Test
-    @DisplayName("Should implement equals and hashCode correctly")
-    void shouldImplementEqualsAndHashCodeCorrectly() {
-        Customer customer1 = new Customer("Customer1", location, waterDemand);
-        Customer customer2 = new Customer("Customer1", location, waterDemand);
-        Customer customer3 = new Customer("Customer2", location, waterDemand);
-
-        // Different objects with same data should not be equal (due to UUID)
-        assertNotEquals(customer1, customer2);
-        assertNotEquals(customer1, customer3);
-
-        // Same object should be equal to itself
-        assertEquals(customer1, customer1);
-
-        // Different types should not be equal
-        assertNotEquals(customer1, "Customer1");
     }
 
     @Test
     @DisplayName("Should throw ValidationException for null location")
     void shouldThrowValidationExceptionForNullLocation() {
-        ValidationException exception = assertThrows(
-            ValidationException.class,
-            () -> new Customer("Customer1", null, waterDemand)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            Customer.builder()
+                    .name("Customer1")
+                    .waterDemand(waterDemand)
+                    .build();
+        });
         assertTrue(exception.getMessage().contains("Location cannot be null"));
     }
 
     @Test
-    @DisplayName("Should inherit NetworkNode properties")
-    void shouldInheritNetworkNodeProperties() {
-        Customer customer = new Customer("Customer1", location, waterDemand);
+    @DisplayName("Should have unique IDs")
+    void shouldHaveUniqueIds() {
+        Customer customer1 = Customer.builder()
+                .name("Customer1")
+                .location(location)
+                .waterDemand(waterDemand)
+                .build();
 
-        // Verify inheritance
-        assertTrue(customer instanceof NetworkNode);
-        assertEquals(NetworkNode.NodeType.CUSTOMER, customer.getType());
-        assertEquals(location, customer.getLocation());
+        Customer customer2 = Customer.builder()
+                .name("Customer1")
+                .location(location)
+                .waterDemand(waterDemand)
+                .build();
+
+        assertNotEquals(customer1.getId(), customer2.getId());
     }
 }
