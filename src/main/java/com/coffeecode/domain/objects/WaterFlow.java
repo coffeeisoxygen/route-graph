@@ -1,5 +1,9 @@
 package com.coffeecode.domain.objects;
 
+import javax.validation.constraints.PositiveOrZero;
+
+import com.coffeecode.validation.ValidationUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -26,12 +30,16 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class WaterFlow {
 
+    @PositiveOrZero(message = "Flow rate cannot be negative!")
     private final double flowRate; // Flow rate in cubic meters per second
 
-    public WaterFlow(double flowRate) {
-        if (flowRate < 0) {
-            throw new IllegalArgumentException("Flow rate cannot be negative!");
-        }
+    private WaterFlow(double flowRate) {
         this.flowRate = flowRate;
+    }
+
+    public static WaterFlow of(double flowRate) {
+        WaterFlow waterFlow = new WaterFlow(flowRate);
+        ValidationUtils.validate(waterFlow);
+        return waterFlow;
     }
 }

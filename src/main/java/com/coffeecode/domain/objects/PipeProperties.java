@@ -1,5 +1,9 @@
 package com.coffeecode.domain.objects;
 
+import javax.validation.constraints.NotNull;
+
+import com.coffeecode.validation.ValidationUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,14 +32,20 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class PipeProperties {
 
+    @NotNull(message = "Length cannot be null")
     private final Distance length;
+
+    @NotNull(message = "Capacity cannot be null")
     private final Volume capacity;
 
-    public PipeProperties(Distance length, Volume capacity) {
-        if (length == null || capacity == null) {
-            throw new IllegalArgumentException("Length and capacity cannot be null!");
-        }
+    private PipeProperties(Distance length, Volume capacity) {
         this.length = length;
         this.capacity = capacity;
+    }
+
+    public static PipeProperties of(Distance length, Volume capacity) {
+        PipeProperties pipeProperties = new PipeProperties(length, capacity);
+        ValidationUtils.validate(pipeProperties);
+        return pipeProperties;
     }
 }

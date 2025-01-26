@@ -14,7 +14,7 @@ class WaterFlowTest {
     @Test
     @DisplayName("Should create valid WaterFlow")
     void shouldCreateValidWaterFlow() {
-        WaterFlow waterFlow = new WaterFlow(5.0);
+        WaterFlow waterFlow = WaterFlow.of(5.0);
 
         assertNotNull(waterFlow);
         assertEquals(5.0, waterFlow.getFlowRate());
@@ -25,7 +25,7 @@ class WaterFlowTest {
     void shouldThrowExceptionForNegativeFlowRate() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new WaterFlow(-1.0)
+                () -> WaterFlow.of(-1.0)
         );
         assertEquals("Flow rate cannot be negative!", exception.getMessage());
     }
@@ -33,9 +33,9 @@ class WaterFlowTest {
     @Test
     @DisplayName("Should properly implement equals and hashCode")
     void shouldImplementEqualsAndHashCode() {
-        WaterFlow waterFlow1 = new WaterFlow(5.0);
-        WaterFlow waterFlow2 = new WaterFlow(5.0);
-        WaterFlow waterFlow3 = new WaterFlow(10.0);
+        WaterFlow waterFlow1 = WaterFlow.of(5.0);
+        WaterFlow waterFlow2 = WaterFlow.of(5.0);
+        WaterFlow waterFlow3 = WaterFlow.of(10.0);
 
         assertEquals(waterFlow1, waterFlow2);
         assertNotEquals(waterFlow1, waterFlow3);
@@ -45,7 +45,7 @@ class WaterFlowTest {
     @Test
     @DisplayName("Should implement toString properly")
     void shouldImplementToString() {
-        WaterFlow waterFlow = new WaterFlow(5.0);
+        WaterFlow waterFlow = WaterFlow.of(5.0);
         String expected = "WaterFlow(flowRate=5.0)";
         assertEquals(expected, waterFlow.toString());
     }

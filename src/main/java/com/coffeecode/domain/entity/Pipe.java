@@ -30,9 +30,29 @@ public class Pipe {
     private final PipeProperties properties;
 
     public Pipe(NetworkNode source, NetworkNode destination, PipeProperties properties) {
+        validateNodes(source, destination);
+        validateProperties(properties);
         this.id = UUID.randomUUID();
         this.source = source;
         this.destination = destination;
         this.properties = properties;
+    }
+
+    private void validateNodes(NetworkNode source, NetworkNode destination) {
+        if (source == null) {
+            throw new IllegalArgumentException("Source node cannot be null");
+        }
+        if (destination == null) {
+            throw new IllegalArgumentException("Destination node cannot be null");
+        }
+        if (source.equals(destination)) {
+            throw new IllegalArgumentException("Source and destination cannot be the same node");
+        }
+    }
+
+    private void validateProperties(PipeProperties properties) {
+        if (properties == null) {
+            throw new IllegalArgumentException("Pipe properties cannot be null");
+        }
     }
 }

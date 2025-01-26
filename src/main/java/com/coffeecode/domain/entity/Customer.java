@@ -43,17 +43,21 @@ public class Customer extends NetworkNode {
 
     public Customer(String name, Coordinate location, WaterDemand waterDemand) {
         super(location, NodeType.CUSTOMER);
-        if (location == null) {
-            throw new NullPointerException("Location cannot be null");
-        }
-        if (name == null || name.isEmpty()) {
-            throw new NullPointerException("Customer name cannot be null or empty");
-        }
-        if (waterDemand == null) {
-            throw new NullPointerException("Water demand cannot be null");
-        }
-
+        validateName(name);
+        validateWaterDemand(waterDemand);
         this.name = name;
         this.waterDemand = waterDemand;
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Customer name cannot be null or empty");
+        }
+    }
+
+    private void validateWaterDemand(WaterDemand waterDemand) {
+        if (waterDemand == null) {
+            throw new IllegalArgumentException("Water demand cannot be null");
+        }
     }
 }

@@ -16,7 +16,7 @@ class DistanceTest {
     @ValueSource(doubles = {0.0, 100.0, Double.MAX_VALUE})
     @DisplayName("Should create valid distance")
     void shouldCreateValidDistance(double value) {
-        Distance distance = new Distance(value);
+        Distance distance = Distance.of(value);
         assertEquals(value, distance.getValue());
     }
 
@@ -25,7 +25,7 @@ class DistanceTest {
     void shouldThrowExceptionForNegativeDistance() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new Distance(-1.0)
+                () -> Distance.of(-1.0)
         );
         assertEquals("Distance cannot be negative!", exception.getMessage());
     }
@@ -33,9 +33,9 @@ class DistanceTest {
     @Test
     @DisplayName("Should implement equals and hashCode")
     void shouldImplementEqualsAndHashCode() {
-        Distance distance1 = new Distance(100.0);
-        Distance distance2 = new Distance(100.0);
-        Distance distance3 = new Distance(200.0);
+        Distance distance1 = Distance.of(100.0);
+        Distance distance2 = Distance.of(100.0);
+        Distance distance3 = Distance.of(200.0);
 
         assertEquals(distance1, distance2);
         assertNotEquals(distance1, distance3);
@@ -45,7 +45,7 @@ class DistanceTest {
     @Test
     @DisplayName("Should implement toString")
     void shouldImplementToString() {
-        Distance distance = new Distance(100.0);
+        Distance distance = Distance.of(100.0);
         assertEquals("Distance(value=100.0)", distance.toString());
     }
 }

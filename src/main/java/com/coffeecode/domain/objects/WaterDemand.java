@@ -1,41 +1,31 @@
 package com.coffeecode.domain.objects;
 
+import javax.validation.constraints.NotNull;
+
+import com.coffeecode.validation.ValidationUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Represents the water demand for a specific entity. This class encapsulates
- * the daily water demand volume.
- *
- * <p>
- * Instances of this class are immutable.</p>
- *
- * <p>
- * Example usage:</p>
- * <pre>
- * {@code
- * Volume dailyVolume = new Volume(100);
- * WaterDemand waterDemand = new WaterDemand(dailyVolume);
- * }
- * </pre>
- *
- * <p>
- * Note: The daily demand volume cannot be null.</p>
- *
- * @see Volume
+ * Represents daily water demand volume.
  */
 @Getter
 @ToString
 @EqualsAndHashCode
 public class WaterDemand {
 
+    @NotNull(message = "Daily demand cannot be null")
     private final Volume dailyDemand;
 
-    public WaterDemand(Volume dailyDemand) {
-        if (dailyDemand == null) {
-            throw new IllegalArgumentException("Daily demand cannot be null!");
-        }
+    private WaterDemand(Volume dailyDemand) {
         this.dailyDemand = dailyDemand;
+    }
+
+    public static WaterDemand of(Volume dailyDemand) {
+        WaterDemand waterDemand = new WaterDemand(dailyDemand);
+        ValidationUtils.validate(waterDemand);
+        return waterDemand;
     }
 }

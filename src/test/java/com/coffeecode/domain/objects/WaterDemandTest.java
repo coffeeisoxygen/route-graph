@@ -14,8 +14,8 @@ class WaterDemandTest {
     @Test
     @DisplayName("Should create valid WaterDemand")
     void shouldCreateValidWaterDemand() {
-        Volume dailyVolume = new Volume(100);
-        WaterDemand waterDemand = new WaterDemand(dailyVolume);
+        Volume dailyVolume = Volume.of(100);
+        WaterDemand waterDemand = WaterDemand.of(dailyVolume);
 
         assertNotNull(waterDemand);
         assertEquals(dailyVolume, waterDemand.getDailyDemand());
@@ -26,7 +26,7 @@ class WaterDemandTest {
     void shouldThrowExceptionForNullDailyDemand() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new WaterDemand(null)
+                () -> WaterDemand.of(null)
         );
         assertEquals("Daily demand cannot be null!", exception.getMessage());
     }
@@ -34,13 +34,13 @@ class WaterDemandTest {
     @Test
     @DisplayName("Should properly implement equals and hashCode")
     void shouldImplementEqualsAndHashCode() {
-        Volume dailyVolume1 = new Volume(100);
-        Volume dailyVolume2 = new Volume(100);
-        Volume dailyVolume3 = new Volume(200);
+        Volume dailyVolume1 = Volume.of(100);
+        Volume dailyVolume2 = Volume.of(100);
+        Volume dailyVolume3 = Volume.of(200);
 
-        WaterDemand waterDemand1 = new WaterDemand(dailyVolume1);
-        WaterDemand waterDemand2 = new WaterDemand(dailyVolume2);
-        WaterDemand waterDemand3 = new WaterDemand(dailyVolume3);
+        WaterDemand waterDemand1 = WaterDemand.of(dailyVolume1);
+        WaterDemand waterDemand2 = WaterDemand.of(dailyVolume2);
+        WaterDemand waterDemand3 = WaterDemand.of(dailyVolume3);
 
         assertEquals(waterDemand1, waterDemand2);
         assertNotEquals(waterDemand1, waterDemand3);
@@ -50,8 +50,8 @@ class WaterDemandTest {
     @Test
     @DisplayName("Should implement toString properly")
     void shouldImplementToString() {
-        Volume dailyVolume = new Volume(100);
-        WaterDemand waterDemand = new WaterDemand(dailyVolume);
+        Volume dailyVolume = Volume.of(100);
+        WaterDemand waterDemand = WaterDemand.of(dailyVolume);
         String expected = "WaterDemand(dailyDemand=Volume(cubicMeters=100.0))";
         assertEquals(expected, waterDemand.toString());
     }

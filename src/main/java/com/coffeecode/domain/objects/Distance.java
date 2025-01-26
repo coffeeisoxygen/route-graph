@@ -1,5 +1,9 @@
 package com.coffeecode.domain.objects;
 
+import javax.validation.constraints.PositiveOrZero;
+
+import com.coffeecode.validation.ValidationUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -33,12 +37,16 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Distance {
 
+    @PositiveOrZero(message = "Distance cannot be negative!")
     private final double value; // Distance in meters
 
-    public Distance(double value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("Distance cannot be negative!");
-        }
+    private Distance(double value) {
         this.value = value;
+    }
+
+    public static Distance of(double value) {
+        Distance distance = new Distance(value);
+        ValidationUtils.validate(distance);
+        return distance;
     }
 }
