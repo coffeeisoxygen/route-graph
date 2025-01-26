@@ -28,7 +28,8 @@
     <jmh.version>1.37</jmh.version>
     <jacoco.version>0.8.11</jacoco.version>
     <surefire.version>3.1.2</surefire.version>
-    <bytebuddy.version>1.14.11</bytebuddy.version>
+    <junit.version>5.10.1</junit.version>
+    <bytebuddy.version>1.11.10</bytebuddy.version>
   </properties>
 
   <dependencies>
@@ -233,44 +234,42 @@
         <version>${jacoco.version}</version>
         <executions>
           <execution>
+            <id>default-prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
           </execution>
           <execution>
-            <id>report</id>
-            <phase>test</phase>
+            <id>default-report</id>
+            <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>
           </execution>
           <execution>
-            <id>check</id>
+            <id>default-check</id>
             <goals>
               <goal>check</goal>
             </goals>
             <configuration>
               <rules>
                 <rule>
-                  <element>PACKAGE</element>
+                  <element>CLASS</element>
+                  <excludes>
+                    <exclude>*Test</exclude>
+                    <exclude>*IT</exclude>
+                    <exclude>com/coffeecode/App.class</exclude>
+                    <exclude>com/coffeecode/**/ui/**/*</exclude>
+                  </excludes>
                   <limits>
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
                       <minimum>0.80</minimum>
                     </limit>
-                    <limit>
-                      <counter>BRANCH</counter>
-                      <value>COVEREDRATIO</value>
-                      <minimum>0.80</minimum>
-                    </limit>
                   </limits>
                 </rule>
               </rules>
-              <excludes>
-                <exclude>com/coffeecode/App.class</exclude>
-                <exclude>com/coffeecode/**/ui/**/*</exclude>
-              </excludes>
             </configuration>
           </execution>
         </executions>

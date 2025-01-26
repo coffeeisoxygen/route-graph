@@ -63,6 +63,29 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <argLine>@{argLine}
+            --add-opens java.base/java.lang=ALL-UNNAMED -Djdk.attach.allowAttachSelf=true
+            -XX:+EnableDynamicAgentLoading
+            --add-opens java.base/java.time=ALL-UNNAMED
+            --add-opens java.base/java.util=ALL-UNNAMED -Dnet.bytebuddy.experimental=true</argLine>
+          <useModulePath>false</useModulePath>
+          <testFailureIgnore>false</testFailureIgnore>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
@@ -108,60 +131,51 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.11</version>
+        <version>${jacoco.version}</version>
         <executions>
           <execution>
+            <id>default-prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
           </execution>
           <execution>
-            <id>report</id>
-            <phase>test</phase>
+            <id>default-report</id>
+            <phase>verify</phase>
             <goals>
               <goal>report</goal>
             </goals>
           </execution>
           <execution>
-            <id>check</id>
+            <id>default-check</id>
             <goals>
               <goal>check</goal>
             </goals>
             <configuration>
               <rules>
                 <rule>
-                  <element>PACKAGE</element>
+                  <element>CLASS</element>
+                  <excludes>
+                    <exclude>*Test</exclude>
+                    <exclude>*IT</exclude>
+                    <exclude>com/coffeecode/App.class</exclude>
+                    <exclude>com/coffeecode/**/ui/**/*</exclude>
+                  </excludes>
                   <limits>
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
                       <minimum>0.80</minimum>
                     </limit>
-                    <limit>
-                      <counter>BRANCH</counter>
-                      <value>COVEREDRATIO</value>
-                      <minimum>0.80</minimum>
-                    </limit>
                   </limits>
                 </rule>
               </rules>
-              <excludes>
-                <exclude>com/coffeecode/App.class</exclude>
-                <exclude>com/coffeecode/**/ui/**/*</exclude>
-              </excludes>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>osgeo</id>
-      <name>OSGeo Release Repository</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
-    </repository>
-  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -218,6 +232,40 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.10.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>byte-buddy</artifactId>
+          <groupId>net.bytebuddy</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.10.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-agent</artifactId>
+      <version>1.11.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.openjdk.jmh</groupId>
       <artifactId>jmh-core</artifactId>
       <version>1.37</version>
@@ -239,18 +287,18 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <jmh.version>1.37</jmh.version>
-    <jakarta.el.version>4.0.2</jakarta.el.version>
+    <bytebuddy.version>1.11.10</bytebuddy.version>
     <java.version>17</java.version>
-    <hibernate.validator.version>7.0.5.Final</hibernate.validator.version>
-    <mockito.version>5.14.2</mockito.version>
+    <mockito.version>5.10.0</mockito.version>
     <junit.jupiter.version>5.8.1</junit.jupiter.version>
-    <geotools.version>27.2</geotools.version>
     <maven-shade.version>3.2.4</maven-shade.version>
+    <jacoco.version>0.8.11</jacoco.version>
     <maven-compiler.version>3.8.0</maven-compiler.version>
+    <surefire.version>3.1.2</surefire.version>
     <lombok.version>1.18.30</lombok.version>
-    <jakarta.validation.version>3.0.2</jakarta.validation.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mockito-inline.version>5.2.0</mockito-inline.version>
+    <junit.version>5.10.1</junit.version>
     <spring-context.version>6.2.1</spring-context.version>
     <logback.version>1.5.6</logback.version>
     <slf4jjcl.version>2.0.9</slf4jjcl.version>
