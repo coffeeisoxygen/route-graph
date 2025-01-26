@@ -4,15 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
@@ -30,48 +25,80 @@ import com.coffeecode.logic.flow.calculation.PressureCalculator;
 import com.coffeecode.logic.flow.calculation.VelocityCalculator;
 import com.coffeecode.validation.exceptions.ValidationException;
 
-@ExtendWith(MockitoExtension.class)
 @DisplayName("Flow Calculation Service Tests")
 class FlowCalculationServiceImplTest {
 
-    @Mock
-    private VelocityCalculator velocityCalculator;
-    @Mock
-    private HeadLossCalculator headLossCalculator;
-    @Mock
-    private PressureCalculator pressureCalculator;
+    private static class TestVelocityCalculator extends VelocityCalculator {
+        private double velocityResult = 2.0;
+        private double reynoldsResult = 100000.0;
+
+        @Override
+        public double calculate(double pressure) {
+            return velocityResult;
+        }
+
+        @Override
+        public double calculateWithReynolds(double velocity, double diameter) {
+            return reynoldsResult;
+        }
+    }
+
+    private static class TestHeadLossCalculator extends HeadLossCalculator {
+        private double frictionFactor = 0.02;
+        private double headLoss = 5.0;
+
+        @Override
+        public double calculateFrictionFactor(double reynolds, double diameter, double roughness) {
+            return frictionFactor;
+        }
+
+        @Override
+        public double calculate(double length, double diameter, double frictionFactor, double velocity) {
+            return headLoss;
+        }
+    }
+
+    private static class TestPressureCalculator extends PressureCalculator {
+        private double pressureOutResult = 40000.0;
+
+        @Override
+        public double calculatePressureOut(double pressureIn, double headLoss) {
+            return pressureOutResult;
+        }
+    }
 
     private FlowCalculationServiceImpl service;
     private Pipe pipe;
+    private TestVelocityCalculator velocityCalculator;
+    private TestHeadLossCalculator headLossCalculator;
+    private TestPressureCalculator pressureCalculator;
 
     @BeforeEach
     void setUp() {
+        velocityCalculator = new TestVelocityCalculator();
+        headLossCalculator = new TestHeadLossCalculator();
+        pressureCalculator = new TestPressureCalculator();
+
         service = new FlowCalculationServiceImpl(
-                velocityCalculator,
-                headLossCalculator,
-                pressureCalculator
+            velocityCalculator,
+            headLossCalculator,
+            pressureCalculator
         );
 
-        // Setup test data without mocks
         setupTestPipe();
     }
 
     @Test
     @DisplayName("Should calculate flow with valid parameters")
     void shouldCalculateFlowWithValidParameters() {
-        // Setup mocks for this specific test
-        when(velocityCalculator.calculate(anyDouble())).thenReturn(2.0);
-        when(velocityCalculator.calculateWithReynolds(anyDouble(), anyDouble())).thenReturn(100000.0);
-        when(headLossCalculator.calculateFrictionFactor(anyDouble(), anyDouble(), anyDouble())).thenReturn(0.02);
-        when(headLossCalculator.calculate(anyDouble(), anyDouble(), anyDouble(), anyDouble())).thenReturn(5.0);
-        when(pressureCalculator.calculatePressureOut(anyDouble(), anyDouble())).thenReturn(40000.0);
-
         double pressureIn = 50000.0;
         FlowResult result = service.calculateFlow(pipe, pressureIn);
 
         assertNotNull(result);
         assertTrue(result.getFlowRate() > 0);
         assertEquals(40000.0, result.getPressureOut());
+        assertEquals(2.0, result.getVelocityOut());
+        assertEquals(5.0, result.getHeadLoss());
     }
 
     @Test
@@ -81,6 +108,7 @@ class FlowCalculationServiceImplTest {
 
         assertEquals(SimulationDefaults.FLOW_VELOCITY, result.getVelocityOut());
         assertEquals(PhysicalConstants.ATMOSPHERIC_PRESSURE, result.getPressureOut());
+        assertEquals(0.0, result.getHeadLoss());
     }
 
     @Test
