@@ -16,6 +16,6 @@ public class PressureCalculator {
         log.debug("Calculating pressure out: input={}, headLoss={}, result={}",
                 inputPressure, headLoss, pressureOut);
 
-        return Math.max(pressureOut, PhysicalConstants.ATMOSPHERIC_PRESSURE);
+        return pressureOut;
     }
 }

@@ -143,24 +143,6 @@
       <version>${jmh.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- validation -->
-    <dependency>
-      <groupId>jakarta.validation</groupId>
-      <artifactId>jakarta.validation-api</artifactId>
-      <version>${jakarta.validation.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate.validator.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>jakarta.el</artifactId>
-      <version>${jakarta.el.version}</version>
-    </dependency>
     <!-- depndency injection -->
     <dependency>
       <groupId>org.springframework</groupId>
