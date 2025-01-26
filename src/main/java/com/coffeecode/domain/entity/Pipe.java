@@ -2,9 +2,10 @@ package com.coffeecode.domain.entity;
 
 import java.util.UUID;
 
+import com.coffeecode.domain.objects.Distance;
 import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.domain.objects.Volume;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -28,14 +29,8 @@ import lombok.ToString;
 public class Pipe {
 
     private final UUID id;
-
-    @NotNull(message = "Source node cannot be null")
     private final NetworkNode source;
-
-    @NotNull(message = "Destination node cannot be null")
     private final NetworkNode destination;
-
-    @NotNull(message = "Pipe properties cannot be null")
     private final PipeProperties properties;
 
     private Pipe(PipeBuilder builder) {
@@ -48,6 +43,22 @@ public class Pipe {
         this.source = builder.source;
         this.destination = builder.destination;
         this.properties = builder.properties;
+    }
+
+    public double getDiameter() {
+        return properties.getDiameter();
+    }
+
+    public double getRoughness() {
+        return properties.getRoughness();
+    }
+
+    public Distance getLength() {
+        return properties.getLength();
+    }
+
+    public Volume getCapacity() {
+        return properties.getCapacity();
     }
 
     public static PipeBuilder builder() {

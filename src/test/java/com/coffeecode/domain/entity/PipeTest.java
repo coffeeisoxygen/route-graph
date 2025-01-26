@@ -117,4 +117,19 @@ class PipeTest {
 
         assertNotEquals(pipe1.getId(), pipe2.getId());
     }
+
+    @Test
+    @DisplayName("Should provide convenience methods for properties")
+    void shouldProvideConvenienceMethodsForProperties() {
+        Pipe pipe = Pipe.builder()
+                .source(source)
+                .destination(destination)
+                .properties(properties)
+                .build();
+
+        assertEquals(properties.getDiameter(), pipe.getDiameter());
+        assertEquals(properties.getRoughness(), pipe.getRoughness());
+        assertEquals(properties.getLength(), pipe.getLength());
+        assertEquals(properties.getCapacity(), pipe.getCapacity());
+    }
 }
