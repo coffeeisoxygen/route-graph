@@ -16,14 +16,13 @@ Project Description
 
 ### In Progress
 
-- [ ] Value Object Tests
-  - [x] CoordinateTest
-  - [x] DistanceTest
-  - [ ] VolumeTest
-  - [ ] WaterDemandTest
-  - [ ] PipePropertiesTest
-
 ### Done ✓
 
+- [x] PipePropertiesTest
+- [x] WaterDemandTest
+- [x] VolumeTest
+- [x] DistanceTest
+- [x] CoordinateTest
+- [x] Value Object Tests
 - [x] Basic value objects (Distance, Volume, etc)
 - [x] Core entities (Customer, Pipe, WaterSource)
