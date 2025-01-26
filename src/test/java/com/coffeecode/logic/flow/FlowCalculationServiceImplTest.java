@@ -34,9 +34,12 @@ import com.coffeecode.validation.exceptions.ValidationException;
 @DisplayName("Flow Calculation Service Tests")
 class FlowCalculationServiceImplTest {
 
-    @Mock private VelocityCalculator velocityCalculator;
-    @Mock private HeadLossCalculator headLossCalculator;
-    @Mock private PressureCalculator pressureCalculator;
+    @Mock
+    private VelocityCalculator velocityCalculator;
+    @Mock
+    private HeadLossCalculator headLossCalculator;
+    @Mock
+    private PressureCalculator pressureCalculator;
 
     private FlowCalculationServiceImpl service;
     private Pipe pipe;
@@ -44,9 +47,9 @@ class FlowCalculationServiceImplTest {
     @BeforeEach
     void setUp() {
         service = new FlowCalculationServiceImpl(
-            velocityCalculator,
-            headLossCalculator,
-            pressureCalculator
+                velocityCalculator,
+                headLossCalculator,
+                pressureCalculator
         );
 
         // Setup test data without mocks
@@ -84,8 +87,8 @@ class FlowCalculationServiceImplTest {
     @DisplayName("Should throw exception for null pipe")
     void shouldThrowExceptionForNullPipe() {
         ValidationException exception = assertThrows(
-            ValidationException.class,
-            () -> service.calculateFlow(null, 50000.0)
+                ValidationException.class,
+                () -> service.calculateFlow(null, 50000.0)
         );
         assertTrue(exception.getMessage().contains("Pipe cannot be null"));
     }
@@ -94,36 +97,36 @@ class FlowCalculationServiceImplTest {
     @DisplayName("Should throw exception for negative pressure")
     void shouldThrowExceptionForNegativePressure() {
         ValidationException exception = assertThrows(
-            ValidationException.class,
-            () -> service.calculateFlow(pipe, -1000.0)
+                ValidationException.class,
+                () -> service.calculateFlow(pipe, -1000.0)
         );
         assertTrue(exception.getMessage().contains("Pressure cannot be negative"));
     }
 
     private void setupTestPipe() {
         PipeProperties properties = PipeProperties.builder()
-            .length(Distance.of(100.0))
-            .capacity(Volume.of(500.0))
-            .diameter(0.5)
-            .roughness(0.0002)
-            .build();
+                .length(Distance.of(100.0))
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
+                .build();
 
         NetworkNode source = WaterSource.builder()
-            .name("Source")
-            .location(Coordinate.of(0.0, 0.0))
-            .capacity(Volume.of(1000.0))
-            .build();
+                .name("Source")
+                .location(Coordinate.of(0.0, 0.0))
+                .capacity(Volume.of(1000.0))
+                .build();
 
         NetworkNode destination = Customer.builder()
-            .name("Customer")
-            .location(Coordinate.of(1.0, 1.0))
-            .waterDemand(WaterDemand.of(Volume.of(100.0)))
-            .build();
+                .name("Customer")
+                .location(Coordinate.of(1.0, 1.0))
+                .waterDemand(WaterDemand.of(Volume.of(100.0)))
+                .build();
 
         pipe = Pipe.builder()
-            .source(source)
-            .destination(destination)
-            .properties(properties)
-            .build();
+                .source(source)
+                .destination(destination)
+                .properties(properties)
+                .build();
     }
 }

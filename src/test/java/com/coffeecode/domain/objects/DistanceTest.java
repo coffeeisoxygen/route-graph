@@ -50,4 +50,22 @@ class DistanceTest {
         Distance distance = Distance.of(100.0);
         assertEquals("Distance(value=100.0)", distance.toString());
     }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, 0.1, 1.0, 10.0})
+    @DisplayName("Should create valid distance from kilometers")
+    void shouldCreateValidDistanceFromKilometers(double kilometers) {
+        Distance distance = Distance.ofKilometers(kilometers);
+        assertEquals(kilometers * 1000, distance.getValue());
+    }
+
+    @Test
+    @DisplayName("Should throw ValidationException for negative kilometers")
+    void shouldThrowValidationExceptionForNegativeKilometers() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> Distance.ofKilometers(-1.0)
+        );
+        assertEquals("Distance cannot be negative!", exception.getMessage());
+    }
 }
