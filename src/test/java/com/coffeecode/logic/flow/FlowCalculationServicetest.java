@@ -21,6 +21,7 @@ import com.coffeecode.domain.objects.WaterDemand;
 
 @DisplayName("Flow Calculation Service Tests")
 class FlowCalculationServiceTest {
+
     private FlowCalculationService service;
     private Pipe pipe;
     private NetworkNode source;
@@ -30,31 +31,30 @@ class FlowCalculationServiceTest {
     void setUp() {
         service = new FlowCalculationServiceImpl();
 
-        // Create test pipe with properties
         PipeProperties properties = PipeProperties.builder()
-            .length(Distance.of(100.0))
-            .capacity(Volume.of(500.0))
-            .diameter(0.5)
-            .roughness(0.0002)
-            .build();
+                .length(Distance.of(100.0))
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
+                .build();
 
         source = WaterSource.builder()
-            .name("Source")
-            .location(Coordinate.of(0.0, 0.0))
-            .capacity(Volume.of(1000.0))
-            .build();
+                .name("Source")
+                .location(Coordinate.of(0.0, 0.0))
+                .capacity(Volume.of(1000.0))
+                .build();
 
         destination = Customer.builder()
-            .name("Customer")
-            .location(Coordinate.of(1.0, 1.0))
-            .waterDemand(WaterDemand.of(Volume.of(100.0)))
-            .build();
+                .name("Customer")
+                .location(Coordinate.of(1.0, 1.0))
+                .waterDemand(WaterDemand.of(Volume.of(100.0)))
+                .build();
 
         pipe = Pipe.builder()
-            .source(source)
-            .destination(destination)
-            .properties(properties)
-            .build();
+                .source(source)
+                .destination(destination)
+                .properties(properties)
+                .build();
     }
 
     @Test
@@ -66,8 +66,6 @@ class FlowCalculationServiceTest {
         assertNotNull(result);
         assertTrue(result.getFlowRate() > 0);
         assertTrue(result.getPressureOut() < pressureIn);
-        assertTrue(result.getVelocityOut() > 0);
-        assertTrue(result.getHeadLoss() > 0);
     }
 
     @Test

@@ -42,8 +42,20 @@ public class Distance {
         this.value = value;
     }
 
-    public static Distance of(double value) {
-        return new Distance(value);
+    public static Distance of(double meters) {
+        return new Distance(meters);
+    }
+
+    public static Distance ofKilometers(double kilometers) {
+        return new Distance(kilometers * 1000);
+    }
+
+    public double getMeters() {
+        return value;
+    }
+
+    public double getKilometers() {
+        return value / 1000;
     }
 
     private static void validateValue(double value) {
