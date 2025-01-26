@@ -1,9 +1,8 @@
 package com.coffeecode.domain.objects;
 
-import javax.validation.constraints.PositiveOrZero;
-
 import com.coffeecode.validation.ValidationUtils;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

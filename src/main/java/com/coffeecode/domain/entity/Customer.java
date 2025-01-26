@@ -2,7 +2,10 @@ package com.coffeecode.domain.entity;
 
 import com.coffeecode.domain.objects.Coordinate;
 import com.coffeecode.domain.objects.WaterDemand;
+import com.coffeecode.validation.ValidationUtils;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -34,30 +37,24 @@ import lombok.ToString;
  *
  */
 @Getter
-@ToString(callSuper = true)
+@ToString(callSuper = true, includeFieldNames = true)
 @EqualsAndHashCode(callSuper = true)
 public class Customer extends NetworkNode {
 
+    @NotBlank(message = "Customer name cannot be empty")
     private final String name;
+
+    @NotNull(message = "Water demand cannot be null")
     private final WaterDemand waterDemand;
 
     public Customer(String name, Coordinate location, WaterDemand waterDemand) {
         super(location, NodeType.CUSTOMER);
-        validateName(name);
-        validateWaterDemand(waterDemand);
         this.name = name;
         this.waterDemand = waterDemand;
+        validate();
     }
 
-    private void validateName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Customer name cannot be null or empty");
-        }
-    }
-
-    private void validateWaterDemand(WaterDemand waterDemand) {
-        if (waterDemand == null) {
-            throw new IllegalArgumentException("Water demand cannot be null");
-        }
+    private void validate() {
+        ValidationUtils.validate(this);
     }
 }

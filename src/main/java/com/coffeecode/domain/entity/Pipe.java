@@ -3,7 +3,11 @@ package com.coffeecode.domain.entity;
 import java.util.UUID;
 
 import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.validation.ValidationUtils;
+import com.coffeecode.validation.exceptions.ValidationException;
 
+import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -22,37 +26,35 @@ import lombok.ToString;
  */
 @Getter
 @ToString
+@EqualsAndHashCode
 public class Pipe {
 
     private final UUID id;
+
+    @NotNull(message = "Source node cannot be null")
     private final NetworkNode source;
+
+    @NotNull(message = "Destination node cannot be null")
     private final NetworkNode destination;
+
+    @NotNull(message = "Pipe properties cannot be null")
     private final PipeProperties properties;
 
     public Pipe(NetworkNode source, NetworkNode destination, PipeProperties properties) {
-        validateNodes(source, destination);
-        validateProperties(properties);
         this.id = UUID.randomUUID();
         this.source = source;
         this.destination = destination;
         this.properties = properties;
+        validateSameNode();
+        validate();
     }
 
-    private void validateNodes(NetworkNode source, NetworkNode destination) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source node cannot be null");
-        }
-        if (destination == null) {
-            throw new IllegalArgumentException("Destination node cannot be null");
-        }
-        if (source.equals(destination)) {
-            throw new IllegalArgumentException("Source and destination cannot be the same node");
-        }
+    private void validate() {
+        validateSameNode();
+        ValidationUtils.validate(this);
     }
 
-    private void validateProperties(PipeProperties properties) {
-        if (properties == null) {
-            throw new IllegalArgumentException("Pipe properties cannot be null");
-        }
+    private void validateSameNode() {
+        throw new ValidationException("Source and destination cannot be the same node");
     }
 }

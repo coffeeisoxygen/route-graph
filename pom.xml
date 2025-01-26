@@ -27,6 +27,9 @@
     <slf4jjcl.version>2.0.9</slf4jjcl.version>
     <lombok.version>1.18.30</lombok.version>
     <jmh.version>1.37</jmh.version>
+    <hibernate.validator.version>7.0.5.Final</hibernate.validator.version>
+    <jakarta.validation.version>3.0.2</jakarta.validation.version>
+    <jakarta.el.version>4.0.2</jakarta.el.version>
   </properties>
 
   <dependencies>
@@ -135,19 +138,21 @@
     </dependency>
     <!-- validation -->
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>${jakarta.validation.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>6.2.5.Final</version>
+      <version>${hibernate.validator.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.el</artifactId>
-      <version>4.0.2</version>
+      <version>${jakarta.el.version}</version>
     </dependency>
     <!-- depndency injection -->
     <dependency>

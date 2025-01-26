@@ -1,10 +1,9 @@
 package com.coffeecode.domain.objects;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-
 import com.coffeecode.validation.ValidationUtils;
 
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

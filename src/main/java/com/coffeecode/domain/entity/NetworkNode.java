@@ -2,11 +2,9 @@ package com.coffeecode.domain.entity;
 
 import java.util.UUID;
 
-import javax.validation.constraints.NotNull;
-
 import com.coffeecode.domain.objects.Coordinate;
-import com.coffeecode.validation.ValidationUtils;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -21,7 +19,11 @@ import lombok.ToString;
 public abstract class NetworkNode {
 
     private final UUID id;
+
+    @NotNull(message = "Location cannot be null")
     private final Coordinate location;
+
+    @NotNull(message = "Node type cannot be null")
     private final NodeType type;
 
     /**
@@ -30,10 +32,10 @@ public abstract class NetworkNode {
      * @param location must not be null
      * @param type must not be null
      */
-    protected NetworkNode(@NotNull final Coordinate location, @NotNull final NodeType type) {
+    protected NetworkNode(final Coordinate location, final NodeType type) {
         this.id = UUID.randomUUID();
-        this.location = ValidationUtils.validate(location);
-        this.type = ValidationUtils.validate(type);
+        this.location = location;
+        this.type = type;
     }
 
     public enum NodeType {

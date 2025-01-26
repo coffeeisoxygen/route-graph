@@ -3,11 +3,14 @@ package com.coffeecode.domain.objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("Coordinate Tests")
 class CoordinateTest {
@@ -26,13 +29,13 @@ class CoordinateTest {
         "-91.0, 0.0",
         "91.0, 0.0"
     })
-    @DisplayName("Should throw exception for invalid latitude")
-    void shouldThrowExceptionForInvalidLatitude(double latitude, double longitude) {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Coordinate.of(latitude, longitude)
+    @DisplayName("Should throw ValidationException for invalid latitude")
+    void shouldThrowValidationExceptionForInvalidLatitude(double latitude, double longitude) {
+        ValidationException exception = assertThrows(
+            ValidationException.class,
+            () -> Coordinate.of(latitude, longitude)
         );
-        assertEquals("Latitude must be between -90 and 90 degrees!", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Latitude must be between -90 and 90 degrees"));
     }
 
     @ParameterizedTest
@@ -40,13 +43,13 @@ class CoordinateTest {
         "0.0, -181.0",
         "0.0, 181.0"
     })
-    @DisplayName("Should throw exception for invalid longitude")
-    void shouldThrowExceptionForInvalidLongitude(double latitude, double longitude) {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> Coordinate.of(latitude, longitude)
+    @DisplayName("Should throw ValidationException for invalid longitude")
+    void shouldThrowValidationExceptionForInvalidLongitude(double latitude, double longitude) {
+        ValidationException exception = assertThrows(
+            ValidationException.class,
+            () -> Coordinate.of(latitude, longitude)
         );
-        assertEquals("Longitude must be between -180 and 180 degrees!", exception.getMessage());
+        assertTrue(exception.getMessage().contains("Longitude must be between -180 and 180 degrees"));
     }
 
     @Test
