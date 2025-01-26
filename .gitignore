@@ -31,3 +31,9 @@ replay_pid*
 
 # Maven target directory
 target/
+
+# Ignore todo.md
+TODO.md
+
+#Ignore log files
+*.log
