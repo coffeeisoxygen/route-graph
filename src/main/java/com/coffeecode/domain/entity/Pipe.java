@@ -2,6 +2,7 @@ package com.coffeecode.domain.entity;
 
 import java.util.UUID;
 
+import com.coffeecode.domain.entity.validation.PipeValidation;
 import com.coffeecode.domain.objects.Distance;
 import com.coffeecode.domain.objects.PipeProperties;
 import com.coffeecode.domain.objects.Volume;

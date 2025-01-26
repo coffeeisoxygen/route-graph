@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.coffeecode.domain.entity.validation.WaterDistributionValidation;
 import com.coffeecode.domain.objects.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
 

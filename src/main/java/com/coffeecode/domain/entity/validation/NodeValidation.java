@@ -1,5 +1,6 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entity.validation;
 
+import com.coffeecode.domain.entity.NodeType;
 import com.coffeecode.domain.objects.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 

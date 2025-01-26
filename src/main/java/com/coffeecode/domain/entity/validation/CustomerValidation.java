@@ -1,4 +1,4 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entity.validation;
 
 import com.coffeecode.domain.objects.WaterDemand;
 import com.coffeecode.validation.exceptions.ValidationException;

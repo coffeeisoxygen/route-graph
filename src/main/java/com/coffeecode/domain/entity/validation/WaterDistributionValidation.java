@@ -1,5 +1,7 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entity.validation;
 
+import com.coffeecode.domain.entity.NetworkNode;
+import com.coffeecode.domain.entity.WaterSource;
 import com.coffeecode.domain.objects.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
 
