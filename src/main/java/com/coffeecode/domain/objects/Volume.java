@@ -25,7 +25,7 @@ import lombok.ToString;
  * @throws IllegalArgumentException if the provided volume is negative
  */
 @Getter
-@ToString
+@ToString(of = "cubicMeters")
 @EqualsAndHashCode
 public class Volume {
 

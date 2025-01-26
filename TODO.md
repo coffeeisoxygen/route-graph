@@ -16,6 +16,13 @@ Project Description
 
 ### In Progress
 
+- [ ] Value Object Tests
+  - [x] CoordinateTest
+  - [x] DistanceTest
+  - [ ] VolumeTest
+  - [ ] WaterDemandTest
+  - [ ] PipePropertiesTest
+
 ### Done ✓
 
 - [x] Basic value objects (Distance, Volume, etc)
