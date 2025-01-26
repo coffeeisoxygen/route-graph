@@ -16,6 +16,11 @@ Project Description
 
 ### In Progress
 
+- [ ] Entity Tests
+  - [x] CustomerTest
+  - [ ] PipeTest
+  - [ ] WaterDistributionTest
+
 ### Done ✓
 
 - [x] PipePropertiesTest
