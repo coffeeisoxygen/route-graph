@@ -134,6 +134,77 @@ class FlowCalculationServiceImplTest {
         assertTrue(exception.getMessage().contains("Pressure cannot be negative"));
     }
 
+    @Test
+    @DisplayName("Should throw exception for zero pipe length")
+    void shouldThrowExceptionForZeroPipeLength() {
+        PipeProperties invalidProperties = PipeProperties.builder()
+                .length(Distance.of(0.0)) // Zero length
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
+                .build();
+
+        Pipe invalidPipe = createInvalidPipe(invalidProperties);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> service.calculateFlow(invalidPipe, 50000.0)
+        );
+        assertEquals("Pipe length must be positive", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for invalid pipe diameter")
+    void shouldThrowExceptionForInvalidPipeDiameter() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> PipeProperties.builder()
+                        .length(Distance.of(100.0))
+                        .capacity(Volume.of(500.0))
+                        .diameter(0.0)
+                        .roughness(0.0002)
+                        .build()
+        );
+        assertEquals("Diameter must be positive", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for negative pipe diameter")
+    void shouldThrowExceptionForNegativePipeDiameter() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> PipeProperties.builder()
+                        .length(Distance.of(100.0))
+                        .capacity(Volume.of(500.0))
+                        .diameter(-1.0)
+                        .roughness(0.0002)
+                        .build()
+        );
+        assertEquals("Diameter must be positive", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should validate pipe properties successfully")
+    void shouldValidatePipePropertiesSuccessfully() {
+        PipeProperties properties = PipeProperties.builder()
+                .length(Distance.of(100.0))
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
+                .build();
+
+        assertNotNull(properties);
+        assertEquals(0.5, properties.getDiameter());
+    }
+
+    private Pipe createInvalidPipe(PipeProperties properties) {
+        return Pipe.builder()
+                .source(pipe.getSource())
+                .destination(pipe.getDestination())
+                .properties(properties)
+                .build();
+    }
+
     private void setupTestPipe() {
         PipeProperties properties = PipeProperties.builder()
                 .length(Distance.of(100.0))

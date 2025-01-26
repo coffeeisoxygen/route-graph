@@ -1,5 +1,7 @@
 package com.coffeecode.logic.flow;
 
+import org.springframework.stereotype.Service;
+
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
 import com.coffeecode.domain.entity.Pipe;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  * hydraulic formulas to calculate flow parameters in pipes.
  */
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class FlowCalculationServiceImpl implements FlowCalculationService {
 
@@ -26,6 +29,7 @@ public class FlowCalculationServiceImpl implements FlowCalculationService {
 
     @Override
     public FlowResult calculateFlow(Pipe pipe, double pressureIn) {
+        // Let FlowValidator handle all validations
         FlowValidator.validatePipe(pipe);
         FlowValidator.validatePressure(pressureIn);
 
@@ -34,27 +38,31 @@ public class FlowCalculationServiceImpl implements FlowCalculationService {
         }
 
         try {
-            double diameter = pipe.getDiameter();
-            double roughness = pipe.getRoughness();
-            double length = pipe.getLength().getMeters();
-
-            double velocity = velocityCalculator.calculate(pressureIn);
-            double flowRate = calculateFlowRate(diameter, velocity);
-            double reynoldsNumber = velocityCalculator.calculateWithReynolds(velocity, diameter);
-            double frictionFactor = headLossCalculator.calculateFrictionFactor(reynoldsNumber, diameter, roughness);
-            double headLoss = headLossCalculator.calculate(length, diameter, frictionFactor, velocity);
-            double pressureOut = pressureCalculator.calculatePressureOut(pressureIn, headLoss);
-
-            return FlowResult.builder()
-                    .flowRate(flowRate)
-                    .pressureOut(pressureOut)
-                    .velocityOut(velocity)
-                    .headLoss(headLoss)
-                    .build();
+            return calculateFlowParameters(pipe, pressureIn);
         } catch (Exception e) {
             log.error("Flow calculation failed: {}", e.getMessage());
             throw new ValidationException("Flow calculation failed: " + e.getMessage());
         }
+    }
+
+    private FlowResult calculateFlowParameters(Pipe pipe, double pressureIn) {
+        double diameter = pipe.getDiameter();
+        double roughness = pipe.getRoughness();
+        double length = pipe.getLength().getMeters();
+
+        double velocity = velocityCalculator.calculate(pressureIn);
+        double flowRate = calculateFlowRate(diameter, velocity);
+        double reynoldsNumber = velocityCalculator.calculateWithReynolds(velocity, diameter);
+        double frictionFactor = headLossCalculator.calculateFrictionFactor(reynoldsNumber, diameter, roughness);
+        double headLoss = headLossCalculator.calculate(length, diameter, frictionFactor, velocity);
+        double pressureOut = pressureCalculator.calculatePressureOut(pressureIn, headLoss);
+
+        return FlowResult.builder()
+                .flowRate(flowRate)
+                .pressureOut(pressureOut)
+                .velocityOut(velocity)
+                .headLoss(headLoss)
+                .build();
     }
 
     private FlowResult calculateWithDefaults(Pipe pipe) {

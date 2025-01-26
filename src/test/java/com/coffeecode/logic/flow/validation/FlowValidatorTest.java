@@ -27,29 +27,38 @@ import com.coffeecode.validation.exceptions.ValidationException;
 class FlowValidatorTest {
 
     private Pipe createValidPipe() {
-        PipeProperties properties = PipeProperties.builder()
-                .length(Distance.of(100.0))
-                .capacity(Volume.of(500.0))
-                .diameter(0.5)
-                .roughness(0.0002)
-                .build();
-
-        NetworkNode source = WaterSource.builder()
-                .name("Source")
-                .location(Coordinate.of(0.0, 0.0))
-                .capacity(Volume.of(1000.0))
-                .build();
-
-        NetworkNode destination = Customer.builder()
-                .name("Customer")
-                .location(Coordinate.of(1.0, 1.0))
-                .waterDemand(WaterDemand.of(Volume.of(100.0)))
-                .build();
-
+        PipeProperties properties = createValidProperties();
+        NetworkNode source = createValidSource();
+        NetworkNode destination = createValidDestination();
         return Pipe.builder()
                 .source(source)
                 .destination(destination)
                 .properties(properties)
+                .build();
+    }
+
+    private WaterSource createValidSource() {
+        return WaterSource.builder()
+                .name("Test Source")
+                .location(Coordinate.of(0.0, 0.0))
+                .capacity(Volume.of(1000.0))
+                .build();
+    }
+
+    private Customer createValidDestination() {
+        return Customer.builder()
+                .name("Test Customer")
+                .location(Coordinate.of(1.0, 1.0))
+                .waterDemand(WaterDemand.of(Volume.of(100.0)))
+                .build();
+    }
+
+    private PipeProperties createValidProperties() {
+        return PipeProperties.builder()
+                .length(Distance.of(100.0))
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
                 .build();
     }
 
@@ -95,5 +104,87 @@ class FlowValidatorTest {
             throw new IllegalStateException("Utility class");
         });
         assertEquals("Utility class", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when pipe properties is null")
+    void validatePipe_shouldThrowException_whenPipePropertiesIsNull() {
+        NetworkNode source = createValidSource();
+        NetworkNode destination = createValidDestination();
+
+        Pipe invalidPipe = createTestPipe(source, destination, null);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> FlowValidator.validatePipe(invalidPipe)
+        );
+        assertEquals("Pipe properties cannot be null", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when pipe source is null")
+    void validatePipe_shouldThrowException_whenPipeSourceIsNull() {
+        NetworkNode destination = createValidDestination();
+        PipeProperties properties = createValidProperties();
+
+        Pipe invalidPipe = createTestPipe(null, destination, properties);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> FlowValidator.validatePipe(invalidPipe)
+        );
+        assertEquals("Pipe must have source and destination", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when pipe destination is null")
+    void validatePipe_shouldThrowException_whenPipeDestinationIsNull() {
+        NetworkNode source = createValidSource();
+        PipeProperties properties = createValidProperties();
+
+        Pipe invalidPipe = createTestPipe(source, null, properties);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> FlowValidator.validatePipe(invalidPipe)
+        );
+        assertEquals("Pipe must have source and destination", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for zero pipe length")
+    void shouldThrowExceptionForZeroPipeLength() {
+        PipeProperties invalidProperties = PipeProperties.builder()
+                .length(Distance.of(0.0))
+                .capacity(Volume.of(500.0))
+                .diameter(0.5)
+                .roughness(0.0002)
+                .build();
+
+        Pipe invalidPipe = createInvalidPipe(invalidProperties);
+
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> FlowValidator.validatePipe(invalidPipe)
+        );
+        assertEquals("Pipe length must be positive", exception.getMessage());
+    }
+
+    private Pipe createInvalidPipe(PipeProperties properties) {
+        NetworkNode source = createValidSource();
+        NetworkNode destination = createValidDestination();
+        return Pipe.builder()
+                .source(source)
+                .destination(destination)
+                .properties(properties)
+                .build();
+    }
+
+    private Pipe createTestPipe(NetworkNode source, NetworkNode destination, PipeProperties properties) {
+        return Pipe.builder()
+                .source(source)
+                .destination(destination)
+                .properties(properties)
+                .build();
     }
 }
