@@ -3,46 +3,62 @@ package com.coffeecode.logic.flow;
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
 import com.coffeecode.domain.entity.Pipe;
+import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * FlowCalculationServiceImpl provides the implementation for calculating flow
- * parameters (flow rate, pressure, velocity, head loss) for a pipe network.
+ * Implementation of FlowCalculationService for water distribution network. Uses
+ * hydraulic formulas to calculate flow parameters in pipes.
  */
 @Slf4j
 @RequiredArgsConstructor
 public class FlowCalculationServiceImpl implements FlowCalculationService {
 
     @Override
-    public FlowResult calculateFlow(Pipe pipe, double inputPressure) {
-        // Validate input pressure
-        if (inputPressure <= 0) {
+    public FlowResult calculateFlow(Pipe pipe, double pressureIn) {
+        validateInput(pipe, pressureIn);
+
+        if (pressureIn <= 0) {
+            log.debug("Using default calculations for zero/negative pressure");
             return calculateWithDefaults(pipe);
         }
 
-        // Extract pipe properties
-        double diameter = pipe.getDiameter();
-        double roughness = pipe.getRoughness();
-        double length = pipe.getLength().getMeters();
+        try {
+            double diameter = pipe.getDiameter();
+            double roughness = pipe.getRoughness();
+            double length = pipe.getLength().getMeters();
 
-        // Calculate velocity, flow rate, head loss, and output pressure
-        double velocity = calculateVelocity(inputPressure);
-        double flowRate = calculateFlowRate(diameter, velocity);
-        double headLoss = calculateHeadLoss(length, diameter, roughness, flowRate);
-        double pressureOut = calculatePressureOut(inputPressure, headLoss);
+            double velocity = calculateVelocity(pressureIn);
+            double flowRate = calculateFlowRate(diameter, velocity);
+            double reynoldsNumber = calculateReynoldsNumber(velocity, diameter);
+            double frictionFactor = calculateFrictionFactorSwameeJain(reynoldsNumber, diameter, roughness);
+            double headLoss = calculateHeadLoss(length, diameter, frictionFactor, velocity);
+            double pressureOut = calculatePressureOut(pressureIn, headLoss);
 
-        // Log calculations for debugging
-        log.debug("Calculated Flow Rate: {} m³/s, Velocity: {} m/s, Head Loss: {} m, Output Pressure: {} Pa",
-                flowRate, velocity, headLoss, pressureOut);
+            log.debug("Flow calculation completed: velocity={}, flowRate={}, headLoss={}",
+                    velocity, flowRate, headLoss);
 
-        return FlowResult.builder()
-                .flowRate(flowRate)
-                .pressureOut(pressureOut)
-                .velocityOut(velocity)
-                .headLoss(headLoss)
-                .build();
+            return FlowResult.builder()
+                    .flowRate(flowRate)
+                    .pressureOut(pressureOut)
+                    .velocityOut(velocity)
+                    .headLoss(headLoss)
+                    .build();
+        } catch (Exception e) {
+            log.error("Error calculating flow: {}", e.getMessage());
+            throw new ValidationException("Flow calculation failed: " + e.getMessage());
+        }
+    }
+
+    private void validateInput(Pipe pipe, double pressureIn) {
+        if (pipe == null) {
+            throw new ValidationException("Pipe cannot be null");
+        }
+        if (pressureIn < 0) {
+            throw new ValidationException("Pressure cannot be negative");
+        }
     }
 
     private FlowResult calculateWithDefaults(Pipe pipe) {
@@ -73,24 +89,11 @@ public class FlowCalculationServiceImpl implements FlowCalculationService {
         return Math.sqrt((2 * inputPressure) / PhysicalConstants.WATER_DENSITY);
     }
 
-    private double calculateHeadLoss(double length, double diameter, double roughness, double flowRate) {
-        // Calculate the velocity from flow rate and pipe area
-        double area = Math.PI * Math.pow(diameter / 2, 2);
-        double velocity = flowRate / area;
+    private double calculateReynoldsNumber(double velocity, double diameter) {
+        return (velocity * diameter) / PhysicalConstants.KINEMATIC_VISCOSITY;
+    }
 
-        // Calculate Reynolds number
-        double reynoldsNumber = (velocity * diameter) / PhysicalConstants.KINEMATIC_VISCOSITY;
-
-        // Calculate friction factor based on flow type (Laminar or Turbulent)
-        double frictionFactor;
-        if (reynoldsNumber < 2000) {
-            // Laminar flow: Use the formula f = 64 / Re
-            frictionFactor = 64.0 / reynoldsNumber;
-        } else {
-            // Turbulent flow: Use Swamee-Jain equation for friction factor
-            frictionFactor = calculateFrictionFactorSwameeJain(reynoldsNumber, diameter, roughness);
-        }
-
+    private double calculateHeadLoss(double length, double diameter, double frictionFactor, double velocity) {
         // Darcy-Weisbach head loss formula
         return frictionFactor * (length / diameter) * Math.pow(velocity, 2) / (2 * PhysicalConstants.GRAVITY);
     }

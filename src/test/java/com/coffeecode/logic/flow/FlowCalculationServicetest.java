@@ -2,12 +2,14 @@ package com.coffeecode.logic.flow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
 import com.coffeecode.domain.entity.Customer;
 import com.coffeecode.domain.entity.NetworkNode;
@@ -18,6 +20,7 @@ import com.coffeecode.domain.objects.Distance;
 import com.coffeecode.domain.objects.PipeProperties;
 import com.coffeecode.domain.objects.Volume;
 import com.coffeecode.domain.objects.WaterDemand;
+import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("Flow Calculation Service Tests")
 class FlowCalculationServiceTest {
@@ -100,5 +103,50 @@ class FlowCalculationServiceTest {
         assertTrue(result.getPressureOut() >= 0);
         assertTrue(result.getVelocityOut() <= 10.0); // Reasonable max velocity
         assertTrue(result.getHeadLoss() >= 0);
+    }
+
+    @Test
+    @DisplayName("Should throw exception for null pipe")
+    void shouldThrowExceptionForNullPipe() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> service.calculateFlow(null, 50000.0)
+        );
+        assertTrue(exception.getMessage().contains("Pipe cannot be null"));
+    }
+
+    @Test
+    @DisplayName("Should throw exception for negative pressure")
+    void shouldThrowExceptionForNegativePressure() {
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> service.calculateFlow(pipe, -1000.0)
+        );
+        assertTrue(exception.getMessage().contains("Pressure cannot be negative"));
+    }
+
+    @Test
+    @DisplayName("Should calculate within physical limits")
+    void shouldCalculateWithinPhysicalLimits() {
+        double pressureIn = 50000.0;
+        FlowResult result = service.calculateFlow(pipe, pressureIn);
+
+        assertTrue(result.getPressureOut() >= PhysicalConstants.ATMOSPHERIC_PRESSURE,
+                "Pressure should not be below atmospheric");
+        assertTrue(result.getVelocityOut() <= 10.0,
+                "Velocity should be within reasonable limits");
+        assertTrue(result.getHeadLoss() >= 0 && result.getHeadLoss() <= pressureIn,
+                "Head loss should be positive and less than input pressure");
+    }
+
+    @Test
+    @DisplayName("Should handle boundary pressure conditions")
+    void shouldHandleBoundaryPressureConditions() {
+        FlowResult result = service.calculateFlow(pipe, PhysicalConstants.ATMOSPHERIC_PRESSURE);
+
+        assertTrue(result.getFlowRate() >= 0,
+                "Flow rate should be non-negative at atmospheric pressure");
+        assertEquals(PhysicalConstants.ATMOSPHERIC_PRESSURE, result.getPressureOut(),
+                "Output pressure should equal atmospheric pressure at boundary");
     }
 }
