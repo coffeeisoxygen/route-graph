@@ -7,6 +7,19 @@ import com.coffeecode.domain.objects.PipeProperties;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Represents a Pipe entity in the network graph. A Pipe connects a source
+ * NetworkNode to a destination NetworkNode and contains specific properties
+ * defined in PipeProperties.
+ *
+ * <p>
+ * This class is immutable and thread-safe.</p>
+ *
+ * <p>
+ * Each Pipe instance is assigned a unique identifier (UUID) upon creation.</p>
+ *
+ *
+ */
 @Getter
 @ToString
 public class Pipe {
