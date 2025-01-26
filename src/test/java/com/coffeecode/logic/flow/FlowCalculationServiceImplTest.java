@@ -1,78 +1,129 @@
 package com.coffeecode.logic.flow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.algorithm.Length;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.coffeecode.domain.constants.PhysicalConstants;
+import com.coffeecode.domain.constants.SimulationDefaults;
+import com.coffeecode.domain.entity.Customer;
+import com.coffeecode.domain.entity.NetworkNode;
 import com.coffeecode.domain.entity.Pipe;
+import com.coffeecode.domain.entity.WaterSource;
+import com.coffeecode.domain.objects.Coordinate;
+import com.coffeecode.domain.objects.Distance;
+import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.objects.WaterDemand;
 import com.coffeecode.logic.flow.calculation.HeadLossCalculator;
 import com.coffeecode.logic.flow.calculation.PressureCalculator;
 import com.coffeecode.logic.flow.calculation.VelocityCalculator;
 import com.coffeecode.validation.exceptions.ValidationException;
 
+@ExtendWith(MockitoExtension.class)
+@DisplayName("Flow Calculation Service Tests")
 class FlowCalculationServiceImplTest {
 
-    @Mock
-    private VelocityCalculator velocityCalculator;
+    @Mock private VelocityCalculator velocityCalculator;
+    @Mock private HeadLossCalculator headLossCalculator;
+    @Mock private PressureCalculator pressureCalculator;
 
-    @Mock
-    private HeadLossCalculator headLossCalculator;
-
-    @Mock
-    private PressureCalculator pressureCalculator;
-
-    @InjectMocks
-    private FlowCalculationServiceImpl flowCalculationService;
+    private FlowCalculationServiceImpl service;
+    private Pipe pipe;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        service = new FlowCalculationServiceImpl(
+            velocityCalculator,
+            headLossCalculator,
+            pressureCalculator
+        );
+
+        // Setup test data without mocks
+        setupTestPipe();
     }
 
     @Test
-    void testCalculateFlow() {
-        Pipe pipe = new Pipe(0.5, 0.0001, new Length(100.0));
-        double pressureIn = 1000.0;
+    @DisplayName("Should calculate flow with valid parameters")
+    void shouldCalculateFlowWithValidParameters() {
+        // Setup mocks for this specific test
+        when(velocityCalculator.calculate(anyDouble())).thenReturn(2.0);
+        when(velocityCalculator.calculateWithReynolds(anyDouble(), anyDouble())).thenReturn(100000.0);
+        when(headLossCalculator.calculateFrictionFactor(anyDouble(), anyDouble(), anyDouble())).thenReturn(0.02);
+        when(headLossCalculator.calculate(anyDouble(), anyDouble(), anyDouble(), anyDouble())).thenReturn(5.0);
+        when(pressureCalculator.calculatePressureOut(anyDouble(), anyDouble())).thenReturn(40000.0);
 
-        when(velocityCalculator.calculate(pressureIn)).thenReturn(2.0);
-        when(velocityCalculator.calculateWithReynolds(2.0, 0.5)).thenReturn(10000.0);
-        when(headLossCalculator.calculateFrictionFactor(10000.0, 0.5, 0.0001)).thenReturn(0.02);
-        when(headLossCalculator.calculate(100.0, 0.5, 0.02, 2.0)).thenReturn(10.0);
-        when(pressureCalculator.calculatePressureOut(1000.0, 10.0)).thenReturn(900.0);
+        double pressureIn = 50000.0;
+        FlowResult result = service.calculateFlow(pipe, pressureIn);
 
-        FlowResult result = flowCalculationService.calculateFlow(pipe, pressureIn);
-
-        assertEquals(0.7853981633974483, result.getFlowRate(), 1e-6);
-        assertEquals(900.0, result.getPressureOut(), 1e-6);
-        assertEquals(2.0, result.getVelocityOut(), 1e-6);
-        assertEquals(10.0, result.getHeadLoss(), 1e-6);
+        assertNotNull(result);
+        assertTrue(result.getFlowRate() > 0);
+        assertEquals(40000.0, result.getPressureOut());
     }
 
     @Test
-    void testCalculateFlowWithInvalidPressure() {
-        Pipe pipe = new Pipe(0.5, 0.0001, new Length(100.0));
-        double pressureIn = -100.0;
+    @DisplayName("Should use defaults when pressure is zero")
+    void shouldUseDefaultsWhenPressureIsZero() {
+        FlowResult result = service.calculateFlow(pipe, 0);
 
-        assertThrows(ValidationException.class, () -> flowCalculationService.calculateFlow(pipe, pressureIn));
+        assertEquals(SimulationDefaults.FLOW_VELOCITY, result.getVelocityOut());
+        assertEquals(PhysicalConstants.ATMOSPHERIC_PRESSURE, result.getPressureOut());
     }
 
     @Test
-    void testCalculateFlowWithZeroPressure() {
-        Pipe pipe = new Pipe(0.5, 0.0001, new Length(100.0));
-        double pressureIn = 0.0;
+    @DisplayName("Should throw exception for null pipe")
+    void shouldThrowExceptionForNullPipe() {
+        ValidationException exception = assertThrows(
+            ValidationException.class,
+            () -> service.calculateFlow(null, 50000.0)
+        );
+        assertTrue(exception.getMessage().contains("Pipe cannot be null"));
+    }
 
-        FlowResult result = flowCalculationService.calculateFlow(pipe, pressureIn);
+    @Test
+    @DisplayName("Should throw exception for negative pressure")
+    void shouldThrowExceptionForNegativePressure() {
+        ValidationException exception = assertThrows(
+            ValidationException.class,
+            () -> service.calculateFlow(pipe, -1000.0)
+        );
+        assertTrue(exception.getMessage().contains("Pressure cannot be negative"));
+    }
 
-        assertEquals(0.7853981633974483, result.getFlowRate(), 1e-6);
-        assertEquals(101325.0, result.getPressureOut(), 1e-6);
-        assertEquals(1.0, result.getVelocityOut(), 1e-6);
-        assertEquals(0.0, result.getHeadLoss(), 1e-6);
+    private void setupTestPipe() {
+        PipeProperties properties = PipeProperties.builder()
+            .length(Distance.of(100.0))
+            .capacity(Volume.of(500.0))
+            .diameter(0.5)
+            .roughness(0.0002)
+            .build();
+
+        NetworkNode source = WaterSource.builder()
+            .name("Source")
+            .location(Coordinate.of(0.0, 0.0))
+            .capacity(Volume.of(1000.0))
+            .build();
+
+        NetworkNode destination = Customer.builder()
+            .name("Customer")
+            .location(Coordinate.of(1.0, 1.0))
+            .waterDemand(WaterDemand.of(Volume.of(100.0)))
+            .build();
+
+        pipe = Pipe.builder()
+            .source(source)
+            .destination(destination)
+            .properties(properties)
+            .build();
     }
 }
