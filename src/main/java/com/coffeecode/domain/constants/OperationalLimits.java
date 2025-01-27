@@ -10,16 +10,6 @@ public final class OperationalLimits {
         public static final double MIN_RATE = 0.001; // m³/s (1 L/s)
         public static final double MAX_RATE = 2.0; // m³/s (2000 L/s)
 
-        public static final class Default {
-
-            public static final double SMALL_PIPE = 0.05; // D ≤ 200mm
-            public static final double MEDIUM_PIPE = 0.2; // 200mm < D ≤ 500mm
-            public static final double LARGE_PIPE = 0.5; // D > 500mm
-
-            private Default() {
-            }
-        }
-
         private Flow() {
         }
     }
@@ -62,14 +52,6 @@ public final class OperationalLimits {
      * Default simulation parameters.
      */
     public static final class Simulation {
-        public static final double MIN_PIPE_DIAMETER = 0.1; // [m]
-        public static final double MAX_PIPE_DIAMETER = 2.0; // [m]
-        public static final double DEFAULT_PIPE_DIAMETER = 0.5; // [m]
-
-        public static final double MIN_PIPE_ROUGHNESS = 0.0001; // [m]
-        public static final double MAX_PIPE_ROUGHNESS = 0.01; // [m]
-        public static final double DEFAULT_PIPE_ROUGHNESS = 0.0002; // [m]
-
         public static final double DEFAULT_FLOW_VELOCITY = 1.5; // [m/s]
         public static final double DEFAULT_PRESSURE = 50000.0; // [Pa]
 
@@ -107,6 +89,7 @@ public final class OperationalLimits {
 
         private Customer() {
         }
+
     }
 
     private OperationalLimits() {

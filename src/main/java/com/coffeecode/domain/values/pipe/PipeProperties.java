@@ -1,5 +1,6 @@
 package com.coffeecode.domain.values.pipe;
 
+import com.coffeecode.domain.constants.MaterialConstants;
 import com.coffeecode.domain.values.location.Distance;
 import com.coffeecode.validation.exceptions.ValidationException;
 
@@ -15,6 +16,11 @@ public class PipeProperties {
     private static final String MSG_NULL_MATERIAL = "Pipe material cannot be null";
     private static final String MSG_NULL_LENGTH = "Pipe length cannot be null";
     private static final String MSG_INVALID_DIAMETER = "Pipe diameter must be between %f and %f meters";
+
+    // Use constants from MaterialConstants
+    private static final double SMALL_DIAMETER = MaterialConstants.PipeSizes.SMALL;
+    private static final double MEDIUM_DIAMETER = MaterialConstants.PipeSizes.MEDIUM;
+    private static final double LARGE_DIAMETER = MaterialConstants.PipeSizes.LARGE;
 
     PipeMaterial material;
     double diameter;
@@ -55,15 +61,57 @@ public class PipeProperties {
     }
 
     /**
-     * Creates standard PVC pipe configuration
+     * Creates a standard PVC pipe configuration with small diameter
      * 
      * @param length pipe length in meters
-     * @return PipeProperties instance
+     * @return PipeProperties instance with PVC material and small diameter
      */
     public static PipeProperties standardPVC(Distance length) {
         return builder()
                 .material(PipeMaterial.PVC)
-                .diameter(0.1)
+                .diameter(SMALL_DIAMETER) // Use constant instead of magic number
+                .length(length)
+                .build();
+    }
+
+    /**
+     * Creates a standard HDPE pipe configuration with small diameter
+     * 
+     * @param length pipe length in meters
+     * @return PipeProperties instance with HDPE material and small diameter
+     */
+    public static PipeProperties standardHDPE(Distance length) {
+        return builder()
+                .material(PipeMaterial.HDPE)
+                .diameter(SMALL_DIAMETER)
+                .length(length)
+                .build();
+    }
+
+    /**
+     * Creates a standard steel pipe configuration with medium diameter
+     * 
+     * @param length pipe length in meters
+     * @return PipeProperties instance with steel material and medium diameter
+     */
+    public static PipeProperties standardSteel(Distance length) {
+        return builder()
+                .material(PipeMaterial.STEEL)
+                .diameter(MEDIUM_DIAMETER)
+                .length(length)
+                .build();
+    }
+
+    /**
+     * Creates a large PVC pipe configuration
+     * 
+     * @param length pipe length in meters
+     * @return PipeProperties instance with PVC material and large diameter
+     */
+    public static PipeProperties largePVC(Distance length) {
+        return builder()
+                .material(PipeMaterial.PVC)
+                .diameter(LARGE_DIAMETER)
                 .length(length)
                 .build();
     }

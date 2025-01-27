@@ -6,10 +6,18 @@ import lombok.Getter;
 
 @Getter
 public enum PipeMaterial {
-    PVC(MaterialConstants.Roughness.PVC, 0.05, 0.5),
-    HDPE(MaterialConstants.Roughness.HDPE, 0.05, 0.5),
-    STEEL(MaterialConstants.Roughness.STEEL_NEW, 0.1, 2.0),
-    CONCRETE(MaterialConstants.Roughness.CONCRETE, 0.3, 2.0);
+    PVC(MaterialConstants.Roughness.PVC,
+            MaterialConstants.PipeSizes.MIN,
+            MaterialConstants.PipeSizes.MEDIUM),
+    HDPE(MaterialConstants.Roughness.HDPE,
+            MaterialConstants.PipeSizes.MIN,
+            MaterialConstants.PipeSizes.MEDIUM),
+    STEEL(MaterialConstants.Roughness.STEEL_NEW,
+            MaterialConstants.PipeSizes.MIN,
+            MaterialConstants.PipeSizes.MAX),
+    CONCRETE(MaterialConstants.Roughness.CONCRETE,
+            MaterialConstants.PipeSizes.MEDIUM,
+            MaterialConstants.PipeSizes.MAX);
 
     private final double roughness;
     private final double minDiameter;
