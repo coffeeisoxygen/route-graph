@@ -29,8 +29,8 @@ public class WaterSource extends NetworkNode {
 
     private void validateSourceProperties(WaterSourceBuilder builder) {
         validateName(builder.name);
-        validateCapacity(builder.capacity);
-        validateFlow(builder.flowRate);
+        validateCapacity(builder.capacity); // Must validate capacity first
+        validateFlow(builder.flowRate); // Then validate flow
     }
 
     private void validateName(String name) {
@@ -47,12 +47,12 @@ public class WaterSource extends NetworkNode {
 
     private void validateCapacity(WaterVolume capacity) {
         if (capacity == null) {
-            throw ValidationException.nullOrEmpty("Source capacity");
+            throw ValidationException.nullOrEmpty("Capacity");
         }
         double value = capacity.getValue();
         if (value < OperationalLimits.Source.MIN_CAPACITY ||
                 value > OperationalLimits.Source.MAX_CAPACITY) {
-            throw ValidationException.invalidRange("Source capacity",
+            throw ValidationException.invalidRange("Capacity",
                     OperationalLimits.Source.MIN_CAPACITY,
                     OperationalLimits.Source.MAX_CAPACITY);
         }
@@ -62,7 +62,7 @@ public class WaterSource extends NetworkNode {
         if (flowRate == null) {
             throw ValidationException.nullOrEmpty("Flow rate");
         }
-        // Flow rate validation using capacity
+        // Now safe to check capacity since it's validated
         if (flowRate.getValue() > capacity.getValue()) {
             throw new ValidationException("Flow rate cannot exceed capacity");
         }
