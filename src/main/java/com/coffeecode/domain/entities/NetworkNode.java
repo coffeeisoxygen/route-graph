@@ -31,7 +31,16 @@ public abstract class NetworkNode {
     private final NodeType type;
     private final Elevation elevation; // Changed from ElevationLimits to Elevation
 
+    public Coordinate getLocation() {
+        // Defensive copy on getter
+        return Coordinate.of(
+            this.location.getLatitude(),
+            this.location.getLongitude()
+        );
+    }
+
     public Elevation getElevation() {
+        // Defensive copy on getter
         return Elevation.of(this.elevation.getValue());
     }
 
@@ -47,10 +56,17 @@ public abstract class NetworkNode {
         validateType(builder.type);
 
         this.id = UUID.randomUUID();
-        this.location = builder.location;
+        // Defensive copy for immutable objects
+        this.location = Coordinate.of(
+            builder.location.getLatitude(),
+            builder.location.getLongitude()
+        );
         this.type = builder.type;
-        this.elevation = builder.elevation != null ? builder.elevation
-                : Elevation.of(OperationalLimits.ElevationLimits.DEFAULT);
+        this.elevation = Elevation.of(
+            builder.elevation != null ?
+            builder.elevation.getValue() :
+            OperationalLimits.ElevationLimits.DEFAULT
+        );
     }
 
     private static void validateLocation(Coordinate location) {
@@ -91,7 +107,7 @@ public abstract class NetworkNode {
          * @return A new node instance
          * @throws ValidationException if validation fails
          */
-        protected abstract NetworkNode build();
+        public abstract NetworkNode build(); // Change to public
 
         /**
          * Type-safe self reference for builder inheritance.

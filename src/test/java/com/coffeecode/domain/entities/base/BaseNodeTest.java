@@ -3,17 +3,22 @@ package com.coffeecode.domain.entities.base;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import com.coffeecode.domain.constants.OperationalLimits;
 import com.coffeecode.domain.entities.NetworkNode;
 import com.coffeecode.domain.entities.NodeType;
 import com.coffeecode.domain.values.location.Coordinate;
 import com.coffeecode.domain.values.location.Elevation;
+import com.coffeecode.validation.exceptions.ValidationException;
 
 public abstract class BaseNodeTest {
     // Test Fixtures
@@ -69,6 +74,8 @@ public abstract class BaseNodeTest {
     }
 
     protected void assertImmutableLocation(NetworkNode node, Coordinate original) {
+        System.out.println("Original Coordinate: " + original);
+        System.out.println("Node Coordinate: " + node.getLocation());
         assertNotSame(original, node.getLocation());
         assertEquals(original.getLatitude(), node.getLocation().getLatitude());
         assertEquals(original.getLongitude(), node.getLocation().getLongitude());
@@ -77,5 +84,18 @@ public abstract class BaseNodeTest {
     protected void assertImmutableElevation(NetworkNode node, Elevation original) {
         assertNotSame(original, node.getElevation());
         assertEquals(original.getValue(), node.getElevation().getValue());
+    }
+
+    @Test
+    @DisplayName("Should create node with default values")
+    void shouldCreateNodeWithDefaults() {
+        NetworkNode node = createDefaultNode();
+        assertValidNode(node);
+    }
+
+    @Test
+    @DisplayName("Should throw on null location")
+    void shouldThrowOnNullLocation() {
+        assertThrows(ValidationException.class, () -> createBuilder().build());
     }
 }
