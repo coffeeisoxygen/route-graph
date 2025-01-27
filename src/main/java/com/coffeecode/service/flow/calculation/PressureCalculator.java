@@ -1,21 +1,21 @@
-package com.coffeecode.service.flow.calculation;
+// package com.coffeecode.service.flow.calculation;
 
-import com.coffeecode.domain.constants.PhysicalConstants;
+// import com.coffeecode.domain.constants.PhysicalConstants;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+// import lombok.RequiredArgsConstructor;
+// import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-@RequiredArgsConstructor
-public class PressureCalculator {
+// @Slf4j
+// @RequiredArgsConstructor
+// public class PressureCalculator {
 
-    public double calculatePressureOut(double inputPressure, double headLoss) {
-        double pressureLoss = headLoss * PhysicalConstants.WATER_DENSITY * PhysicalConstants.GRAVITY;
-        double pressureOut = inputPressure - pressureLoss;
+//     public double calculatePressureOut(double inputPressure, double headLoss) {
+//         double pressureLoss = headLoss * PhysicalConstants.WATER_DENSITY * PhysicalConstants.GRAVITY;
+//         double pressureOut = inputPressure - pressureLoss;
 
-        log.debug("Calculating pressure out: input={}, headLoss={}, result={}",
-                inputPressure, headLoss, pressureOut);
+//         log.debug("Calculating pressure out: input={}, headLoss={}, result={}",
+//                 inputPressure, headLoss, pressureOut);
 
-        return pressureOut;
-    }
-}
+//         return pressureOut;
+//     }
+// }
