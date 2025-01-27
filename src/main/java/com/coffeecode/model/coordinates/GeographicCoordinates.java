@@ -17,7 +17,7 @@ public class GeographicCoordinates implements Coordinates {
     // Add validation method
     private static void validateCoordinates(double latitude, double longitude) {
         if (latitude < -90 || latitude > 90) {
-            throw new IllegalArgumentException("Latitude must be between -90 and 90 degrees");
+            throw new IllegalArgumentException("Invalid latitude");
         }
         if (longitude < -180 || longitude > 180) {
             throw new IllegalArgumentException("Longitude must be between -180 and 180 degrees");
@@ -40,7 +40,7 @@ public class GeographicCoordinates implements Coordinates {
     }
 
     private static double calculateHaversineDistance(GeographicCoordinates point1, GeographicCoordinates point2) {
-        final double R = 6371.0; // Earth radius in kilometers
+        final double R = 6371.0088; // More precise Earth radius in kilometers
         double lat1 = Math.toRadians(point1.getLatitude());
         double lat2 = Math.toRadians(point2.getLatitude());
         double deltaLat = Math.toRadians(point2.getLatitude() - point1.getLatitude());

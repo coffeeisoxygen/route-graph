@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppProperties {
     private static final Properties props = new Properties();
 
-    private AppProperties() {
+    protected AppProperties() {
         loadProperties();
     }
 
