@@ -27,7 +27,7 @@ class FlowRegimeTest {
     }
 
     @Test
-    public void testBoundaryTransitionToTurbulent() {
+    void testBoundaryTransitionToTurbulent() {
         assertEquals(FlowRegime.TURBULENT, FlowRegime.fromReynolds(4000));
     }
 }

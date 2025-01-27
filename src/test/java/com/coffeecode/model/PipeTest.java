@@ -103,4 +103,48 @@ class PipeTest {
         // Then
         assertEquals(0.0015e-3, pipe.getRoughness(), 0.0000001);
     }
+
+    @Test
+    @DisplayName("Should create pipe with specified length")
+    void shouldCreatePipeWithSpecifiedLength() {
+        // When
+        Pipe pipe = Pipe.builder()
+                .start(startNode)
+                .end(endNode)
+                .length(150.0)
+                .diameter(0.1)
+                .material(PipeMaterial.PVC)
+                .build();
+
+        // Then
+        assertEquals(150.0, pipe.getLength(), 0.001);
+    }
+
+    @Test
+    @DisplayName("Should calculate length if not specified")
+    void shouldCalculateLengthIfNotSpecified() {
+        // When
+        Pipe pipe = Pipe.builder()
+                .start(startNode)
+                .end(endNode)
+                .diameter(0.1)
+                .material(PipeMaterial.PVC)
+                .build();
+
+        // Then
+        assertEquals(100.0, pipe.getLength(), 0.001); // 100m length calculated from coordinates
+    }
+
+    @Test
+    @DisplayName("Should throw exception for negative length")
+    void shouldThrowExceptionForNegativeLength() {
+        // When/Then
+        assertThrows(IllegalArgumentException.class, () -> Pipe.builder()
+                .start(startNode)
+                .end(endNode)
+                .length(-50.0)
+                .diameter(0.1)
+                .material(PipeMaterial.PVC)
+                .build());
+    }
 }

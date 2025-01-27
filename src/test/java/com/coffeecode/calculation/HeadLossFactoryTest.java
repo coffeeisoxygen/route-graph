@@ -33,7 +33,7 @@ class HeadLossFactoryTest {
     @DisplayName("Calculator should use config values")
     void calculatorShouldUseConfigValues() {
         // Given
-        TestConfig customConfig = new TestConfig(2.0, 9.81);
+        TestConfig customConfig = new TestConfig(2.0, 9.81, 1.0, 1.0, 1.0); // Adjust the parameters as needed
         factory = new HeadLossFactory(customConfig);
 
         // When

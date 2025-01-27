@@ -36,16 +36,11 @@ public class DarcyWeisbachCalculator implements HeadLossCalculator {
 
     @Override
     public double calculateTotalHead(Pipe pipe) {
-        try {
-            validatePipe(pipe);
-            double velocity = config.getDouble(WATER_VELOCITY_KEY);
-            validateVelocity(velocity);
+        validatePipe(pipe);
+        double velocity = config.getDouble(WATER_VELOCITY_KEY);
+        validateVelocity(velocity);
 
-            return calculateElevationLoss(pipe) + calculateFrictionLoss(pipe, velocity);
-        } catch (Exception e) {
-            log.error("Head loss calculation failed: {}", e.getMessage());
-            throw new HeadLossCalculationException("Failed to calculate head loss", e);
-        }
+        return calculateElevationLoss(pipe) + calculateFrictionLoss(pipe, velocity);
     }
 
     private double calculateFrictionLoss(Pipe pipe, double velocity) {
