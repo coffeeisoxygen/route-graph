@@ -1,6 +1,7 @@
 package com.coffeecode.domain.entities;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -71,6 +72,78 @@ class NetworkNodeTest {
                             .build()
             );
             assertEquals("Node type cannot be null", exception.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("Node Type Validation Tests")
+    class NodeTypeValidationTests {
+
+        @Test
+        @DisplayName("Should create node for each valid type")
+        void shouldCreateNodeForEachValidType() {
+            Coordinate location = Coordinate.of(0, 0);
+
+            for (NodeType type : NodeType.values()) {
+                NetworkNode node = TestNode.builder()
+                        .location(location)
+                        .type(type)
+                        .build();
+
+                assertEquals(type, node.getType());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Node Identity Tests")
+    class NodeIdentityTests {
+
+        @Test
+        @DisplayName("Should generate unique IDs for different nodes")
+        void shouldGenerateUniqueIds() {
+            NetworkNode node1 = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .build();
+
+            NetworkNode node2 = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .build();
+
+            assertNotEquals(node1.getId(), node2.getId());
+        }
+    }
+
+    @Nested
+    @DisplayName("Builder Pattern Tests")
+    class BuilderPatternTests {
+
+        @Test
+        @DisplayName("Should allow chaining builder methods")
+        void shouldAllowChainingBuilderMethods() {
+            NetworkNode node = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .build();
+
+            assertNotNull(node);
+        }
+
+        @Test
+        @DisplayName("Should maintain immutability after building")
+        void shouldMaintainImmutabilityAfterBuilding() {
+            Coordinate location = Coordinate.of(0, 0);
+            NetworkNode node = TestNode.builder()
+                    .location(location)
+                    .type(NodeType.JUNCTION)
+                    .build();
+
+            assertThrows(UnsupportedOperationException.class, () -> {
+                // Attempt to modify - should throw exception
+                node.getClass().getDeclaredField("location").set(node, Coordinate.of(1, 1));
+            });
         }
     }
 }
