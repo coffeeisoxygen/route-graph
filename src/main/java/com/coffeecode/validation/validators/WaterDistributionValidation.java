@@ -2,7 +2,7 @@ package com.coffeecode.validation.validators;
 
 import com.coffeecode.domain.entities.NetworkNode;
 import com.coffeecode.domain.entities.WaterSource;
-import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.pipe.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;

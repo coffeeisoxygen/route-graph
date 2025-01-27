@@ -2,9 +2,9 @@ package com.coffeecode.domain.entities;
 
 import java.util.UUID;
 
-import com.coffeecode.domain.values.Distance;
-import com.coffeecode.domain.values.PipeProperties;
-import com.coffeecode.domain.values.Volume;
+import com.coffeecode.domain.values.location.Distance;
+import com.coffeecode.domain.values.pipe.PipeProperties;
+import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.specifications.PipeSpecification;
 
 import lombok.EqualsAndHashCode;
@@ -36,9 +36,9 @@ public class Pipe {
 
     private Pipe(PipeBuilder builder) {
         PipeSpecification.validatePipeConstruction(
-            builder.source,
-            builder.destination,
-            builder.properties
+                builder.source,
+                builder.destination,
+                builder.properties
         );
 
         this.id = UUID.randomUUID();
@@ -59,7 +59,7 @@ public class Pipe {
         return properties.getLength();
     }
 
-    public Volume getCapacity() {
+    public WaterVolume getCapacity() {
         return properties.getCapacity();
     }
 

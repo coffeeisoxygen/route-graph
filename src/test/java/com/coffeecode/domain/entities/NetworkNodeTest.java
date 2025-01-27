@@ -21,7 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.domain.values.location.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("NetworkNode Tests")

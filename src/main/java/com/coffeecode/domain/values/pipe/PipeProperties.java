@@ -1,6 +1,8 @@
-package com.coffeecode.domain.values;
+package com.coffeecode.domain.values.pipe;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
+import com.coffeecode.domain.values.location.Distance;
+import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.specifications.PipeSpecification;
 import com.coffeecode.validation.validators.HydraulicValidator;
 
@@ -16,10 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 public class PipeProperties {
 
     private final Distance length;
-    private final Volume capacity;
+    private final WaterVolume capacity;
     private final double diameter;
     private final double roughness;
-    private final PipeType type;
+    private final PipeMaterial type;
 
     private PipeProperties(PipePropertiesBuilder builder) {
         // Validate using specification
@@ -34,7 +36,7 @@ public class PipeProperties {
     }
 
     // Factory methods
-    public static PipeProperties of(Distance length, Volume capacity, PipeType type) {
+    public static PipeProperties of(Distance length, WaterVolume capacity, PipeMaterial type) {
         return builder()
                 .length(length)
                 .capacity(capacity)
@@ -76,9 +78,9 @@ public class PipeProperties {
                 / (2 * diameter * PhysicalConstants.Environment.GRAVITY);
     }
 
-    public Volume calculateCapacity() {
+    public WaterVolume calculateCapacity() {
         double area = Math.PI * Math.pow(diameter / 2, 2);
-        return Volume.of(area * length.getValue());
+        return WaterVolume.of(area * length.getValue());
     }
 
     private double calculateFrictionFactor(double reynoldsNumber) {
@@ -90,17 +92,17 @@ public class PipeProperties {
     public static class PipePropertiesBuilder {
 
         private Distance length;
-        private Volume capacity;
+        private WaterVolume capacity;
         private double diameter;
         private double roughness;
-        private PipeType type = PipeType.PVC; // Default type
+        private PipeMaterial type = PipeMaterial.PVC; // Default type
 
         public PipePropertiesBuilder length(Distance length) {
             this.length = length;
             return this;
         }
 
-        public PipePropertiesBuilder capacity(Volume capacity) {
+        public PipePropertiesBuilder capacity(WaterVolume capacity) {
             this.capacity = capacity;
             return this;
         }
@@ -110,7 +112,7 @@ public class PipeProperties {
             return this;
         }
 
-        public PipePropertiesBuilder type(PipeType type) {
+        public PipePropertiesBuilder type(PipeMaterial type) {
             this.type = type;
             this.roughness = type.getRoughness(); // Set roughness based on type
             return this;

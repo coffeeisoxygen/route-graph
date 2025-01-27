@@ -1,4 +1,4 @@
-package com.coffeecode.domain.values;
+package com.coffeecode.domain.values.fluid;
 
 public interface FluidProperties {
 

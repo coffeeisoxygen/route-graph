@@ -1,6 +1,6 @@
 package com.coffeecode.domain.entities;
 
-import com.coffeecode.domain.values.Volume;
+import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.validators.WaterSourceValidation;
 
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import lombok.ToString;
 public class WaterSource extends NetworkNode {
 
     private final String name;
-    private final Volume capacity;
+    private final WaterVolume capacity;
 
     private WaterSource(WaterSourceBuilder builder) {
         super(builder);
@@ -30,14 +30,14 @@ public class WaterSource extends NetworkNode {
     public static class WaterSourceBuilder extends AbstractNodeBuilder<WaterSourceBuilder> {
 
         private String name;
-        private Volume capacity;
+        private WaterVolume capacity;
 
         public WaterSourceBuilder name(String name) {
             this.name = name;
             return this;
         }
 
-        public WaterSourceBuilder capacity(Volume capacity) {
+        public WaterSourceBuilder capacity(WaterVolume capacity) {
             this.capacity = capacity;
             return this;
         }

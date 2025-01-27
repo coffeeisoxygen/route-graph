@@ -1,6 +1,6 @@
 package com.coffeecode.domain.entities;
 
-import com.coffeecode.domain.values.WaterDemand;
+import com.coffeecode.domain.values.water.WaterDemand;
 import com.coffeecode.validation.validators.CustomerValidation;
 
 import lombok.EqualsAndHashCode;

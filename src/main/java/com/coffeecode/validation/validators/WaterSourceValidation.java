@@ -1,6 +1,6 @@
 package com.coffeecode.validation.validators;
 
-import com.coffeecode.domain.values.Volume;
+import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public final class WaterSourceValidation {
         }
     }
 
-    public static void validateCapacity(Volume capacity) {
+    public static void validateCapacity(WaterVolume capacity) {
         if (capacity == null) {
             throw new ValidationException("Capacity cannot be null");
         }

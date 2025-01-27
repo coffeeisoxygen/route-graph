@@ -1,4 +1,4 @@
-package com.coffeecode.domain.values;
+package com.coffeecode.domain.values.water;
 
 import com.coffeecode.validation.exceptions.ValidationException;
 
@@ -12,17 +12,17 @@ import lombok.ToString;
 @Getter
 @ToString(of = "cubicMeters")
 @EqualsAndHashCode
-public class Volume {
+public class WaterVolume {
 
     private final double cubicMeters;
 
-    private Volume(double cubicMeters) {
+    private WaterVolume(double cubicMeters) {
         validateCubicMeters(cubicMeters);
         this.cubicMeters = cubicMeters;
     }
 
-    public static Volume of(double cubicMeters) {
-        return new Volume(cubicMeters);
+    public static WaterVolume of(double cubicMeters) {
+        return new WaterVolume(cubicMeters);
     }
 
     private static void validateCubicMeters(double cubicMeters) {

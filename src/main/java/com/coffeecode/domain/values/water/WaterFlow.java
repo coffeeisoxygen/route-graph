@@ -1,4 +1,4 @@
-package com.coffeecode.domain.values;
+package com.coffeecode.domain.values.water;
 
 import com.coffeecode.validation.exceptions.ValidationException;
 

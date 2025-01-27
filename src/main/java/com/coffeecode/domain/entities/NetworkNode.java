@@ -2,7 +2,7 @@ package com.coffeecode.domain.entities;
 
 import java.util.UUID;
 
-import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.domain.values.location.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.EqualsAndHashCode;

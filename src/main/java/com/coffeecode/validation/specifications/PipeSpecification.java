@@ -1,9 +1,9 @@
 package com.coffeecode.validation.specifications;
 
 import com.coffeecode.domain.entities.NetworkNode;
-import com.coffeecode.domain.values.Distance;
-import com.coffeecode.domain.values.PipeProperties;
-import com.coffeecode.domain.values.PipeType;
+import com.coffeecode.domain.values.location.Distance;
+import com.coffeecode.domain.values.pipe.PipeMaterial;
+import com.coffeecode.domain.values.pipe.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 public interface PipeSpecification {
@@ -12,12 +12,12 @@ public interface PipeSpecification {
     double MIN_LENGTH_METERS = 0.1;
     double MAX_LENGTH_METERS = 10000.0;
 
-    static void validatePipeProperties(PipeType type, double diameter, double roughness) {
+    static void validatePipeProperties(PipeMaterial type, double diameter, double roughness) {
         validateDiameter(type, diameter);
         validateRoughness(type, roughness);
     }
 
-    static void validateDiameter(PipeType type, double diameter) {
+    static void validateDiameter(PipeMaterial type, double diameter) {
         if (diameter < type.getMinDiameter() || diameter > type.getMaxDiameter()) {
             throw new ValidationException(String.format(
                     "Diameter must be between %.2f and %.2f for %s pipe",
@@ -25,7 +25,7 @@ public interface PipeSpecification {
         }
     }
 
-    static void validateRoughness(PipeType type, double roughness) {
+    static void validateRoughness(PipeMaterial type, double roughness) {
         if (Math.abs(roughness - type.getRoughness()) > 1e-6) {
             throw new ValidationException(String.format(
                     "Roughness must be %.6f for %s pipe",
