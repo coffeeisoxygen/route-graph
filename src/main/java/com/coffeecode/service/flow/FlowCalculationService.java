@@ -1,18 +1,23 @@
-// package com.coffeecode.service.flow;
+package com.coffeecode.service.flow;
 
-// import com.coffeecode.domain.entities.Pipe;
+import org.springframework.stereotype.Service;
 
-// /**
-// * Service interface for flow calculations in the network.
-// */
-// public interface FlowCalculationService {
+import com.coffeecode.domain.entities.Pipe;
+import com.coffeecode.validation.exceptions.ValidationException;
 
-// /**
-// * Calculates flow parameters for a given pipe and input pressure.
-// *
-// * @param pipe The pipe to calculate flow for
-// * @param pressureIn Input pressure in Pascals
-// * @return FlowResult containing calculated parameters
-// */
-// FlowResult calculateFlow(Pipe pipe, double pressureIn);
-// }
+/**
+ * Service interface for flow calculations in the network.
+ */
+@Service
+public interface FlowCalculationService {
+
+    /**
+     * Calculates flow parameters for a given pipe and input pressure
+     * 
+     * @param pipe       The pipe to calculate flow for
+     * @param pressureIn Input pressure in Pascals
+     * @return FlowResult containing calculated parameters
+     * @throws ValidationException if parameters are invalid
+     */
+    FlowResult calculateFlow(Pipe pipe, double pressureIn);
+}

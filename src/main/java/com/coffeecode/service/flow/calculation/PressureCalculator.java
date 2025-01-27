@@ -1,21 +1,28 @@
-// package com.coffeecode.service.flow.calculation;
+package com.coffeecode.service.flow.calculation;
 
-// import com.coffeecode.domain.constants.PhysicalConstants;
+import org.springframework.stereotype.Component;
 
-// import lombok.RequiredArgsConstructor;
-// import lombok.extern.slf4j.Slf4j;
+import com.coffeecode.domain.constants.PhysicalConstants;
 
-// @Slf4j
-// @RequiredArgsConstructor
-// public class PressureCalculator {
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-//     public double calculatePressureOut(double inputPressure, double headLoss) {
-//         double pressureLoss = headLoss * PhysicalConstants.WATER_DENSITY * PhysicalConstants.GRAVITY;
-//         double pressureOut = inputPressure - pressureLoss;
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class PressureCalculator {
 
-//         log.debug("Calculating pressure out: input={}, headLoss={}, result={}",
-//                 inputPressure, headLoss, pressureOut);
+    public double calculatePressureOut(double inputPressure, double headLoss) {
+        HydraulicValidator.validatePressure(inputPressure);
+        HydraulicValidator.validateHeadLoss(headLoss);
 
-//         return pressureOut;
-//     }
-// }
+        double pressureLoss = headLoss * PhysicalConstants.Water.DENSITY
+            * PhysicalConstants.Environment.GRAVITY;
+        double pressureOut = inputPressure - pressureLoss;
+
+        log.debug("Calculated pressure out: {} Pa from input: {} Pa and head loss: {} m",
+            pressureOut, inputPressure, headLoss);
+
+        return pressureOut;
+    }
+}
