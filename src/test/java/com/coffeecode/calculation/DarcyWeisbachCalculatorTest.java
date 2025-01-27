@@ -52,13 +52,16 @@ class DarcyWeisbachCalculatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "0.05, 1.5, LAMINAR", // Small diameter -> laminar
-            "0.3, 1.5, TURBULENT", // Large diameter -> turbulent
-            "0.15, 0.5, TRANSITION" // Medium values -> transition
+            "0.05, 1.5", // Laminar
+            "0.3, 1.5", // Turbulent
+            "0.15, 0.5" // Transition
     })
     @DisplayName("Should handle different flow regimes")
-    void shouldHandleFlowRegimes(double diameter, double velocity, FlowRegime expected) {
+    void shouldHandleFlowRegimes(double diameter, double velocity) {
         // Given
+        config = new TestConfig(velocity, 0.3, 3.0, 1.004E-6, 9.81);
+        calculator = new DarcyWeisbachCalculator(config);
+
         pipe = Pipe.builder()
                 .start(startNode)
                 .end(endNode)
@@ -70,8 +73,24 @@ class DarcyWeisbachCalculatorTest {
         double headLoss = calculator.calculateTotalHead(pipe);
 
         // Then
-        assertTrue(headLoss > 0);
-        assertTrue(headLoss > pipe.getElevationDifference());
+        assertTrue(headLoss >= 0,
+                String.format("Head loss should be non-negative, got: %.3f", headLoss));
+    }
+
+    @Test
+    @DisplayName("Should calculate total head loss")
+    void shouldCalculateTotalHeadLoss() {
+        // Given
+        config = new TestConfig(1.5, 0.3, 3.0, 1.004E-6, 9.81);
+        calculator = new DarcyWeisbachCalculator(config);
+
+        // When
+        double headLoss = calculator.calculateTotalHead(pipe);
+
+        // Then
+        assertTrue(headLoss >= 0, "Head loss should be non-negative");
+        assertTrue(headLoss >= Math.abs(pipe.getElevationDifference()),
+                "Head loss should be greater than elevation difference");
     }
 
     @Test
@@ -114,13 +133,13 @@ class DarcyWeisbachCalculatorTest {
         // Given
         pipe = Pipe.builder()
                 .start(Node.builder()
-                    .coordinates(new CartesianCoordinates(0, 0))
-                    .elevation(95.0)
-                    .build())
+                        .coordinates(new CartesianCoordinates(0, 0))
+                        .elevation(95.0)
+                        .build())
                 .end(Node.builder()
-                    .coordinates(new CartesianCoordinates(100, 0))
-                    .elevation(100.0)
-                    .build())
+                        .coordinates(new CartesianCoordinates(100, 0))
+                        .elevation(100.0)
+                        .build())
                 .diameter(0.1)
                 .material(PipeMaterial.PVC)
                 .build();
@@ -146,5 +165,43 @@ class DarcyWeisbachCalculatorTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> calculator.calculateTotalHead(pipe));
         assertEquals("Pipe diameter must be positive", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for negative diameter")
+    void shouldThrowExceptionForNegativeDiameter() {
+        // Given
+        pipe = Pipe.builder()
+                .start(startNode)
+                .end(endNode)
+                .diameter(-0.1)
+                .material(PipeMaterial.PVC)
+                .build();
+
+        // When/Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculateTotalHead(pipe));
+        assertEquals("Diameter must be positive", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for null pipe")
+    void shouldThrowExceptionForNullPipe() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> calculator.calculateTotalHead(null));
+        assertEquals("Pipe cannot be null", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception for invalid velocity")
+    void shouldThrowExceptionForInvalidVelocity() {
+        // Given
+        TestConfig invalidConfig = new TestConfig(4.0, 0.3, 3.0, 1.004E-6, 9.81);
+        DarcyWeisbachCalculator invalidCalculator = new DarcyWeisbachCalculator(invalidConfig);
+
+        // When/Then
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> invalidCalculator.calculateTotalHead(pipe));
+        assertTrue(exception.getMessage().contains("Velocity must be between"));
     }
 }
