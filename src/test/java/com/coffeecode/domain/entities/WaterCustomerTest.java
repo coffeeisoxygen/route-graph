@@ -119,4 +119,60 @@ class WaterCustomerTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("Name Validation Tests")
+    class NameValidationTests {
+        @Test
+        @DisplayName("Should reject name shorter than minimum length")
+        void shouldRejectShortName() {
+            assertThrows(ValidationException.class, () -> WaterCustomer.builder()
+                    .name("ab")
+                    .waterDemand(WaterDemand.of(1.0))
+                    .location(Coordinate.of(0, 0))
+                    .build(),
+                    "Name length validation failed");
+        }
+
+        @Test
+        @DisplayName("Should reject name longer than maximum length")
+        void shouldRejectLongName() {
+            String longName = "a".repeat(51);
+            assertThrows(ValidationException.class, () -> WaterCustomer.builder()
+                    .name(longName)
+                    .waterDemand(WaterDemand.of(1.0))
+                    .location(Coordinate.of(0, 0))
+                    .build(),
+                    "Name length validation failed");
+        }
+    }
+
+    @Nested
+    @DisplayName("Location Tests")
+    class LocationTests {
+        @Test
+        @DisplayName("Should handle boundary coordinates")
+        void shouldHandleBoundaryCoordinates() {
+            WaterCustomer customer = WaterCustomer.builder()
+                    .name("Boundary Test")
+                    .waterDemand(WaterDemand.of(1.0))
+                    .location(Coordinate.of(-90, 180))
+                    .build();
+
+            assertEquals(-90, customer.getLocation().getLatitude());
+            assertEquals(180, customer.getLocation().getLongitude());
+        }
+
+        @Test
+        @DisplayName("Should set default elevation when not specified")
+        void shouldSetDefaultElevation() {
+            WaterCustomer customer = WaterCustomer.builder()
+                    .name("Default Elevation Test")
+                    .waterDemand(WaterDemand.of(1.0))
+                    .location(Coordinate.of(0, 0))
+                    .build();
+
+            assertEquals(0.0, customer.getElevation().getValue());
+        }
+    }
 }

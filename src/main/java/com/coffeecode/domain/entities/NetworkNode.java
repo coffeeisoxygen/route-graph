@@ -2,7 +2,9 @@ package com.coffeecode.domain.entities;
 
 import java.util.UUID;
 
+import com.coffeecode.domain.constants.OperationalLimits;
 import com.coffeecode.domain.values.location.Coordinate;
+import com.coffeecode.domain.values.location.Elevation;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.EqualsAndHashCode;
@@ -27,6 +29,11 @@ public abstract class NetworkNode {
     private final UUID id;
     private final Coordinate location;
     private final NodeType type;
+    private final Elevation elevation; // Changed from ElevationLimits to Elevation
+
+    public Elevation getElevation() {
+        return Elevation.of(this.elevation.getValue());
+    }
 
     /**
      * Protected constructor for creating network nodes. Validates all required
@@ -42,6 +49,8 @@ public abstract class NetworkNode {
         this.id = UUID.randomUUID();
         this.location = builder.location;
         this.type = builder.type;
+        this.elevation = builder.elevation != null ? builder.elevation
+                : Elevation.of(OperationalLimits.ElevationLimits.DEFAULT);
     }
 
     private static void validateLocation(Coordinate location) {
@@ -74,6 +83,7 @@ public abstract class NetworkNode {
 
         protected Coordinate location;
         protected NodeType type;
+        protected Elevation elevation; // Changed from ElevationLimits to Elevation
 
         /**
          * Builds the concrete node instance.
@@ -110,6 +120,17 @@ public abstract class NetworkNode {
          */
         public final T type(NodeType type) {
             this.type = type;
+            return self();
+        }
+
+        /**
+         * Sets the node elevation.
+         *
+         * @param elevation The node elevation
+         * @return Builder instance for chaining
+         */
+        public final T elevation(Elevation elevation) { // Updated parameter type
+            this.elevation = elevation;
             return self();
         }
 

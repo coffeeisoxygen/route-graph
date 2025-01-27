@@ -1,7 +1,6 @@
 package com.coffeecode.domain.entities;
 
 import com.coffeecode.domain.constants.OperationalLimits;
-import com.coffeecode.domain.values.location.Elevation;
 import com.coffeecode.domain.values.water.WaterFlow;
 import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.exceptions.ValidationException;
@@ -18,7 +17,6 @@ public class WaterSource extends NetworkNode {
     private final String name;
     private final WaterVolume capacity;
     private final WaterFlow flowRate;
-    private final Elevation elevation;
 
     private WaterSource(WaterSourceBuilder builder) {
         super(builder);
@@ -27,8 +25,6 @@ public class WaterSource extends NetworkNode {
         this.name = builder.name;
         this.capacity = builder.capacity;
         this.flowRate = builder.flowRate;
-        this.elevation = builder.elevation != null
-                ? builder.elevation : Elevation.of(OperationalLimits.Elevation.DEFAULT);
     }
 
     private void validateSourceProperties(WaterSourceBuilder builder) {
@@ -53,11 +49,22 @@ public class WaterSource extends NetworkNode {
         if (capacity == null) {
             throw ValidationException.nullOrEmpty("Source capacity");
         }
+        double value = capacity.getValue();
+        if (value < OperationalLimits.Source.MIN_CAPACITY ||
+                value > OperationalLimits.Source.MAX_CAPACITY) {
+            throw ValidationException.invalidRange("Source capacity",
+                    OperationalLimits.Source.MIN_CAPACITY,
+                    OperationalLimits.Source.MAX_CAPACITY);
+        }
     }
 
     private void validateFlow(WaterFlow flowRate) {
         if (flowRate == null) {
             throw ValidationException.nullOrEmpty("Flow rate");
+        }
+        // Flow rate validation using capacity
+        if (flowRate.getValue() > capacity.getValue()) {
+            throw new ValidationException("Flow rate cannot exceed capacity");
         }
     }
 
@@ -70,7 +77,6 @@ public class WaterSource extends NetworkNode {
         private String name;
         private WaterVolume capacity;
         private WaterFlow flowRate;
-        private Elevation elevation;
 
         @Override
         public WaterSource build() {
@@ -90,11 +96,6 @@ public class WaterSource extends NetworkNode {
 
         public WaterSourceBuilder flowRate(WaterFlow flowRate) {
             this.flowRate = flowRate;
-            return this;
-        }
-
-        public WaterSourceBuilder elevation(Elevation elevation) {
-            this.elevation = elevation;
             return this;
         }
     }

@@ -80,7 +80,7 @@ class WaterSourceTest {
                     .location(Coordinate.of(0, 0))
                     .build();
 
-            assertEquals(OperationalLimits.Elevation.DEFAULT,
+            assertEquals(OperationalLimits.ElevationLimits.DEFAULT,
                     source.getElevation().getValue());
         }
     }
@@ -92,50 +92,42 @@ class WaterSourceTest {
         @Test
         @DisplayName("Should throw on null name")
         void shouldThrowOnNullName() {
-            assertThrows(ValidationException.class, ()
-                    -> WaterSource.builder()
-                            .capacity(WaterVolume.of(1000.0))
-                            .flowRate(WaterFlow.of(0.5))
-                            .location(Coordinate.of(0, 0))
-                            .build()
-            );
+            assertThrows(ValidationException.class, () -> WaterSource.builder()
+                    .capacity(WaterVolume.of(1000.0))
+                    .flowRate(WaterFlow.of(0.5))
+                    .location(Coordinate.of(0, 0))
+                    .build());
         }
 
         @Test
         @DisplayName("Should throw on invalid name length")
         void shouldThrowOnInvalidNameLength() {
-            assertThrows(ValidationException.class, ()
-                    -> WaterSource.builder()
-                            .name("ab") // Too short
-                            .capacity(WaterVolume.of(1000.0))
-                            .flowRate(WaterFlow.of(0.5))
-                            .location(Coordinate.of(0, 0))
-                            .build()
-            );
+            assertThrows(ValidationException.class, () -> WaterSource.builder()
+                    .name("ab") // Too short
+                    .capacity(WaterVolume.of(1000.0))
+                    .flowRate(WaterFlow.of(0.5))
+                    .location(Coordinate.of(0, 0))
+                    .build());
         }
 
         @Test
         @DisplayName("Should throw on null capacity")
         void shouldThrowOnNullCapacity() {
-            assertThrows(ValidationException.class, ()
-                    -> WaterSource.builder()
-                            .name("Test Source")
-                            .flowRate(WaterFlow.of(0.5))
-                            .location(Coordinate.of(0, 0))
-                            .build()
-            );
+            assertThrows(ValidationException.class, () -> WaterSource.builder()
+                    .name("Test Source")
+                    .flowRate(WaterFlow.of(0.5))
+                    .location(Coordinate.of(0, 0))
+                    .build());
         }
 
         @Test
         @DisplayName("Should throw on null flow rate")
         void shouldThrowOnNullFlowRate() {
-            assertThrows(ValidationException.class, ()
-                    -> WaterSource.builder()
-                            .name("Test Source")
-                            .capacity(WaterVolume.of(1000.0))
-                            .location(Coordinate.of(0, 0))
-                            .build()
-            );
+            assertThrows(ValidationException.class, () -> WaterSource.builder()
+                    .name("Test Source")
+                    .capacity(WaterVolume.of(1000.0))
+                    .location(Coordinate.of(0, 0))
+                    .build());
         }
     }
 

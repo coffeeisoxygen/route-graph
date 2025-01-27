@@ -3,6 +3,7 @@ package com.coffeecode.domain.entities;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,7 +22,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.constants.OperationalLimits;
 import com.coffeecode.domain.values.location.Coordinate;
+import com.coffeecode.domain.values.location.Elevation;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("NetworkNode Tests")
@@ -29,20 +32,43 @@ class NetworkNodeTest {
 
     private static class TestNode extends NetworkNode {
 
-        private TestNode(AbstractNodeBuilder<?> builder) {
+        private TestNode(TestNodeBuilder builder) {
             super(builder);
         }
 
-        private static class Builder extends AbstractNodeBuilder<Builder> {
-
+        public static class TestNodeBuilder extends AbstractNodeBuilder<TestNodeBuilder> {
             @Override
-            protected NetworkNode build() {
+            public TestNode build() {
+                this.type(NodeType.JUNCTION);
                 return new TestNode(this);
             }
         }
 
-        static Builder builder() {
-            return new Builder();
+        public static TestNodeBuilder builder() {
+            return new TestNodeBuilder();
+        }
+    }
+
+    @Nested
+    @DisplayName("Base Node Tests")
+    class BaseNodeTests {
+        @Test
+        @DisplayName("Should generate unique IDs")
+        void shouldGenerateUniqueIds() {
+            Set<UUID> ids = new HashSet<>();
+            for (int i = 0; i < 100; i++) {
+                NetworkNode node = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .build();
+                assertTrue(ids.add(node.getId()));
+            }
+        }
+
+        @Test
+        @DisplayName("Should validate location")
+        void shouldValidateLocation() {
+            assertThrows(ValidationException.class, () ->
+                TestNode.builder().build());
         }
     }
 
@@ -67,22 +93,18 @@ class NetworkNodeTest {
         @Test
         @DisplayName("Should throw exception for null location")
         void shouldThrowExceptionForNullLocation() {
-            ValidationException exception = assertThrows(ValidationException.class, ()
-                    -> TestNode.builder()
-                            .type(NodeType.JUNCTION)
-                            .build()
-            );
+            ValidationException exception = assertThrows(ValidationException.class, () -> TestNode.builder()
+                    .type(NodeType.JUNCTION)
+                    .build());
             assertEquals("Location cannot be null", exception.getMessage());
         }
 
         @Test
         @DisplayName("Should throw exception for null type")
         void shouldThrowExceptionForNullType() {
-            ValidationException exception = assertThrows(ValidationException.class, ()
-                    -> TestNode.builder()
-                            .location(Coordinate.of(0, 0))
-                            .build()
-            );
+            ValidationException exception = assertThrows(ValidationException.class, () -> TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .build());
             assertEquals("Node type cannot be null", exception.getMessage());
         }
     }
@@ -347,5 +369,121 @@ class NetworkNodeTest {
             assertNotEquals(source.getType(), customer.getType());
             assertNotEquals(customer.getType(), junction.getType());
         }
+    }
+
+    @Nested
+    @DisplayName("Elevation Tests")
+    class ElevationTests {
+        @Test
+        @DisplayName("Should set default elevation when not specified")
+        void shouldSetDefaultElevation() {
+            NetworkNode node = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .build();
+
+            assertEquals(OperationalLimits.ElevationLimits.DEFAULT,
+                    node.getElevation().getValue());
+        }
+
+        @Test
+        @DisplayName("Should accept custom elevation")
+        void shouldAcceptCustomElevation() {
+            NetworkNode node = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .elevation(Elevation.of(100.0))
+                    .build();
+
+            assertEquals(100.0, node.getElevation().getValue());
+        }
+
+        @Test
+        @DisplayName("Should handle elevation at limits")
+        void shouldHandleElevationAtLimits() {
+            NetworkNode minNode = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .elevation(Elevation.of(OperationalLimits.ElevationLimits.MIN))
+                    .build();
+
+            NetworkNode maxNode = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION)
+                    .elevation(Elevation.of(OperationalLimits.ElevationLimits.MAX))
+                    .build();
+
+            assertEquals(OperationalLimits.ElevationLimits.MIN,
+                    minNode.getElevation().getValue());
+            assertEquals(OperationalLimits.ElevationLimits.MAX,
+                    maxNode.getElevation().getValue());
+        }
+
+        @Test
+        @DisplayName("Should handle default elevation")
+        void shouldHandleDefaultElevation() {
+            NetworkNode node = TestNode.builder()
+                .location(Coordinate.of(0, 0))
+                .build();
+
+            assertEquals(OperationalLimits.ElevationLimits.DEFAULT,
+                node.getElevation().getValue());
+        }
+
+        @Test
+        @DisplayName("Should maintain elevation immutability")
+        void shouldMaintainElevationImmutability() {
+            Elevation elevation = Elevation.of(100.0);
+            NetworkNode node = TestNode.builder()
+                .location(Coordinate.of(0, 0))
+                .elevation(elevation)
+                .build();
+
+            assertNotSame(elevation, node.getElevation());
+            assertEquals(elevation.getValue(), node.getElevation().getValue());
+        }
+    }
+
+    @Nested
+    @DisplayName("Location Tests")
+    class LocationTests {
+        @Test
+        @DisplayName("Should maintain location immutability")
+        void shouldMaintainLocationImmutability() {
+            Coordinate location = Coordinate.of(10, 20);
+            NetworkNode node = TestNode.builder()
+                .location(location)
+                .build();
+
+            assertNotSame(location, node.getLocation());
+            assertEquals(location.getLatitude(), node.getLocation().getLatitude());
+            assertEquals(location.getLongitude(), node.getLocation().getLongitude());
+        }
+    }
+
+    @Test
+    @DisplayName("Should set default elevation when not specified")
+    void shouldSetDefaultElevation() {
+        TestNode node = TestNode.builder()
+                .location(Coordinate.of(0, 0))
+                .type(NodeType.JUNCTION)
+                .build();
+
+        assertEquals(OperationalLimits.ElevationLimits.DEFAULT,
+                node.getElevation().getValue());
+    }
+
+    @Test
+    @DisplayName("Should maintain immutability for elevation")
+    void shouldMaintainImmutabilityForElevation() {
+        Elevation elevation = Elevation.of(100.0);
+        NetworkNode node = TestNode.builder()
+                .location(Coordinate.of(0, 0))
+                .type(NodeType.JUNCTION)
+                .elevation(elevation)
+                .build();
+
+        assertEquals(100.0, node.getElevation().getValue());
+        assertNotSame(elevation, node.getElevation());
     }
 }

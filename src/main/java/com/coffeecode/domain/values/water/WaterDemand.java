@@ -1,6 +1,6 @@
 package com.coffeecode.domain.values.water;
 
-import com.coffeecode.domain.constants.CustomerConstants;
+import com.coffeecode.domain.constants.OperationalLimits;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.Value;
@@ -10,7 +10,7 @@ import lombok.Value;
  *
  * <p>
  * This immutable value object ensures that water demand values are within
- * valid operational ranges defined in CustomerConstants.
+ * valid operational ranges defined in OperationalLimits.
  * </p>
  *
  * <p>
@@ -42,13 +42,12 @@ public class WaterDemand {
         return new WaterDemand(value);
     }
 
-    private static void validateDemand(double value) {
-        if (value < CustomerConstants.MIN_DEMAND ||
-                value > CustomerConstants.MAX_DEMAND) {
-            throw new ValidationException(
-                    String.format("Daily demand must be between %.3f and %.3f m³/day",
-                            CustomerConstants.MIN_DEMAND,
-                            CustomerConstants.MAX_DEMAND));
+    private void validateDemand(double value) {
+        if (value < OperationalLimits.Customer.MIN_DEMAND ||
+                value > OperationalLimits.Customer.MAX_DEMAND) {
+            throw ValidationException.invalidRange("Daily demand",
+                    OperationalLimits.Customer.MIN_DEMAND,
+                    OperationalLimits.Customer.MAX_DEMAND);
         }
     }
 }
