@@ -25,9 +25,12 @@ class HeadLossTest {
         calculator = new HeadLoss();
         config = AppProperties.getInstance();
 
+        double velocity = config.getDouble("water.velocity.default");
+        double pressure = config.getDouble("environment.pressure.atmospheric");
+
         // Create test pipe with 5m elevation drop
-        Node start = new Node(0.0, 0.0, 100.0, config.getDouble("water.velocity.default"));
-        Node end = new Node(100.0, 0.0, 95.0, config.getDouble("water.velocity.default"));
+        Node start = new Node(0.0, 0.0, 100.0, velocity, pressure);
+        Node end = new Node(100.0, 0.0, 95.0, velocity, pressure);
         pipe = new Pipe(start, end, 100.0, 0.1, config.getDouble("pipe.roughness.pvc"));
     }
 
@@ -49,8 +52,10 @@ class HeadLossTest {
     @DisplayName("Should handle zero length pipe")
     void shouldHandleZeroLengthPipe() {
         // Given
-        Node start = new Node(0.0, 0.0, 100.0, config.getDouble("water.velocity.default"));
-        Node end = new Node(0.0, 0.0, 100.0, config.getDouble("water.velocity.default"));
+        Node start = new Node(0.0, 0.0, 100.0, config.getDouble("water.velocity.default"),
+                config.getDouble("environment.pressure.atmospheric"));
+        Node end = new Node(0.0, 0.0, 100.0, config.getDouble("water.velocity.default"),
+                config.getDouble("environment.pressure.atmospheric"));
         Pipe zeroPipe = new Pipe(start, end, 0.0, 0.1, config.getDouble("pipe.roughness.pvc"));
 
         // When

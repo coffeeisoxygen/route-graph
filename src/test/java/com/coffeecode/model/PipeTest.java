@@ -13,8 +13,8 @@ class PipeTest {
 
     @BeforeEach
     void setUp() {
-        startNode = new Node(0.0, 0.0, 100.0, 101325.0);
-        endNode = new Node(100.0, 0.0, 95.0, 101325.0);
+        startNode = new Node(0.0, 0.0, 100.0, 1.5, 101325.0);
+        endNode = new Node(100.0, 0.0, 95.0, 1.5, 101325.0);
     }
 
     @Test
