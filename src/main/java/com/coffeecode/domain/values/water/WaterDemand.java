@@ -2,17 +2,12 @@ package com.coffeecode.domain.values.water;
 
 import com.coffeecode.validation.exceptions.ValidationException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 import lombok.Value;
 
 /**
  * Represents daily water demand volume.
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+
 @Value
 public class WaterDemand {
 

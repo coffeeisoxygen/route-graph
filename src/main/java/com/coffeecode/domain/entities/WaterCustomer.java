@@ -1,7 +1,7 @@
 package com.coffeecode.domain.entities;
 
 import com.coffeecode.domain.values.water.WaterDemand;
-import com.coffeecode.validation.validators.CustomerValidation;
+import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,10 +20,27 @@ public class WaterCustomer extends NetworkNode {
 
     private WaterCustomer(CustomerBuilder builder) {
         super(builder);
-        CustomerValidation.validateName(builder.name);
-        CustomerValidation.validateWaterDemand(builder.waterDemand);
+        validateCustomerProperties(builder);
+
         this.name = builder.name;
         this.waterDemand = builder.waterDemand;
+    }
+
+    private void validateCustomerProperties(CustomerBuilder builder) {
+        validateName(builder.name);
+        validateDemand(builder.waterDemand);
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw ValidationException.nullOrEmpty("Customer name");
+        }
+    }
+
+    private void validateDemand(WaterDemand demand) {
+        if (demand == null) {
+            throw ValidationException.nullOrEmpty("Water demand");
+        }
     }
 
     public static CustomerBuilder builder() {
