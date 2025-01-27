@@ -2,18 +2,31 @@ package com.coffeecode.model.coordinates;
 
 import lombok.Value;
 
+/**
+ * Geographic coordinate system implementation using latitude and longitude.
+ * Uses Haversine formula for distance calculations.
+ * All distances are returned in kilometers.
+ */
 @Value
 public class GeographicCoordinates implements Coordinates {
+    /** Latitude in degrees, must be between -90 and 90 */
     double latitude;
+    /** Longitude in degrees, must be between -180 and 180 */
     double longitude;
 
-    public GeographicCoordinates(double latitude, double longitude) {
+    // Add validation method
+    private static void validateCoordinates(double latitude, double longitude) {
         if (latitude < -90 || latitude > 90) {
             throw new IllegalArgumentException("Latitude must be between -90 and 90 degrees");
         }
         if (longitude < -180 || longitude > 180) {
             throw new IllegalArgumentException("Longitude must be between -180 and 180 degrees");
         }
+    }
+
+    // Use validation in constructor
+    public GeographicCoordinates(double latitude, double longitude) {
+        validateCoordinates(latitude, longitude);
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -28,7 +41,6 @@ public class GeographicCoordinates implements Coordinates {
 
     private static double calculateHaversineDistance(GeographicCoordinates point1, GeographicCoordinates point2) {
         final double R = 6371.0; // Earth radius in kilometers
-
         double lat1 = Math.toRadians(point1.getLatitude());
         double lat2 = Math.toRadians(point2.getLatitude());
         double deltaLat = Math.toRadians(point2.getLatitude() - point1.getLatitude());
@@ -40,6 +52,6 @@ public class GeographicCoordinates implements Coordinates {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return R * c; // Returns distance in kilometers
+        return R * c; // Distance in kilometers
     }
 }
