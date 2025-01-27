@@ -7,5 +7,5 @@ public final class HydraulicConstants {
     public static final double WATER_DENSITY = 998.2; // kg/m³ at 20°C
 
     private HydraulicConstants() {
-    }
+    } //prevent installation
 }
