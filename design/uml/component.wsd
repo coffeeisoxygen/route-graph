@@ -1,0 +1,25 @@
+@startuml Components
+
+package "Domain Layer" {
+    component [Entities] as E
+    component [Value Objects] as VO
+}
+
+package "Service Layer" {
+    component [Flow Calculation] as FC
+    component [Validation] as V
+}
+
+package "Infrastructure Layer" {
+    component [Constants] as C
+    component [Utilities] as U
+}
+
+FC ..> E
+FC ..> VO
+FC ..> V
+V ..> C
+E ..> VO
+VO ..> U
+
+@enduml

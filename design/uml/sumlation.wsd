@@ -1,0 +1,49 @@
+@startuml Simulation Flow
+
+package "service.flow" {
+    interface FlowCalculationService {
+        + calculateFlow(pipe: Pipe, pressureIn: double): FlowResult
+    }
+
+    class FlowCalculationServiceImpl {
+        - headLossCalculator: HeadLossCalculator
+        - pressureCalculator: PressureCalculator
+        - velocityCalculator: VelocityCalculator
+    }
+
+    class HeadLossCalculator {
+        + calculate(length: double, diameter: double, friction: double, velocity: double): double
+        + calculateFrictionFactor(reynolds: double, diameter: double, roughness: double): double
+    }
+
+    class PressureCalculator {
+        + calculatePressureOut(pressureIn: double, headLoss: double): double
+    }
+
+    class VelocityCalculator {
+        + calculate(pressure: double): double
+        + calculateReynolds(velocity: double, diameter: double): double
+    }
+
+    class HydraulicValidator {
+        + {static} validatePressure(pressure: double)
+        + {static} validateVelocity(velocity: double)
+        + {static} validateHeadLoss(headLoss: double)
+    }
+
+    class FlowResult <<Value>> {
+        - flowRate: double
+        - pressureOut: double
+        - velocityOut: double
+        - headLoss: double
+    }
+}
+
+FlowCalculationService <|.. FlowCalculationServiceImpl
+FlowCalculationServiceImpl --> HeadLossCalculator
+FlowCalculationServiceImpl --> PressureCalculator
+FlowCalculationServiceImpl --> VelocityCalculator
+FlowCalculationServiceImpl ..> HydraulicValidator
+FlowCalculationServiceImpl ..> FlowResult
+
+@enduml

@@ -1,0 +1,94 @@
+@startuml Domain Model
+
+package "domain.entities" {
+    abstract class NetworkNode {
+        - id: UUID
+        - location: Coordinate
+        - elevation: Elevation
+        + getLocation(): Coordinate
+        + getElevation(): Elevation
+    }
+
+    class WaterSource extends NetworkNode {
+        - name: String
+        - capacity: WaterVolume
+        - flowRate: WaterFlow
+        + getCapacity(): WaterVolume
+        + getFlowRate(): WaterFlow
+    }
+
+    class WaterCustomer extends NetworkNode {
+        - name: String
+        - waterDemand: WaterDemand
+        + getWaterDemand(): WaterDemand
+    }
+
+    class Pipe {
+        - id: UUID
+        - source: NetworkNode
+        - destination: NetworkNode
+        - properties: PipeProperties
+        + getSource(): NetworkNode
+        + getDestination(): NetworkNode
+        + getProperties(): PipeProperties
+    }
+}
+
+package "domain.values" {
+    package "location" {
+        class Coordinate <<Value>> {
+            - latitude: double
+            - longitude: double
+        }
+
+        class Distance <<Value>> {
+            - value: double
+        }
+
+        class Elevation <<Value>> {
+            - value: double
+        }
+    }
+
+    package "water" {
+        class WaterVolume <<Value>> {
+            - value: double
+        }
+
+        class WaterFlow <<Value>> {
+            - value: double
+        }
+
+        class WaterDemand <<Value>> {
+            - value: double
+        }
+    }
+
+    package "pipe" {
+        class PipeProperties <<Value>> {
+            - material: PipeMaterial
+            - diameter: double
+            - length: Distance
+            - roughness: double
+        }
+
+        enum PipeMaterial {
+            PVC
+            HDPE
+            STEEL
+            CONCRETE
+            + getRoughness(): double
+            + getMinDiameter(): double
+            + getMaxDiameter(): double
+        }
+    }
+}
+
+NetworkNode --> "1" Coordinate
+NetworkNode --> "1" Elevation
+Pipe --> "2" NetworkNode
+Pipe --> "1" PipeProperties
+PipeProperties --> "1" PipeMaterial
+PipeProperties --> "1" Distance
+
+@enduml

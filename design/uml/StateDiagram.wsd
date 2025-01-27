@@ -1,0 +1,13 @@
+@startuml Flow State
+
+[*] --> ValidatingInput
+ValidatingInput --> CalculatingVelocity: input valid
+ValidatingInput --> [*]: invalid input
+
+CalculatingVelocity --> CalculatingFriction: velocity calculated
+CalculatingFriction --> CalculatingHeadLoss: friction calculated
+CalculatingHeadLoss --> CalculatingPressure: head loss calculated
+CalculatingPressure --> GeneratingResult: pressure calculated
+GeneratingResult --> [*]: result returned
+
+@enduml
