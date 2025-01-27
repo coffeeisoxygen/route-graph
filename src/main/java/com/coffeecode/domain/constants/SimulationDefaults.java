@@ -1,35 +1,46 @@
 package com.coffeecode.domain.constants;
 
 /**
- * Default values for simulation parameters.
+ * Default values for simulation parameters. All units are in SI (meters,
+ * seconds, kilograms, Pascals)
  */
 public final class SimulationDefaults {
 
     /**
-     * Default pipe diameter in meters
+     * Pipe diameter [m]
      */
     public static final double PIPE_DIAMETER = 0.5;
 
     /**
-     * Default pipe roughness coefficient in meters
+     * Pipe roughness coefficient [m]
      */
     public static final double PIPE_ROUGHNESS = 0.0002;
 
     /**
-     * Default flow velocity in meters per second
+     * Flow velocity [m/s]
      */
     public static final double FLOW_VELOCITY = 1.5;
 
     /**
-     * Default input pressure in Pascals
+     * Input pressure [Pa]
      */
     public static final double PRESSURE_IN = 50000;
 
     /**
-     * Default elevation in meters
+     * Elevation [m]
      */
     public static final double ELEVATION = 0.0;
 
+    /**
+     * Default water flow rate [m³/s]
+     */
+    public static final double DEFAULT_FLOW_RATE = 0.1; // 100 L/s
+
+    /**
+     * Default peak hour factor
+     */
+    public static final double PEAK_HOUR_FACTOR = 2.0;
+
     private SimulationDefaults() {
-    } // Prevent instantiation
+    }
 }

@@ -1,6 +1,6 @@
 package com.coffeecode.domain.values;
 
-import com.coffeecode.domain.constants.ElevationRange;
+import com.coffeecode.domain.constants.ElevationRangeConstants;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -13,7 +13,7 @@ public class Elevation {
 
     public Elevation(Double value) {
         if (value == null) {
-            this.value = ElevationRange.MIN.getValue();
+            this.value = ElevationRangeConstants.MIN.getValue();
         } else {
             this.value = value;
         }

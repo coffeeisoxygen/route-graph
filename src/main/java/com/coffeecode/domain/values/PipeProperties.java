@@ -1,7 +1,7 @@
 package com.coffeecode.domain.values;
 
-import com.coffeecode.domain.constants.SimulationDefaults;
-import com.coffeecode.validation.exceptions.ValidationException;
+import com.coffeecode.domain.constants.PhysicalConstants;
+import com.coffeecode.validation.specifications.PipeSpecification;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,62 +16,67 @@ public class PipeProperties {
     private final Volume capacity;
     private final double diameter;
     private final double roughness;
+    private final PipeType type;
 
     private PipeProperties(PipePropertiesBuilder builder) {
-        validateLength(builder.length);
-        validateCapacity(builder.capacity);
-        validateDiameter(builder.diameter);
-        validateRoughness(builder.roughness);
+        // Validate using specification
+        PipeSpecification.validateLength(builder.length);
+        PipeSpecification.validatePipeProperties(builder.type, builder.diameter, builder.roughness);
 
         this.length = builder.length;
         this.capacity = builder.capacity;
         this.diameter = builder.diameter;
-        this.roughness = builder.roughness;
+        this.type = builder.type;
+        this.roughness = builder.type.getRoughness(); // Always use type's roughness
+    }
+
+    // Factory methods
+    public static PipeProperties of(Distance length, Volume capacity, PipeType type) {
+        return builder()
+                .length(length)
+                .capacity(capacity)
+                .type(type)
+                .diameter(type.getMinDiameter()) // Use minimum diameter as default
+                .build();
     }
 
     public static PipePropertiesBuilder builder() {
         return new PipePropertiesBuilder();
     }
 
-    public static PipeProperties of(Distance length, Volume capacity) {
-        return builder()
-                .length(length)
-                .capacity(capacity)
-                .diameter(SimulationDefaults.PIPE_DIAMETER)
-                .roughness(SimulationDefaults.PIPE_ROUGHNESS)
-                .build();
+    // Add calculations
+    public double calculateFluidVelocity(double flowRate) {
+        double area = Math.PI * Math.pow(diameter / 2, 2);
+        return flowRate / area;
     }
 
-    private static void validateLength(Distance length) {
-        if (length == null) {
-            throw new ValidationException("Length cannot be null");
-        }
+    public double calculatePressureLoss(double flowRate, double temperature) {
+        double velocity = calculateFluidVelocity(flowRate);
+        double reynoldsNumber = (velocity * diameter) / PhysicalConstants.Water.KINEMATIC_VISCOSITY;
+        double frictionFactor = calculateFrictionFactor(reynoldsNumber);
+
+        return (frictionFactor * length.getValue() * Math.pow(velocity, 2))
+                / (2 * diameter * PhysicalConstants.Environment.GRAVITY); // head loss in meters
     }
 
-    private static void validateCapacity(Volume capacity) {
-        if (capacity == null) {
-            throw new ValidationException("Capacity cannot be null");
-        }
+    public Volume calculateCapacity() {
+        double area = Math.PI * Math.pow(diameter / 2, 2);
+        return Volume.of(area * length.getValue());
     }
 
-    private static void validateDiameter(double diameter) {
-        if (diameter <= 0) {
-            throw new ValidationException("Diameter must be positive");
-        }
-    }
-
-    private static void validateRoughness(double roughness) {
-        if (roughness < 0) {
-            throw new ValidationException("Roughness cannot be negative");
-        }
+    private double calculateFrictionFactor(double reynoldsNumber) {
+        // Swamee-Jain equation for friction factor
+        double relativeRoughness = roughness / diameter;
+        return 0.25 / Math.pow(Math.log10(relativeRoughness / 3.7 + 5.74 / Math.pow(reynoldsNumber, 0.9)), 2);
     }
 
     public static class PipePropertiesBuilder {
 
         private Distance length;
         private Volume capacity;
-        private double diameter = SimulationDefaults.PIPE_DIAMETER;
-        private double roughness = SimulationDefaults.PIPE_ROUGHNESS;
+        private double diameter;
+        private double roughness;
+        private PipeType type = PipeType.PVC; // Default type
 
         public PipePropertiesBuilder length(Distance length) {
             this.length = length;
@@ -88,8 +93,9 @@ public class PipeProperties {
             return this;
         }
 
-        public PipePropertiesBuilder roughness(double roughness) {
-            this.roughness = roughness;
+        public PipePropertiesBuilder type(PipeType type) {
+            this.type = type;
+            this.roughness = type.getRoughness(); // Set roughness based on type
             return this;
         }
 

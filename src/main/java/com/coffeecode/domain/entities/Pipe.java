@@ -5,7 +5,7 @@ import java.util.UUID;
 import com.coffeecode.domain.values.Distance;
 import com.coffeecode.domain.values.PipeProperties;
 import com.coffeecode.domain.values.Volume;
-import com.coffeecode.validation.validators.PipeValidation;
+import com.coffeecode.validation.specifications.PipeSpecification;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,10 +35,11 @@ public class Pipe {
     private final PipeProperties properties;
 
     private Pipe(PipeBuilder builder) {
-        PipeValidation.validateSource(builder.source);
-        PipeValidation.validateDestination(builder.destination);
-        PipeValidation.validateProperties(builder.properties);
-        PipeValidation.validateSameNode(builder.source, builder.destination);
+        PipeSpecification.validatePipeConstruction(
+            builder.source,
+            builder.destination,
+            builder.properties
+        );
 
         this.id = UUID.randomUUID();
         this.source = builder.source;
