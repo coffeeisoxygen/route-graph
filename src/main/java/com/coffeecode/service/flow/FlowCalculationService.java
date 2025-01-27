@@ -10,7 +10,7 @@ public interface FlowCalculationService {
     /**
      * Calculates flow parameters for a given pipe and input pressure.
      *
-     * @param pipe The pipe to calculate flow for
+     * @param pipe       The pipe to calculate flow for
      * @param pressureIn Input pressure in Pascals
      * @return FlowResult containing calculated parameters
      */
