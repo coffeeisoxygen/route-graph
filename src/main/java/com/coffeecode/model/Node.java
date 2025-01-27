@@ -1,30 +1,19 @@
 package com.coffeecode.model;
 
+import com.coffeecode.model.coordinates.Coordinates;
+
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-@Getter
+@Value
 @Builder
-@NoArgsConstructor
 public class Node {
-    protected double x;
-    protected double y;
-    protected double elevation;
-    protected double velocity;
-    protected double pressure;
-
-    public Node(double x, double y, double elevation, double velocity, double pressure) {
-        this.x = x;
-        this.y = y;
-        this.elevation = elevation;
-        this.velocity = velocity;
-        this.pressure = pressure;
-    }
+    Coordinates coordinates;
+    double elevation;
+    double velocity;
+    double pressure;
 
     public double getDistanceTo(Node other) {
-        double dx = this.x - other.x;
-        double dy = this.y - other.y;
-        return Math.sqrt(dx * dx + dy * dy);
+        return this.coordinates.getDistanceTo(other.coordinates);
     }
 }
