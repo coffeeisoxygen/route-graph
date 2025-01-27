@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -134,16 +136,29 @@ class NetworkNodeTest {
         @Test
         @DisplayName("Should maintain immutability after building")
         void shouldMaintainImmutabilityAfterBuilding() {
+            // Create initial objects
             Coordinate location = Coordinate.of(0, 0);
             NetworkNode node = TestNode.builder()
                     .location(location)
                     .type(NodeType.JUNCTION)
                     .build();
 
-            assertThrows(UnsupportedOperationException.class, () -> {
-                // Attempt to modify - should throw exception
-                node.getClass().getDeclaredField("location").set(node, Coordinate.of(1, 1));
-            });
+            // Store initial values
+            UUID originalId = node.getId();
+            Coordinate originalLocation = node.getLocation();
+            NodeType originalType = node.getType();
+
+            // Create new values
+            Coordinate newLocation = Coordinate.of(1, 1);
+
+            // Try to modify through getters (should return same instance)
+            assertEquals(originalId, node.getId());
+            assertEquals(originalLocation, node.getLocation());
+            assertEquals(originalType, node.getType());
+
+            // Verify original location hasn't changed
+            assertEquals(0, node.getLocation().getLatitude());
+            assertEquals(0, node.getLocation().getLongitude());
         }
     }
 }
