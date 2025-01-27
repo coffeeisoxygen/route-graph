@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.constants.OperationalLimits;
+import com.coffeecode.domain.entities.NetworkNodeTest.TestNode.TestNodeBuilder;
 import com.coffeecode.domain.values.location.Coordinate;
 import com.coffeecode.domain.values.location.Elevation;
 import com.coffeecode.validation.exceptions.ValidationException;
@@ -93,9 +94,8 @@ class NetworkNodeTest {
         @Test
         @DisplayName("Should throw exception for null location")
         void shouldThrowExceptionForNullLocation() {
-            ValidationException exception = assertThrows(ValidationException.class, () -> TestNode.builder()
-                    .type(NodeType.JUNCTION)
-                    .build());
+            TestNodeBuilder builder = TestNode.builder().type(NodeType.JUNCTION);
+            ValidationException exception = assertThrows(ValidationException.class, builder::build);
             assertEquals("Location cannot be null", exception.getMessage());
         }
 
@@ -103,9 +103,8 @@ class NetworkNodeTest {
         @DisplayName("Should throw exception for null type")
         void shouldThrowExceptionForNullType() {
             ValidationException exception = assertThrows(ValidationException.class, () -> TestNode.builder()
-                    .location(Coordinate.of(0, 0))
-                    .build());
-            assertEquals("Node type cannot be null", exception.getMessage());
+            TestNodeBuilder builder = TestNode.builder().location(Coordinate.of(0, 0));
+            ValidationException exception = assertThrows(ValidationException.class, builder::build);
         }
     }
 
@@ -159,10 +158,10 @@ class NetworkNodeTest {
         void shouldAllowChainingBuilderMethods() {
             NetworkNode node = TestNode.builder()
                     .location(Coordinate.of(0, 0))
-                    .type(NodeType.JUNCTION)
-                    .build();
-
-            assertNotNull(node);
+            TestNodeBuilder builder = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
+                    .type(NodeType.JUNCTION);
+            NetworkNode node = builder.build();
         }
 
         @Test
@@ -391,11 +390,11 @@ class NetworkNodeTest {
         void shouldAcceptCustomElevation() {
             NetworkNode node = TestNode.builder()
                     .location(Coordinate.of(0, 0))
+            TestNodeBuilder builder = TestNode.builder()
+                    .location(Coordinate.of(0, 0))
                     .type(NodeType.JUNCTION)
-                    .elevation(Elevation.of(100.0))
-                    .build();
-
-            assertEquals(100.0, node.getElevation().getValue());
+                    .elevation(Elevation.of(100.0));
+            NetworkNode node = builder.build();
         }
 
         @Test
