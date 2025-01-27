@@ -47,12 +47,13 @@ public class WaterSource extends NetworkNode {
 
     private void validateCapacity(WaterVolume capacity) {
         if (capacity == null) {
-            throw ValidationException.nullOrEmpty("Capacity");
+            throw ValidationException.nullOrEmpty(
+                "Water source capacity must be explicitly defined");
         }
         double value = capacity.getValue();
         if (value < OperationalLimits.Source.MIN_CAPACITY ||
                 value > OperationalLimits.Source.MAX_CAPACITY) {
-            throw ValidationException.invalidRange("Capacity",
+            throw ValidationException.invalidRange("Water source capacity",
                     OperationalLimits.Source.MIN_CAPACITY,
                     OperationalLimits.Source.MAX_CAPACITY);
         }
