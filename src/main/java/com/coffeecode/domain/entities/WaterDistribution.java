@@ -49,7 +49,7 @@ public final class WaterDistribution {
 
     private final Map<UUID, NetworkNode> nodes = new HashMap<>();
     private final Map<UUID, Pipe> pipes = new HashMap<>();
-    private final List<Customer> customers = new ArrayList<>();
+    private final List<WaterCustomer> customers = new ArrayList<>();
     private final WaterSource source;
 
     private WaterDistribution(WaterDistributionBuilder builder) {
@@ -64,7 +64,7 @@ public final class WaterDistribution {
     public synchronized void addNode(NetworkNode node) {
         WaterDistributionValidation.validateNode(node);
         nodes.put(node.getId(), node);
-        if (node instanceof Customer customer) {
+        if (node instanceof WaterCustomer customer) {
             customers.add(customer);
         }
         log.info("Added node: {}", node);
@@ -127,7 +127,7 @@ public final class WaterDistribution {
         return Collections.unmodifiableMap(pipes);
     }
 
-    public List<Customer> getCustomers() {
+    public List<WaterCustomer> getCustomers() {
         return Collections.unmodifiableList(customers);
     }
 }

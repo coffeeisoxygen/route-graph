@@ -13,12 +13,12 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class Customer extends NetworkNode {
+public class WaterCustomer extends NetworkNode {
 
     private final String name;
     private final WaterDemand waterDemand;
 
-    private Customer(CustomerBuilder builder) {
+    private WaterCustomer(CustomerBuilder builder) {
         super(builder);
         CustomerValidation.validateName(builder.name);
         CustomerValidation.validateWaterDemand(builder.waterDemand);
@@ -46,9 +46,9 @@ public class Customer extends NetworkNode {
         }
 
         @Override
-        public Customer build() {
+        public WaterCustomer build() {
             this.type(NodeType.CUSTOMER); // Set type automatically
-            return new Customer(this);
+            return new WaterCustomer(this);
         }
     }
 }

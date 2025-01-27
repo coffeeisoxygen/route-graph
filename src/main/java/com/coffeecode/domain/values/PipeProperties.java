@@ -2,14 +2,17 @@ package com.coffeecode.domain.values;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.validation.specifications.PipeSpecification;
+import com.coffeecode.validation.validators.HydraulicValidator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @ToString
 @EqualsAndHashCode
+@Slf4j
 public class PipeProperties {
 
     private final Distance length;
@@ -46,17 +49,31 @@ public class PipeProperties {
 
     // Add calculations
     public double calculateFluidVelocity(double flowRate) {
+        HydraulicValidator.validatePositiveValue("Flow rate", flowRate);
+
         double area = Math.PI * Math.pow(diameter / 2, 2);
-        return flowRate / area;
+        double velocity = flowRate / area;
+
+        log.debug("Calculated fluid velocity: {} m/s", velocity);
+        return velocity;
     }
 
-    public double calculatePressureLoss(double flowRate, double temperature) {
+    public double calculatePressureLoss(double flowRate) {
         double velocity = calculateFluidVelocity(flowRate);
-        double reynoldsNumber = (velocity * diameter) / PhysicalConstants.Water.KINEMATIC_VISCOSITY;
-        double frictionFactor = calculateFrictionFactor(reynoldsNumber);
+        double reynolds = calculateReynoldsNumber(velocity);
+        double friction = calculateFrictionFactor(reynolds);
 
-        return (frictionFactor * length.getValue() * Math.pow(velocity, 2))
-                / (2 * diameter * PhysicalConstants.Environment.GRAVITY); // head loss in meters
+        return calculateHeadLoss(friction, velocity);
+    }
+
+    private double calculateReynoldsNumber(double velocity) {
+        return (velocity * diameter)
+                / PhysicalConstants.Water.KINEMATIC_VISCOSITY;
+    }
+
+    private double calculateHeadLoss(double friction, double velocity) {
+        return (friction * length.getValue() * Math.pow(velocity, 2))
+                / (2 * diameter * PhysicalConstants.Environment.GRAVITY);
     }
 
     public Volume calculateCapacity() {
