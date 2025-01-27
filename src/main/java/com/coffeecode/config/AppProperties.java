@@ -1,6 +1,7 @@
 package com.coffeecode.config;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import com.coffeecode.exception.AppException;
@@ -17,13 +18,14 @@ public class AppProperties {
     }
 
     private void loadProperties() {
-        try {
-            props.load(AppProperties.class
-                    .getClassLoader()
-                    .getResourceAsStream("application.properties"));
-        } catch (IOException e) {
-            log.error("Failed to load properties file", e);
-            throw new AppException("Configuration could not be loaded!", e);
+        try (InputStream input = AppProperties.class.getClassLoader()
+                .getResourceAsStream("application.properties")) {
+            if (input == null) {
+                throw new AppException("Unable to find application.properties");
+            }
+            props.load(input);
+        } catch (IOException ex) {
+            throw new AppException("Error loading properties", ex);
         }
     }
 

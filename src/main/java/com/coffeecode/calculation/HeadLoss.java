@@ -19,14 +19,15 @@ public class HeadLoss {
 
         private double calculateFrictionLoss(Pipe pipe) {
                 double velocity = config.getDouble("water.velocity.default");
+                double viscosity = config.getDouble("water.kinematic.viscosity");
                 double reynolds = (velocity * pipe.getDiameter()) /
-                                config.getDouble("physical.kinematic.viscosity");
+                                viscosity;
                 double friction = calculateFrictionFactor(reynolds,
                                 pipe.getRoughness(),
                                 pipe.getDiameter());
 
                 return friction * (pipe.getLength() / pipe.getDiameter()) *
-                                Math.pow(velocity, 2) / (2 * config.getDouble("physical.gravity"));
+                                Math.pow(velocity, 2) / (2 * config.getDouble("environment.gravity"));
         }
 
         private double calculateFrictionFactor(double reynolds,
