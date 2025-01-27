@@ -29,13 +29,13 @@ class WaterCustomerTest {
         void shouldCreateCustomerWithValidParameters() {
             WaterCustomer customer = WaterCustomer.builder()
                     .name("Test Customer")
-                    .waterDemand(WaterDemand.of(WaterVolume.of(0.5)))
+                    .waterDemand(WaterDemand.of(0.5))
                     .location(Coordinate.of(0, 0))
                     .build();
 
             assertNotNull(customer);
             assertEquals("Test Customer", customer.getName());
-            assertEquals(0.5, customer.getWaterDemand().getDailyDemand().getValue());
+            assertEquals(0.5, customer.getWaterDemand().getValue());
             assertEquals(NodeType.CUSTOMER, customer.getType());
         }
     }
@@ -48,7 +48,7 @@ class WaterCustomerTest {
         void shouldThrowOnNullName() {
             WaterVolume volume = WaterVolume.of(0.5);
             assertThrows(ValidationException.class, () -> WaterCustomer.builder()
-                    .waterDemand(WaterDemand.of(volume))
+                    .waterDemand(WaterDemand.of(volume.getValue()))
                     .location(Coordinate.of(0, 0))
                     .build());
         }
@@ -68,7 +68,7 @@ class WaterCustomerTest {
             WaterVolume volume = WaterVolume.of(0.5);
             assertThrows(ValidationException.class, () -> WaterCustomer.builder()
                     .name("Test Customer")
-                    .waterDemand(WaterDemand.of(volume))
+                    .waterDemand(WaterDemand.of(volume.getValue()))
                     .build());
         }
     }
@@ -81,7 +81,7 @@ class WaterCustomerTest {
         void shouldSetNodeTypeToCustomer() {
             WaterCustomer customer = WaterCustomer.builder()
                     .name("Test Customer")
-                    .waterDemand(WaterDemand.of(WaterVolume.of(0.5)))
+                    .waterDemand(WaterDemand.of(WaterVolume.of(0.5).getValue()))
                     .location(Coordinate.of(0, 0))
                     .build();
 
@@ -97,12 +97,12 @@ class WaterCustomerTest {
         void shouldHandleMinimumValidDemand() {
             WaterCustomer customer = WaterCustomer.builder()
                     .name("Min Test")
-                    .waterDemand(WaterDemand.of(WaterVolume.of(0.001)))
+                    .waterDemand(WaterDemand.of(0.001))
                     .location(Coordinate.of(0, 0))
                     .build();
 
             assertNotNull(customer);
-            assertEquals(0.001, customer.getWaterDemand().getDailyDemand().getValue());
+            assertEquals(0.001, customer.getWaterDemand().getValue());
         }
 
         @Test
@@ -112,7 +112,7 @@ class WaterCustomerTest {
             for (int i = 0; i < 100; i++) {
                 WaterCustomer customer = WaterCustomer.builder()
                         .name("Test " + i)
-                        .waterDemand(WaterDemand.of(WaterVolume.of(1.0)))
+                        .waterDemand(WaterDemand.of(1.0))
                         .location(Coordinate.of(0, 0))
                         .build();
                 assertTrue(ids.add(customer.getId()));
