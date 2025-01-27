@@ -1,120 +1,94 @@
 package com.coffeecode.domain.values.pipe;
 
-import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.values.location.Distance;
-import com.coffeecode.domain.values.water.WaterVolume;
-import com.coffeecode.validation.specifications.PipeSpecification;
-import com.coffeecode.validation.validators.HydraulicValidator;
+import com.coffeecode.validation.exceptions.ValidationException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Value;
 
-@Getter
-@ToString
-@EqualsAndHashCode
-@Slf4j
+/**
+ * Represents the physical properties of a pipe in a water distribution network.
+ * Implements the Value Object pattern with immutable properties.
+ */
+@Value
 public class PipeProperties {
+    // Consider adding validation messages as constants
+    private static final String MSG_NULL_MATERIAL = "Pipe material cannot be null";
+    private static final String MSG_NULL_LENGTH = "Pipe length cannot be null";
+    private static final String MSG_INVALID_DIAMETER = "Pipe diameter must be between %f and %f meters";
 
-    private final Distance length;
-    private final WaterVolume capacity;
-    private final double diameter;
-    private final double roughness;
-    private final PipeMaterial type;
+    PipeMaterial material;
+    double diameter;
+    Distance length; // Immutable value object
+    double roughness;
 
-    private PipeProperties(PipePropertiesBuilder builder) {
-        // Validate using specification
-        PipeSpecification.validateLength(builder.length);
-        PipeSpecification.validatePipeProperties(builder.type, builder.diameter, builder.roughness);
-
-        this.length = builder.length;
-        this.capacity = builder.capacity;
+    private PipeProperties(Builder builder) {
+        validateProperties(builder);
+        this.material = builder.material;
         this.diameter = builder.diameter;
-        this.type = builder.type;
-        this.roughness = builder.type.getRoughness(); // Always use type's roughness
+        // Defensive copy using factory method
+        this.length = Distance.ofMeters(builder.length.getMetersValue());
+        this.roughness = builder.material.getRoughness();
     }
 
-    // Factory methods
-    public static PipeProperties of(Distance length, WaterVolume capacity, PipeMaterial type) {
+    // Defensive copy on getter using factory method
+    public Distance getLength() {
+        return Distance.ofMeters(length.getMetersValue());
+    }
+
+    private void validateProperties(Builder builder) {
+        if (builder.material == null) {
+            throw ValidationException.nullOrEmpty("Pipe material");
+        }
+        if (builder.length == null) {
+            throw ValidationException.nullOrEmpty("Pipe length");
+        }
+        validateDiameter(builder.diameter, builder.material);
+    }
+
+    private void validateDiameter(double diameter, PipeMaterial material) {
+        if (diameter < material.getMinDiameter() ||
+                diameter > material.getMaxDiameter()) {
+            throw ValidationException.invalidRange("Pipe diameter",
+                    material.getMinDiameter(),
+                    material.getMaxDiameter());
+        }
+    }
+
+    /**
+     * Creates standard PVC pipe configuration
+     * 
+     * @param length pipe length in meters
+     * @return PipeProperties instance
+     */
+    public static PipeProperties standardPVC(Distance length) {
         return builder()
+                .material(PipeMaterial.PVC)
+                .diameter(0.1)
                 .length(length)
-                .capacity(capacity)
-                .type(type)
-                .diameter(type.getMinDiameter()) // Use minimum diameter as default
                 .build();
     }
 
-    public static PipePropertiesBuilder builder() {
-        return new PipePropertiesBuilder();
+    public static Builder builder() {
+        return new Builder();
     }
 
-    // Add calculations
-    public double calculateFluidVelocity(double flowRate) {
-        HydraulicValidator.validatePositiveValue("Flow rate", flowRate);
-
-        double area = Math.PI * Math.pow(diameter / 2, 2);
-        double velocity = flowRate / area;
-
-        log.debug("Calculated fluid velocity: {} m/s", velocity);
-        return velocity;
-    }
-
-    public double calculatePressureLoss(double flowRate) {
-        double velocity = calculateFluidVelocity(flowRate);
-        double reynolds = calculateReynoldsNumber(velocity);
-        double friction = calculateFrictionFactor(reynolds);
-
-        return calculateHeadLoss(friction, velocity);
-    }
-
-    private double calculateReynoldsNumber(double velocity) {
-        return (velocity * diameter)
-                / PhysicalConstants.Water.KINEMATIC_VISCOSITY;
-    }
-
-    private double calculateHeadLoss(double friction, double velocity) {
-        return (friction * length.getValue() * Math.pow(velocity, 2))
-                / (2 * diameter * PhysicalConstants.Environment.GRAVITY);
-    }
-
-    public WaterVolume calculateCapacity() {
-        double area = Math.PI * Math.pow(diameter / 2, 2);
-        return WaterVolume.of(area * length.getValue());
-    }
-
-    private double calculateFrictionFactor(double reynoldsNumber) {
-        // Swamee-Jain equation for friction factor
-        double relativeRoughness = roughness / diameter;
-        return 0.25 / Math.pow(Math.log10(relativeRoughness / 3.7 + 5.74 / Math.pow(reynoldsNumber, 0.9)), 2);
-    }
-
-    public static class PipePropertiesBuilder {
-
-        private Distance length;
-        private WaterVolume capacity;
+    public static class Builder {
+        private PipeMaterial material = PipeMaterial.PVC; // Default material
         private double diameter;
-        private double roughness;
-        private PipeMaterial type = PipeMaterial.PVC; // Default type
+        private Distance length;
 
-        public PipePropertiesBuilder length(Distance length) {
-            this.length = length;
+        public Builder material(PipeMaterial material) {
+            this.material = material;
             return this;
         }
 
-        public PipePropertiesBuilder capacity(WaterVolume capacity) {
-            this.capacity = capacity;
-            return this;
-        }
-
-        public PipePropertiesBuilder diameter(double diameter) {
+        public Builder diameter(double diameter) {
             this.diameter = diameter;
             return this;
         }
 
-        public PipePropertiesBuilder type(PipeMaterial type) {
-            this.type = type;
-            this.roughness = type.getRoughness(); // Set roughness based on type
+        public Builder length(Distance length) {
+            this.length = length;
             return this;
         }
 

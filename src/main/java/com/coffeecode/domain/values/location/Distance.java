@@ -2,16 +2,16 @@ package com.coffeecode.domain.values.location;
 
 import com.coffeecode.validation.exceptions.ValidationException;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Value;
 
 /**
  * Represents a distance measurement in meters. This class is immutable and
  * ensures that the distance value is non-negative.
  *
  * <p>
- * Example usage:</p>
+ * Example usage:
+ * </p>
+ *
  * <pre>
  * {@code
  * Distance distance = new Distance(100.0);
@@ -20,7 +20,8 @@ import lombok.ToString;
  * </pre>
  *
  * <p>
- * Annotations used:</p>
+ * Annotations used:
+ * </p>
  * <ul>
  * <li>{@code @Getter} - Generates getter methods for all fields.</li>
  * <li>{@code @ToString} - Generates a {@code toString()} method.</li>
@@ -28,21 +29,38 @@ import lombok.ToString;
  * {@code hashCode()} methods.</li>
  * </ul>
  *
- * @throws IllegalArgumentException if the distance value is negative.
+ * @throws ValidationException if the distance value is negative.
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Value
 public class Distance {
+    // Consider moving constants to OperationalLimits
+    private static final double MIN_DISTANCE = 0.0;
+    private static final double MAX_DISTANCE = 1000000.0;
 
-    private final double value; // Distance in meters
+    // Consider renaming to meters for clarity
+    double metersValue; // in meters
 
     private Distance(double value) {
-        validateValue(value);
-        this.value = value;
+        validateDistance(value);
+        this.metersValue = value;
     }
 
-    public static Distance of(double meters) {
+    private void validateDistance(double value) {
+        if (value < MIN_DISTANCE || value > MAX_DISTANCE) {
+            throw ValidationException.invalidRange("Distance",
+                    MIN_DISTANCE, MAX_DISTANCE);
+        }
+    }
+
+    // Add documentation for factory methods
+    /**
+     * Creates a new Distance instance with the specified value in meters.
+     *
+     * @param meters the distance in meters
+     * @return a new Distance instance
+     * @throws ValidationException if the value is invalid
+     */
+    public static Distance ofMeters(double meters) {
         return new Distance(meters);
     }
 
@@ -50,17 +68,7 @@ public class Distance {
         return new Distance(kilometers * 1000);
     }
 
-    public double getMeters() {
-        return value;
-    }
-
-    public double getKilometers() {
-        return value / 1000;
-    }
-
-    private static void validateValue(double value) {
-        if (value < 0) {
-            throw new ValidationException("Distance cannot be negative!");
-        }
+    public double getMetersValue() {
+        return metersValue;
     }
 }
