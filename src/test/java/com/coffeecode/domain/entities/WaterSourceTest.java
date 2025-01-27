@@ -15,12 +15,14 @@ import com.coffeecode.domain.values.water.WaterFlow;
 import com.coffeecode.domain.values.water.WaterVolume;
 import com.coffeecode.validation.exceptions.ValidationException;
 
+import lombok.Getter;
 import lombok.Value;
 
 @DisplayName("WaterSource Tests")
 class WaterSourceTest {
 
     @Value
+    @Getter
     private static class WaterSourceAsserter {
 
         WaterSource source;
