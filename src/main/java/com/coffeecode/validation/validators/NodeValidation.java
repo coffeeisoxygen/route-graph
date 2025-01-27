@@ -1,7 +1,7 @@
-package com.coffeecode.domain.entity.validation;
+package com.coffeecode.validation.validators;
 
-import com.coffeecode.domain.entity.NodeType;
-import com.coffeecode.domain.objects.Coordinate;
+import com.coffeecode.domain.entities.NodeType;
+import com.coffeecode.domain.values.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;

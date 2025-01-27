@@ -1,6 +1,6 @@
-package com.coffeecode.logic.flow;
+package com.coffeecode.service.flow;
 
-import com.coffeecode.domain.entity.Pipe;
+import com.coffeecode.domain.entities.Pipe;
 
 /**
  * Service interface for flow calculations in the network.

@@ -1,9 +1,9 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entities;
 
 import java.util.UUID;
 
-import com.coffeecode.domain.entity.validation.NodeValidation;
-import com.coffeecode.domain.objects.Coordinate;
+import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.validation.validators.NodeValidation;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

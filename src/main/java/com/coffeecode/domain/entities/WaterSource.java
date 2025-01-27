@@ -1,7 +1,7 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entities;
 
-import com.coffeecode.domain.entity.validation.WaterSourceValidation;
-import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.values.Volume;
+import com.coffeecode.validation.validators.WaterSourceValidation;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

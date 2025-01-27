@@ -8,6 +8,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.constants.SimulationDefaults;
+import com.coffeecode.domain.values.Distance;
+import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.Volume;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("PipeProperties Tests")

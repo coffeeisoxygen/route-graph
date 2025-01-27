@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.service.flow.FlowResult;
+
 @DisplayName("FlowResult Tests")
 class FlowResultTest {
 

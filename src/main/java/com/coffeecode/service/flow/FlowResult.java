@@ -1,4 +1,4 @@
-package com.coffeecode.logic.flow;
+package com.coffeecode.service.flow;
 
 import lombok.Builder;
 import lombok.Value;

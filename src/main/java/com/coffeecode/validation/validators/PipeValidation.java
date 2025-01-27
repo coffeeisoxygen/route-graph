@@ -1,7 +1,7 @@
-package com.coffeecode.domain.entity.validation;
+package com.coffeecode.validation.validators;
 
-import com.coffeecode.domain.entity.NetworkNode;
-import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.domain.entities.NetworkNode;
+import com.coffeecode.domain.values.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;

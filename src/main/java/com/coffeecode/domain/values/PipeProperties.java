@@ -1,4 +1,4 @@
-package com.coffeecode.domain.objects;
+package com.coffeecode.domain.values;
 
 import com.coffeecode.domain.constants.SimulationDefaults;
 import com.coffeecode.validation.exceptions.ValidationException;

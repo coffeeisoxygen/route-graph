@@ -1,6 +1,6 @@
-package com.coffeecode.domain.entity.validation;
+package com.coffeecode.validation.validators;
 
-import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.values.Volume;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,11 +1,11 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entities;
 
 import java.util.UUID;
 
-import com.coffeecode.domain.entity.validation.PipeValidation;
-import com.coffeecode.domain.objects.Distance;
-import com.coffeecode.domain.objects.PipeProperties;
-import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.values.Distance;
+import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.Volume;
+import com.coffeecode.validation.validators.PipeValidation;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

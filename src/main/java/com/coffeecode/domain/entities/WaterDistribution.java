@@ -1,4 +1,4 @@
-package com.coffeecode.domain.entity;
+package com.coffeecode.domain.entities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.coffeecode.domain.entity.validation.WaterDistributionValidation;
-import com.coffeecode.domain.objects.PipeProperties;
+import com.coffeecode.domain.values.PipeProperties;
 import com.coffeecode.validation.exceptions.ValidationException;
+import com.coffeecode.validation.validators.WaterDistributionValidation;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

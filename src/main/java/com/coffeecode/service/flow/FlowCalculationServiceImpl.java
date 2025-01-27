@@ -1,15 +1,15 @@
-package com.coffeecode.logic.flow;
+package com.coffeecode.service.flow;
 
 import org.springframework.stereotype.Service;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
-import com.coffeecode.domain.entity.Pipe;
-import com.coffeecode.logic.flow.calculation.HeadLossCalculator;
-import com.coffeecode.logic.flow.calculation.PressureCalculator;
-import com.coffeecode.logic.flow.calculation.VelocityCalculator;
-import com.coffeecode.logic.flow.validation.FlowValidator;
+import com.coffeecode.domain.entities.Pipe;
+import com.coffeecode.service.flow.calculation.HeadLossCalculator;
+import com.coffeecode.service.flow.calculation.PressureCalculator;
+import com.coffeecode.service.flow.calculation.VelocityCalculator;
 import com.coffeecode.validation.exceptions.ValidationException;
+import com.coffeecode.validation.validators.FlowValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

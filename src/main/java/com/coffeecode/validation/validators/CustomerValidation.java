@@ -1,6 +1,6 @@
-package com.coffeecode.domain.entity.validation;
+package com.coffeecode.validation.validators;
 
-import com.coffeecode.domain.objects.WaterDemand;
+import com.coffeecode.domain.values.WaterDemand;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 import lombok.extern.slf4j.Slf4j;

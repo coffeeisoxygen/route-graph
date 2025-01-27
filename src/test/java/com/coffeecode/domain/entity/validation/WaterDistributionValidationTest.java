@@ -5,13 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.entity.NetworkNode;
-import com.coffeecode.domain.entity.WaterSource;
-import com.coffeecode.domain.objects.Coordinate;
-import com.coffeecode.domain.objects.Distance;
-import com.coffeecode.domain.objects.PipeProperties;
-import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.entities.NetworkNode;
+import com.coffeecode.domain.entities.WaterSource;
+import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.domain.values.Distance;
+import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.Volume;
 import com.coffeecode.validation.exceptions.ValidationException;
+import com.coffeecode.validation.validators.WaterDistributionValidation;
 
 @DisplayName("Water Distribution Validation Tests")
 class WaterDistributionValidationTest {

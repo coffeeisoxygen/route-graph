@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.objects.Coordinate;
+import com.coffeecode.domain.entities.NetworkNode;
+import com.coffeecode.domain.entities.NodeType;
+import com.coffeecode.domain.values.Coordinate;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("NetworkNode Tests")

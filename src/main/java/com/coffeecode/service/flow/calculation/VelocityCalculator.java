@@ -1,4 +1,4 @@
-package com.coffeecode.logic.flow.calculation;
+package com.coffeecode.service.flow.calculation;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
 

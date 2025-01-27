@@ -11,18 +11,20 @@ import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
 import com.coffeecode.domain.constants.SimulationDefaults;
-import com.coffeecode.domain.entity.Customer;
-import com.coffeecode.domain.entity.NetworkNode;
-import com.coffeecode.domain.entity.Pipe;
-import com.coffeecode.domain.entity.WaterSource;
-import com.coffeecode.domain.objects.Coordinate;
-import com.coffeecode.domain.objects.Distance;
-import com.coffeecode.domain.objects.PipeProperties;
-import com.coffeecode.domain.objects.Volume;
-import com.coffeecode.domain.objects.WaterDemand;
-import com.coffeecode.logic.flow.calculation.HeadLossCalculator;
-import com.coffeecode.logic.flow.calculation.PressureCalculator;
-import com.coffeecode.logic.flow.calculation.VelocityCalculator;
+import com.coffeecode.domain.entities.Customer;
+import com.coffeecode.domain.entities.NetworkNode;
+import com.coffeecode.domain.entities.Pipe;
+import com.coffeecode.domain.entities.WaterSource;
+import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.domain.values.Distance;
+import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.Volume;
+import com.coffeecode.domain.values.WaterDemand;
+import com.coffeecode.service.flow.FlowCalculationServiceImpl;
+import com.coffeecode.service.flow.FlowResult;
+import com.coffeecode.service.flow.calculation.HeadLossCalculator;
+import com.coffeecode.service.flow.calculation.PressureCalculator;
+import com.coffeecode.service.flow.calculation.VelocityCalculator;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("Flow Calculation Service Tests")

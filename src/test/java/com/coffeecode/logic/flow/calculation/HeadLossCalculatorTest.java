@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
 import com.coffeecode.domain.constants.PhysicalConstants;
+import com.coffeecode.service.flow.calculation.HeadLossCalculator;
 
 /**
  * Unit tests for {@link HeadLossCalculator}.

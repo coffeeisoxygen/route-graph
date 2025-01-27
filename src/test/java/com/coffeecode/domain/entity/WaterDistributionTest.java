@@ -11,11 +11,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.objects.Coordinate;
-import com.coffeecode.domain.objects.Distance;
-import com.coffeecode.domain.objects.PipeProperties;
-import com.coffeecode.domain.objects.Volume;
+import com.coffeecode.domain.entities.Customer;
+import com.coffeecode.domain.entities.Pipe;
+import com.coffeecode.domain.entities.WaterDistribution;
+import com.coffeecode.domain.entities.WaterSource;
 import com.coffeecode.domain.objects.WaterDemand;
+import com.coffeecode.domain.values.Coordinate;
+import com.coffeecode.domain.values.Distance;
+import com.coffeecode.domain.values.PipeProperties;
+import com.coffeecode.domain.values.Volume;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("WaterDistribution Tests")

@@ -1,7 +1,8 @@
 package com.coffeecode.domain.constants;
 
 /**
- * Elevation constraints for the simulation.
+ * Elevation constraints when user is creating a new location and dont provide
+ * an elevation value.
  */
 public enum ElevationRange {
     MIN(-100.0),

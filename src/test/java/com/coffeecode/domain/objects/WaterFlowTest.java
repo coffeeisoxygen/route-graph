@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.values.WaterFlow;
 import com.coffeecode.validation.exceptions.ValidationException;
 
 @DisplayName("WaterFlow Tests")
