@@ -1,4 +1,4 @@
-package com.coffeecode.location.elevations.dto;
+package com.coffeecode.location.elevations.model;
 
 import java.util.List;
 

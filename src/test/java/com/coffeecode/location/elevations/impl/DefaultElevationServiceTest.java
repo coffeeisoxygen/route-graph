@@ -1,7 +1,7 @@
 package com.coffeecode.location.elevations.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -11,21 +11,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.coffeecode.location.elevations.api.ElevationApiClient;
 import com.coffeecode.location.elevations.exception.ElevationException;
 import com.coffeecode.location.elevations.model.Elevation;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("Default Elevation Service Tests")
+@DisplayName("DefaultElevationService Tests")
 class DefaultElevationServiceTest {
 
     @Mock
-    private ApiClient apiClient;
-
+    private ElevationApiClient apiClient;
+    private ObjectMapper mapper;
     private DefaultElevationService service;
 
     @BeforeEach
     void setUp() {
-        service = new DefaultElevationService(apiClient);
+        mapper = new ObjectMapper();
+        service = new DefaultElevationService(apiClient, mapper);
     }
 
     @Test
@@ -33,26 +36,37 @@ class DefaultElevationServiceTest {
     void shouldGetElevationFromApi() throws Exception {
         // Given
         String response = """
-                {"results":[{"elevation":100.0}]}
-                """;
-        when(ApiClient.sendGetRequest(any())).thenReturn(response);
+                {
+                    "results": [{
+                        "dataset": "aster30m",
+                        "elevation": 325.0,
+                        "location": {
+                            "lat": -6.7991455,
+                            "lng": 107.1884536
+                        }
+                    }],
+                    "status": "OK"
+                }""";
+        when(apiClient.getElevationData(anyDouble(), anyDouble()))
+                .thenReturn(response);
 
         // When
-        var elevation = service.getElevation(-6.2088, 106.8456);
+        var elevation = service.getElevation(-6.7991455, 107.1884536);
 
         // Then
-        assertEquals(100.0, elevation.getMeters());
+        assertEquals(325.0, elevation.getMeters());
         assertEquals(Elevation.Type.API, elevation.getType());
     }
 
     @Test
-    @DisplayName("Should fallback to default on API failure")
-    void shouldFallbackToDefault() throws Exception {
+    @DisplayName("Should return default on API failure")
+    void shouldReturnDefaultOnFailure() throws Exception {
         // Given
-        when(ApiClient.sendGetRequest(any())).thenThrow(new ElevationException("API Error"));
+        when(apiClient.getElevationData(anyDouble(), anyDouble()))
+                .thenThrow(new ElevationException("API Error"));
 
         // When
-        var elevation = service.getElevation(-6.2088, 106.8456);
+        var elevation = service.getElevation(-6.7991455, 107.1884536);
 
         // Then
         assertEquals(0.0, elevation.getMeters());

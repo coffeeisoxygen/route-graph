@@ -1,38 +1,30 @@
 package com.coffeecode.location.elevations.impl;
 
 import com.coffeecode.exception.AppException;
+import com.coffeecode.location.elevations.api.ElevationApiClient;
 import com.coffeecode.location.elevations.api.ElevationService;
-import com.coffeecode.location.elevations.dto.ElevationResponse;
-import com.coffeecode.location.elevations.exception.ElevationException;
 import com.coffeecode.location.elevations.model.Elevation;
+import com.coffeecode.location.elevations.model.ElevationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultElevationService implements ElevationService {
-    private static final String API_URL = "https://api.opentopodata.org/v1/aster30m";
-    private final ApiClient apiClient;
-    private final ObjectMapper mapper = new ObjectMapper();
-
-    public DefaultElevationService(ApiClient apiClient) {
-        this.apiClient = apiClient;
-    }
+    private final ElevationApiClient apiClient;
+    private final ObjectMapper mapper;
 
     @Override
     public Elevation getElevation(double latitude, double longitude) {
         try {
-            String url = buildApiUrl(latitude, longitude);
-            String response = ApiClient.sendGetRequest(url);
+            String response = apiClient.getElevationData(latitude, longitude);
             double meters = parseElevation(response);
-
-            log.info("Got elevation from API: {}m for lat={}, lon={}",
-                    meters, latitude, longitude);
             return Elevation.fromApi(meters);
-
-        } catch (ElevationException e) {
-            log.warn("Failed to get elevation from API, using default", e);
+        } catch (Exception e) {
+            log.warn("Failed to get elevation, using default", e);
             return Elevation.defaultValue();
         }
     }
@@ -40,11 +32,6 @@ public class DefaultElevationService implements ElevationService {
     @Override
     public Elevation updateElevation(double meters) {
         return Elevation.manual(meters);
-    }
-
-    private String buildApiUrl(double latitude, double longitude) {
-        return String.format("%s?locations=%f,%f&interpolation=cubic",
-                API_URL, latitude, longitude);
     }
 
     private double parseElevation(String response) throws AppException {
