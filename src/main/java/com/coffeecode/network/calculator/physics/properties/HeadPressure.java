@@ -1,4 +1,4 @@
-package com.coffeecode.network.distribution.pressure;
+package com.coffeecode.network.calculator.physics.properties;
 
 import lombok.Value;
 

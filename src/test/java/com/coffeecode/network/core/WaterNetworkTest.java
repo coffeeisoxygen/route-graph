@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
 import com.coffeecode.location.elevations.model.Elevation;
-import com.coffeecode.network.distribution.capacity.Capacity;
-import com.coffeecode.network.distribution.flow.FlowRate;
-import com.coffeecode.network.distribution.pressure.HeadPressure;
+import com.coffeecode.network.calculator.physics.properties.Capacity;
+import com.coffeecode.network.calculator.physics.properties.FlowRate;
+import com.coffeecode.network.calculator.physics.properties.HeadPressure;
 import com.coffeecode.network.edges.Pipe;
 import com.coffeecode.network.edges.PipeMaterial;
 import com.coffeecode.network.nodes.WaterDemand;

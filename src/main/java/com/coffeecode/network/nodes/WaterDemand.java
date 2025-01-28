@@ -2,8 +2,8 @@ package com.coffeecode.network.nodes;
 
 import com.coffeecode.location.coordinates.api.Coordinates;
 import com.coffeecode.location.elevations.model.Elevation;
-import com.coffeecode.network.distribution.flow.FlowRate;
-import com.coffeecode.network.distribution.pressure.HeadPressure;
+import com.coffeecode.network.calculator.physics.properties.FlowRate;
+import com.coffeecode.network.calculator.physics.properties.HeadPressure;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
