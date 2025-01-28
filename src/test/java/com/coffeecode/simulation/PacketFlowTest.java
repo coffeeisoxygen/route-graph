@@ -9,17 +9,18 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.algorithms.RoutingStrategy;
 import com.coffeecode.core.RouterNode;
 import com.coffeecode.core.ServerNode;
-import com.coffeecode.metrics.NetworkMonitor;
+import com.coffeecode.metrics.NetworkMetrics;
 
+@ExtendWith(MockitoExtension.class)
 class PacketFlowTest {
-        @Mock
         private RoutingStrategy routingStrategy;
-        private NetworkMonitor networkMonitor; // Changed from NetworkMetrics
+        private NetworkMetrics networkMetrics; // Use interface instead of concrete class
         private PacketFlow packetFlow;
         private RouterNode source;
         private ServerNode destination;
@@ -27,8 +28,8 @@ class PacketFlowTest {
         @BeforeEach
         void setUp() {
                 routingStrategy = mock(RoutingStrategy.class);
-                networkMonitor = mock(NetworkMonitor.class); // Changed from NetworkMetrics
-                packetFlow = new PacketFlow(routingStrategy, networkMonitor);
+                networkMetrics = mock(NetworkMetrics.class);
+                packetFlow = new PacketFlow(routingStrategy, networkMetrics);
                 source = new RouterNode("R1", 10);
                 destination = new ServerNode("S1", 100, 1000);
         }
