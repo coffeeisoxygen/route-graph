@@ -22,7 +22,7 @@ public class DefaultApiClient implements ElevationApiClient {
             return httpClient.sendGetRequest(url);
         } catch (ElevationsHttpClientException e) {
             log.error("Failed to get elevation data for lat={}, lon={}", latitude, longitude, e);
-            throw new ElevationException("Failed to get elevation data", e);
+            throw new ElevationException(e.getMessage(), e);
         }
     }
 

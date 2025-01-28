@@ -72,4 +72,14 @@ class DefaultElevationServiceTest {
         assertEquals(0.0, elevation.getMeters());
         assertEquals(Elevation.Type.DEFAULT, elevation.getType());
     }
+
+    @Test
+    @DisplayName("Should handle JSON parsing error")
+    void shouldHandleParsingError() throws Exception {
+        when(apiClient.getElevationData(anyDouble(), anyDouble()))
+            .thenReturn("invalid json");
+
+        var elevation = service.getElevation(-6.7991455, 107.1884536);
+        assertEquals(Elevation.Type.DEFAULT, elevation.getType());
+    }
 }

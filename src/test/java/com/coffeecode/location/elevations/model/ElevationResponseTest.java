@@ -110,4 +110,20 @@ class ElevationResponseTest {
         // Then
         assertEquals("ERROR", response.getStatus());
     }
+
+    @Test
+    @DisplayName("Should handle null location in results")
+    void shouldHandleNullLocation() throws Exception {
+        String json = """
+                {
+                    "results": [{
+                        "dataset": "aster30m",
+                        "elevation": 325.0,
+                        "location": null
+                    }],
+                    "status": "OK"
+                }""";
+        ElevationResponse response = mapper.readValue(json, ElevationResponse.class);
+        assertNull(response.getResults().get(0).getLocation());
+    }
 }

@@ -42,4 +42,20 @@ class ElevationTest {
                 () -> Elevation.manual(meters));
         assertEquals("Elevation must be between -500.0 and 9000.0 meters", exception.getMessage());
     }
+
+    @Test
+    @DisplayName("Should create manual elevation within bounds")
+    void shouldCreateManualElevation() {
+        double validElevation = 100.0;
+        Elevation elevation = Elevation.manual(validElevation);
+        assertEquals(validElevation, elevation.getMeters());
+        assertEquals(Elevation.Type.MANUAL, elevation.getType());
+    }
+
+    @Test
+    @DisplayName("Should handle zero elevation")
+    void shouldHandleZeroElevation() {
+        Elevation elevation = Elevation.manual(0.0);
+        assertEquals(0.0, elevation.getMeters());
+    }
 }

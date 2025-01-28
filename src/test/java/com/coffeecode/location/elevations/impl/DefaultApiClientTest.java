@@ -67,6 +67,20 @@ class DefaultApiClientTest {
                 .thenThrow(new ElevationsHttpClientException("Network error"));
 
         // When/Then
-        assertThrows(ElevationException.class, () -> apiClient.getElevationData(-6.7991455, 107.1884536));
+        ElevationException exception = assertThrows(ElevationException.class,
+                () -> apiClient.getElevationData(-6.7991455, 107.1884536));
+        assertEquals("Network error", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should handle extreme coordinate values")
+    void shouldHandleExtremeCoordinates() throws Exception {
+        double extremeLat = 90.0;
+        double extremeLon = 180.0;
+
+        when(httpClient.sendGetRequest(anyString())).thenReturn("{}");
+        apiClient.getElevationData(extremeLat, extremeLon);
+        verify(httpClient).sendGetRequest(contains("90.0"));
+        verify(httpClient).sendGetRequest(contains("180.0"));
     }
 }
