@@ -1,14 +1,11 @@
 package com.coffeecode.model;
 
-import com.coffeecode.model.coordinates.CartesianCoordinates;
-import com.coffeecode.model.coordinates.GeographicCoordinates;
+import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
+import com.coffeecode.location.coordinates.impl.GeographicCoordinates;
 
 public class NodeFactory {
     public static Node createCartesianNode(double x, double y, double elevation,
             double velocity, double pressure) {
-        if (velocity < 0) {
-            throw new IllegalArgumentException("Invalid velocity");
-        }
         return Node.builder()
                 .coordinates(new CartesianCoordinates(x, y))
                 .elevation(elevation)

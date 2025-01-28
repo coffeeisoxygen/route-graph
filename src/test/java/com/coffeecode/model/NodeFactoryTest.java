@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.model.coordinates.CartesianCoordinates;
-import com.coffeecode.model.coordinates.GeographicCoordinates;
+import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
+import com.coffeecode.location.coordinates.impl.GeographicCoordinates;
 
 @DisplayName("Node Factory Tests")
 class NodeFactoryTest {

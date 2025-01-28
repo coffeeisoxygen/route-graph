@@ -3,6 +3,7 @@
 ## 1. Core Implementation ✅
 
 ### Domain Layer
+
 - [x] Create base value objects
 - [x] Implement domain entities
 - [x] Add validation system
@@ -10,6 +11,7 @@
 - [x] Configure Lombok integration
 
 ### Flow Calculation ⚠️
+
 - [x] Define Flow Calculation interfaces
 - [x] Implement pipe flow calculations
   - [x] Pressure drop calculations
@@ -21,6 +23,7 @@
 - [x] Implement result models
 
 ### Test Coverage Improvements 🔍
+
 - [ ] Increase coverage for App.java (0%)
 - [ ] Complete FlowValidator tests (77%)
 - [ ] Add ElevationRange tests (0%)
@@ -28,6 +31,7 @@
 - [ ] Finish ValidationException tests (50%)
 
 ### Network Analysis 🚧
+
 - [ ] Path finding algorithm implementation
   - [ ] Shortest path calculation
   - [ ] Flow capacity consideration
@@ -37,6 +41,7 @@
 - [ ] Bottleneck detection system
 
 ### Documentation 📚
+
 - [ ] Add comprehensive JavaDoc
 - [ ] Document calculation formulas
 - [ ] Create package-level documentation
@@ -45,34 +50,40 @@
 ## 2. Next Phase Implementation
 
 ### Time-based Simulation
+
 - [ ] Simulation step implementation
 - [ ] Demand change handling
 - [ ] Flow state tracking
 - [ ] Event system for state changes
 
 ### State Management
+
 - [ ] Network state tracker
 - [ ] Historical data recorder
 - [ ] Performance metrics system
 
 ### Persistence Layer
+
 - [ ] Configuration storage implementation
 - [ ] Results storage system
 - [ ] Data import/export functionality
 
 ## 3. Visualization & UI 🖥️
+
 - [ ] Basic visualization components
 - [ ] Network topology display
 - [ ] Flow animation system
 - [ ] Interactive controls
 
 ## Immediate Priority Tasks
+
 1. Complete test coverage gaps
 2. Finish documentation
 3. Implement basic simulation engine
 4. Add visualization support
 
 ## Long-term Goals
+
 1. Advanced simulation features
 2. Performance optimization
 3. Monitoring dashboard
@@ -95,3 +106,21 @@
 - [x] Value Object Tests
 - [x] Basic value objects (Distance, Volume, etc)
 - [x] Core entities (Customer, Pipe, WaterSource)
+Alur yang Terjadi:
+Input dari user:
+User input lat, long, elevasi, dll (bentuk Geographic).
+
+Konversi ke Cartesian:
+Sebelum masuk ke kalkulasi (hitung jarak, tekanan, dll), lat-long diubah ke Cartesian.
+
+Kalkulasi menggunakan Cartesian:
+Misalnya, perhitungan head loss, jarak antar node, semua pakai CartesianCoordinates.
+
+Output ke user:
+Kalau user butuh informasi posisi, cukup tampilkan kembali dalam GeographicCoordinates.
+
+Kelebihan:
+Flexibel: Input/output tetap berbasis lat-long (spatial).
+Presisi Kalkulasi: Semua kalkulasi dilakukan dalam Cartesian yang lebih sederhana secara matematis.
+Easier to Scale: Nanti kalau ada tambahan fitur (misalnya interpolasi), pipeline ini tetap rapi dan nggak kacau.
+Pendekatan ini clean dan pas buat kebutuhan simulasi spasial kayak gini. 🚀

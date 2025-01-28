@@ -1,7 +1,7 @@
 package com.coffeecode.model;
 
-import com.coffeecode.model.coordinates.Coordinates;
-import com.coffeecode.model.coordinates.DistanceUnit;
+import com.coffeecode.location.coordinates.api.Coordinates;
+import com.coffeecode.location.coordinates.api.DistanceUnit;
 
 import lombok.Builder;
 import lombok.Value;

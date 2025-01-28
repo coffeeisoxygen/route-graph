@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import com.coffeecode.location.coordinates.api.Coordinates;
+import com.coffeecode.location.coordinates.impl.GeographicCoordinates;
+
 @DisplayName("Geographic Coordinates Tests")
 class GeographicCoordinatesTest {
 

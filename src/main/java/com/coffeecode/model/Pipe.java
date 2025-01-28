@@ -1,5 +1,7 @@
 package com.coffeecode.model;
 
+import com.coffeecode.calculation.validation.PipeValidator;
+
 import lombok.Value;
 
 /**
@@ -8,8 +10,7 @@ import lombok.Value;
  */
 @Value
 public class Pipe {
-    private static final double MIN_DIAMETER = 0.05; // meters
-    private static final double MAX_DIAMETER = 2.0; // meters
+    private static final PipeValidator validator = new PipeValidator();
 
     Node start;
     Node end;
@@ -18,50 +19,13 @@ public class Pipe {
     PipeMaterial material;
 
     private Pipe(PipeBuilder builder) {
-        validateBuilder(builder);
+        validator.validateBuilder(builder.start, builder.end,
+                builder.diameter, builder.material);
         this.start = builder.start;
         this.end = builder.end;
         this.diameter = builder.diameter;
         this.material = builder.material;
         this.length = builder.length > 0 ? builder.length : calculateLength(builder.start, builder.end);
-    }
-
-    private static void validateBuilder(PipeBuilder builder) {
-        if (builder == null) {
-            throw new IllegalArgumentException("Builder cannot be null");
-        }
-        validateNodes(builder.start, builder.end);
-        validateDimensions(builder.diameter);
-        validateMaterial(builder.material);
-    }
-
-    private static void validateNodes(Node start, Node end) {
-        if (start == null) {
-            throw new IllegalArgumentException("Start node cannot be null");
-        }
-        if (end == null) {
-            throw new IllegalArgumentException("End node cannot be null");
-        }
-        if (start.equals(end)) {
-            throw new IllegalArgumentException("Start and end nodes cannot be the same");
-        }
-    }
-
-    private static void validateDimensions(double diameter) {
-        if (diameter <= 0) {
-            throw new IllegalArgumentException("Diameter must be positive");
-        }
-        if (diameter < MIN_DIAMETER || diameter > MAX_DIAMETER) {
-            throw new IllegalArgumentException(
-                    String.format("Diameter must be between %.2f and %.2f meters",
-                            MIN_DIAMETER, MAX_DIAMETER));
-        }
-    }
-
-    private static void validateMaterial(PipeMaterial material) {
-        if (material == null) {
-            throw new IllegalArgumentException("Material cannot be null");
-        }
     }
 
     private static double calculateLength(Node start, Node end) {

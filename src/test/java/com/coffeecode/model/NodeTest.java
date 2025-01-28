@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.model.coordinates.CartesianCoordinates;
-import com.coffeecode.model.coordinates.DistanceUnit;
+import com.coffeecode.location.coordinates.api.DistanceUnit;
+import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
 
 class NodeTest {
 
