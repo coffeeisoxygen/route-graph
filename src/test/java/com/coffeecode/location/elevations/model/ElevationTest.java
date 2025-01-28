@@ -40,6 +40,6 @@ class ElevationTest {
         // Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> Elevation.manual(meters));
-        assertEquals("Invalid elevation value", exception.getMessage());
+        assertEquals("Elevation must be between -500.0 and 9000.0 meters", exception.getMessage());
     }
 }
