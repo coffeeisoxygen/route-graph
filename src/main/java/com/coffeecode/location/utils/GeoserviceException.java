@@ -1,4 +1,4 @@
-package com.coffeecode.location.utils.exception;
+package com.coffeecode.location.utils;
 
 public class GeoserviceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
