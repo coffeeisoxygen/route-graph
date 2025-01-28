@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 public class PacketFlow {
     private final RoutingStrategy routingStrategy;
     private final NetworkMonitor monitor;
-    private final ConcurrentLinkedQueue<Packet> packetQueue;
-    private final AtomicLong processedPackets;
-    private final AtomicLong failedPackets;
+    private final ConcurrentLinkedQueue<Packet> packetQueue = new ConcurrentLinkedQueue<>();
+    private final AtomicLong processedPackets = new AtomicLong(0);
+    private final AtomicLong failedPackets = new AtomicLong(0);
 
     private static final long TIMEOUT_MS = 5000;
 
@@ -39,8 +39,11 @@ public class PacketFlow {
     }
 
     private boolean canTransmitPacket(Packet packet, List<Node> route) {
-        return routingStrategy.isValidPath(route) &&
-                hasAvailableBandwidth(packet, route);
+        if (!routingStrategy.isValidPath(route)) {
+            return false;
+        }
+        double requiredBandwidth = calculateRequiredBandwidth(packet);
+        return hasAvailableBandwidth(packet, route, requiredBandwidth);
     }
 
     public void processPackets() {
@@ -62,19 +65,46 @@ public class PacketFlow {
         if (packet.getDestination().isActive()) {
             packet.setStatus(Packet.PacketStatus.DELIVERED);
             processedPackets.incrementAndGet();
-            monitor.recordSuccessfulDelivery(packet);
+            double latency = calculateLatency(packet);
+            double bandwidth = calculateBandwidth(packet);
+            monitor.recordSuccessfulDelivery(latency, bandwidth);
         } else {
             handleFailedPacket(packet);
         }
     }
 
+    private boolean isPacketTimedOut(Packet packet) {
+        return System.currentTimeMillis() - packet.getCreationTime() > TIMEOUT_MS;
+    }
+
+    private double calculateLatency(Packet packet) {
+        return System.currentTimeMillis() - packet.getCreationTime();
+    }
+
+    private double calculateBandwidth(Packet packet) {
+        return packet.getSize() / calculateLatency(packet);
+    }
+
+    private boolean hasAvailableBandwidth(Packet packet, List<Node> route, double requiredBandwidth) {
+        return route.stream().allMatch(node -> node.getEdges().stream()
+                .anyMatch(edge -> edge.getBandwidth() >= requiredBandwidth));
+    }
+
     private void handleFailedPacket(Packet packet) {
         packet.setStatus(Packet.PacketStatus.FAILED);
         failedPackets.incrementAndGet();
-        monitor.recordFailedDelivery(packet);
+        monitor.recordFailedDelivery();
     }
 
-    private boolean isPacketTimedOut(Packet packet) {
-        return System.currentTimeMillis() - packet.getCreationTime() > TIMEOUT_MS;
+    private double calculateRequiredBandwidth(Packet packet) {
+        return packet.getSize() / 1000.0; // Convert to KB/s
+    }
+
+    public long getProcessedPacketsCount() {
+        return processedPackets.get();
+    }
+
+    public long getFailedPacketsCount() {
+        return failedPackets.get();
     }
 }

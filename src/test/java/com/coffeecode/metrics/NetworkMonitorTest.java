@@ -14,15 +14,23 @@ class NetworkMonitorTest {
     }
 
     @Test
-    void testMetricsCalculation() {
-        // Simulate network traffic
-        monitor.recordPacketDelivery(10, 100);
-        monitor.recordPacketDelivery(20, 150);
-        monitor.recordPacketLoss();
+    void testPacketTransmission() {
+        monitor.recordPacketTransmission(100.0);
+        assertEquals(100.0, monitor.getTransmittedData());
+    }
 
-        assertEquals(15, monitor.getAverageLatency());
-        assertEquals(125, monitor.getBandwidthUtilization());
-        assertEquals(0.333, monitor.getPacketLossRate(), 0.001);
-        assertEquals(2, monitor.getTotalPacketsProcessed());
+    @Test
+    void testSuccessfulDelivery() {
+        monitor.recordSuccessfulDelivery(10.0, 100.0);
+        assertEquals(10.0, monitor.getAverageLatency());
+        assertEquals(100.0, monitor.getBandwidthUtilization());
+        assertEquals(1, monitor.getTotalPacketsProcessed());
+    }
+
+    @Test
+    void testPacketLossRate() {
+        monitor.recordSuccessfulDelivery(10.0, 100.0);
+        monitor.recordFailedDelivery();
+        assertEquals(0.5, monitor.getPacketLossRate());
     }
 }
