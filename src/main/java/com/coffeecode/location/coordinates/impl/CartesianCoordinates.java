@@ -1,67 +1,75 @@
 package com.coffeecode.location.coordinates.impl;
 
 import com.coffeecode.location.coordinates.api.Coordinates;
-import com.coffeecode.location.coordinates.constants.MapBoundaryConstants;
 
 import lombok.Value;
 
 /**
  * Cartesian coordinate system implementation.
- * All distances are returned in kilometers for consistency with geographic
- * coordinates.
+ * All measurements in meters, distances returned in kilometers.
  */
 @Value
 public class CartesianCoordinates implements Coordinates {
-    /** X coordinate in meters */
+    /** Earth's radius in meters (WGS84) */
+    private static final double EARTH_RADIUS_METERS = 6371000.0;
+    /** Maximum allowed coordinate value (Earth's diameter) */
+    private static final double MAX_COORDINATE = EARTH_RADIUS_METERS * 2;
+    /** Minimum allowed coordinate value */
+    private static final double MIN_COORDINATE = -MAX_COORDINATE;
+    /** Conversion factor from meters to kilometers */
+    private static final double METERS_TO_KM = 0.001;
+
+    /** X coordinate in meters from origin */
     double x;
-    /** Y coordinate in meters */
+    /** Y coordinate in meters from origin */
     double y;
 
-    public CartesianCoordinates(double x, double y) {
-        validateX(x);
-        validateY(y);
+    private CartesianCoordinates(double x, double y) {
+        validateCoordinate(x, "X");
+        validateCoordinate(y, "Y");
         this.x = x;
         this.y = y;
     }
 
-    private void validateX(double x) {
-        if (Double.isInfinite(x) || Double.isNaN(x)) {
-            throw new IllegalArgumentException("X coordinate must be a finite number");
-        }
-        if (x < MapBoundaryConstants.MIN_LONGITUDE || x > MapBoundaryConstants.MAX_LONGITUDE) {
-            throw new IllegalArgumentException(
-                    String.format("X coordinate must be between %.1f and %.1f",
-                            MapBoundaryConstants.MIN_LONGITUDE,
-                            MapBoundaryConstants.MAX_LONGITUDE));
-        }
+    public static CartesianCoordinates of(double x, double y) {
+        return new CartesianCoordinates(x, y);
     }
 
-    private void validateY(double y) {
-        if (Double.isInfinite(y) || Double.isNaN(y)) {
-            throw new IllegalArgumentException("Y coordinate must be a finite number");
-        }
-        if (y < MapBoundaryConstants.MIN_LATITUDE || y > MapBoundaryConstants.MAX_LATITUDE) {
+    private void validateCoordinate(double value, String axis) {
+        if (!Double.isFinite(value)) {
             throw new IllegalArgumentException(
-                    String.format("Y coordinate must be between %.1f and %.1f",
-                            MapBoundaryConstants.MIN_LATITUDE,
-                            MapBoundaryConstants.MAX_LATITUDE));
+                    String.format("%s coordinate must be finite", axis));
+        }
+        if (value < MIN_COORDINATE || value > MAX_COORDINATE) {
+            throw new IllegalArgumentException(
+                    String.format("%s coordinate must be between ±%.1f meters (Earth's diameter)",
+                            axis, MAX_COORDINATE));
         }
     }
 
     @Override
     public double getDistanceTo(Coordinates other) {
-        if (!(other instanceof CartesianCoordinates)) {
-            throw new IllegalArgumentException(
-                    String.format("Cannot calculate distance between %s and %s",
-                            this.getClass().getSimpleName(),
-                            other != null ? other.getClass().getSimpleName() : "null"));
-        }
-        return calculateEuclideanDistance(this, (CartesianCoordinates) other);
+        CartesianCoordinates cart = other.asCartesian();
+        double dx = this.x - cart.x;
+        double dy = this.y - cart.y;
+        return Math.sqrt(dx * dx + dy * dy) * METERS_TO_KM;
     }
 
-    private static double calculateEuclideanDistance(CartesianCoordinates point1, CartesianCoordinates point2) {
-        double dx = point2.getX() - point1.getX();
-        double dy = point2.getY() - point1.getY();
-        return Math.sqrt(dx * dx + dy * dy) / 1000.0; // Convert meters to kilometers
+    @Override
+    public CartesianCoordinates asCartesian() {
+        return this;
+    }
+
+    @Override
+    public GeographicCoordinates asGeographic() {
+        double radius = Math.sqrt(x * x + y * y);
+        if (radius == 0) {
+            return new GeographicCoordinates(0.0, 0.0);
+        }
+
+        double lat = Math.toDegrees(Math.asin(y / radius));
+        double lon = Math.toDegrees(Math.atan2(y, x));
+
+        return new GeographicCoordinates(lat, lon);
     }
 }

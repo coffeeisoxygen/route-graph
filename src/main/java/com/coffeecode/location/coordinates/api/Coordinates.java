@@ -1,5 +1,8 @@
 package com.coffeecode.location.coordinates.api;
 
+import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
+import com.coffeecode.location.coordinates.impl.GeographicCoordinates;
+
 /**
  * Represents a coordinate system in a hydraulic network.
  * All distances are returned in kilometers by default.
@@ -22,5 +25,20 @@ public interface Coordinates {
      */
     default double getDistanceTo(Coordinates other, DistanceUnit unit) {
         return unit.fromMeters(getDistanceTo(other));
+
     }
+
+    /**
+     * Convert to cartesian coordinates for calculations
+     * 
+     * @return CartesianCoordinates representation
+     */
+    CartesianCoordinates asCartesian();
+
+    /**
+     * Convert to geographic coordinates for display/storage
+     * 
+     * @return GeographicCoordinates representation
+     */
+    GeographicCoordinates asGeographic();
 }

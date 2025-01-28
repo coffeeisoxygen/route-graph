@@ -1,13 +1,19 @@
 package com.coffeecode.location.coordinates.impl;
 
 import com.coffeecode.location.coordinates.api.Coordinates;
-import com.coffeecode.location.coordinates.constants.EarthConstants;
-import com.coffeecode.location.coordinates.constants.MapBoundaryConstants;
 
 import lombok.Value;
 
 @Value
 public class GeographicCoordinates implements Coordinates {
+    /** Boundary constants */
+    private static final double MIN_LATITUDE = -90.0;
+    private static final double MAX_LATITUDE = 90.0;
+    private static final double MIN_LONGITUDE = -180.0;
+    private static final double MAX_LONGITUDE = 180.0;
+    /** Earth radius in meters (WGS84) */
+    private static final double EARTH_RADIUS_METERS = 6371000.0;
+
     double latitude;
     double longitude;
 
@@ -19,50 +25,45 @@ public class GeographicCoordinates implements Coordinates {
     }
 
     private void validateLatitude(double latitude) {
-        if (latitude < MapBoundaryConstants.MIN_LATITUDE ||
-                latitude > MapBoundaryConstants.MAX_LATITUDE) {
+        if (!Double.isFinite(latitude)) {
+            throw new IllegalArgumentException("Latitude must be finite");
+        }
+        if (latitude < MIN_LATITUDE || latitude > MAX_LATITUDE) {
             throw new IllegalArgumentException(
                     String.format("Latitude must be between %.1f° and %.1f°",
-                            MapBoundaryConstants.MIN_LATITUDE,
-                            MapBoundaryConstants.MAX_LATITUDE));
+                            MIN_LATITUDE, MAX_LATITUDE));
         }
     }
 
     private void validateLongitude(double longitude) {
-        if (longitude < MapBoundaryConstants.MIN_LONGITUDE ||
-                longitude > MapBoundaryConstants.MAX_LONGITUDE) {
+        if (!Double.isFinite(longitude)) {
+            throw new IllegalArgumentException("Longitude must be finite");
+        }
+        if (longitude < MIN_LONGITUDE || longitude > MAX_LONGITUDE) {
             throw new IllegalArgumentException(
                     String.format("Longitude must be between %.1f° and %.1f°",
-                            MapBoundaryConstants.MIN_LONGITUDE,
-                            MapBoundaryConstants.MAX_LONGITUDE));
+                            MIN_LONGITUDE, MAX_LONGITUDE));
         }
     }
 
     @Override
-    public double getDistanceTo(Coordinates other) {
-        if (!(other instanceof GeographicCoordinates)) {
-            throw new IllegalArgumentException(
-                    String.format("Cannot calculate distance between %s and %s",
-                            this.getClass().getSimpleName(),
-                            other != null ? other.getClass().getSimpleName() : "null"));
-        }
-        return calculateHaversineDistance(this, (GeographicCoordinates) other);
+    public CartesianCoordinates asCartesian() {
+        double lat = Math.toRadians(latitude);
+        double lon = Math.toRadians(longitude);
+
+        double x = EARTH_RADIUS_METERS * Math.cos(lat) * Math.cos(lon);
+        double y = EARTH_RADIUS_METERS * Math.cos(lat) * Math.sin(lon);
+
+        return CartesianCoordinates.of(x, y);
     }
 
-    private static double calculateHaversineDistance(GeographicCoordinates point1, GeographicCoordinates point2) {
-        double lat1 = Math.toRadians(point1.getLatitude());
-        double lon1 = Math.toRadians(point1.getLongitude());
-        double lat2 = Math.toRadians(point2.getLatitude());
-        double lon2 = Math.toRadians(point2.getLongitude());
+    @Override
+    public GeographicCoordinates asGeographic() {
+        return this;
+    }
 
-        double dlat = lat2 - lat1;
-        double dlon = lon2 - lon1;
-
-        double a = Math.pow(Math.sin(dlat / 2), 2)
-                + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon / 2), 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return EarthConstants.EARTH_RADIUS_KM * c; // Return in kilometers
+    @Override
+    public double getDistanceTo(Coordinates other) {
+        return this.asCartesian().getDistanceTo(other);
     }
 }
