@@ -1,4 +1,4 @@
-package com.coffeecode.location.utils;
+package com.coffeecode.location.coordinates.utils;
 
 import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
 import com.coffeecode.location.coordinates.impl.GeographicCoordinates;
