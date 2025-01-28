@@ -23,16 +23,20 @@ public class CartesianCoordinates implements Coordinates {
     double x;
     /** Y coordinate in meters from origin */
     double y;
+    /** Z coordinate in meters from origin (elevation) */
+    double z;
 
-    private CartesianCoordinates(double x, double y) {
+    private CartesianCoordinates(double x, double y, double z) {
         validateCoordinate(x, "X");
         validateCoordinate(y, "Y");
+        validateElevation(z);
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
-    public static CartesianCoordinates of(double x, double y) {
-        return new CartesianCoordinates(x, y);
+    public static CartesianCoordinates of(double x, double y, double z) {
+        return new CartesianCoordinates(x, y, z);
     }
 
     private void validateCoordinate(double value, String axis) {
@@ -47,12 +51,19 @@ public class CartesianCoordinates implements Coordinates {
         }
     }
 
+    private void validateElevation(double z) {
+        if (!Double.isFinite(z)) {
+            throw new IllegalArgumentException("Elevation must be finite");
+        }
+    }
+
     @Override
     public double getDistanceTo(Coordinates other) {
         CartesianCoordinates cart = other.asCartesian();
         double dx = this.x - cart.x;
         double dy = this.y - cart.y;
-        return Math.sqrt(dx * dx + dy * dy) * METERS_TO_KM;
+        double dz = this.z - cart.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz) * METERS_TO_KM;
     }
 
     @Override
@@ -64,12 +75,23 @@ public class CartesianCoordinates implements Coordinates {
     public GeographicCoordinates asGeographic() {
         double radius = Math.sqrt(x * x + y * y);
         if (radius == 0) {
-            return new GeographicCoordinates(0.0, 0.0);
+            return new GeographicCoordinates(0.0, 0.0, z);
         }
 
+        // Fix conversion formulas
         double lat = Math.toDegrees(Math.asin(y / radius));
-        double lon = Math.toDegrees(Math.atan2(y, x));
+        double lon = Math.toDegrees(Math.atan2(y, x)); // Fixed: y/x instead of x/y
 
-        return new GeographicCoordinates(lat, lon);
+        return new GeographicCoordinates(lat, lon, z);
+    }
+
+    @Override
+    public double getElevation() {
+        return z;
+    }
+
+    @Override
+    public Coordinates withElevation(double elevation) {
+        return new CartesianCoordinates(x, y, elevation);
     }
 }

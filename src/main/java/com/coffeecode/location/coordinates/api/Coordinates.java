@@ -29,15 +29,30 @@ public interface Coordinates {
     }
 
     /**
-     * Convert to cartesian coordinates for calculations
+     * Gets elevation in meters above sea level
      * 
+     * @return elevation in meters
+     */
+    double getElevation();
+
+    /**
+     * Creates new coordinate with specified elevation
+     * 
+     * @param elevation in meters above sea level
+     * @return new coordinate instance
+     */
+    Coordinates withElevation(double elevation);
+
+    /**
+     * Convert to cartesian coordinates for calculations
+     *
      * @return CartesianCoordinates representation
      */
     CartesianCoordinates asCartesian();
 
     /**
      * Convert to geographic coordinates for display/storage
-     * 
+     *
      * @return GeographicCoordinates representation
      */
     GeographicCoordinates asGeographic();

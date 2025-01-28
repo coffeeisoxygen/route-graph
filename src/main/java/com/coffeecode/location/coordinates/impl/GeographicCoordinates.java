@@ -13,15 +13,24 @@ public class GeographicCoordinates implements Coordinates {
     private static final double MAX_LONGITUDE = 180.0;
     /** Earth radius in meters (WGS84) */
     private static final double EARTH_RADIUS_METERS = 6371000.0;
+    /** Default elevation when not specified */
+    private static final double DEFAULT_ELEVATION = 0.0;
 
     double latitude;
     double longitude;
+    double elevation;
 
     public GeographicCoordinates(double latitude, double longitude) {
+        this(latitude, longitude, DEFAULT_ELEVATION);
+    }
+
+    public GeographicCoordinates(double latitude, double longitude, double elevation) {
         validateLatitude(latitude);
         validateLongitude(longitude);
+        validateElevation(elevation);
         this.latitude = latitude;
         this.longitude = longitude;
+        this.elevation = elevation;
     }
 
     private void validateLatitude(double latitude) {
@@ -46,6 +55,12 @@ public class GeographicCoordinates implements Coordinates {
         }
     }
 
+    private void validateElevation(double elevation) {
+        if (!Double.isFinite(elevation)) {
+            throw new IllegalArgumentException("Elevation must be finite");
+        }
+    }
+
     @Override
     public CartesianCoordinates asCartesian() {
         double lat = Math.toRadians(latitude);
@@ -54,7 +69,7 @@ public class GeographicCoordinates implements Coordinates {
         double x = EARTH_RADIUS_METERS * Math.cos(lat) * Math.cos(lon);
         double y = EARTH_RADIUS_METERS * Math.cos(lat) * Math.sin(lon);
 
-        return CartesianCoordinates.of(x, y);
+        return CartesianCoordinates.of(x, y, elevation);
     }
 
     @Override
@@ -65,5 +80,15 @@ public class GeographicCoordinates implements Coordinates {
     @Override
     public double getDistanceTo(Coordinates other) {
         return this.asCartesian().getDistanceTo(other);
+    }
+
+    @Override
+    public double getElevation() {
+        return elevation;
+    }
+
+    @Override
+    public Coordinates withElevation(double elevation) {
+        return new GeographicCoordinates(latitude, longitude, elevation);
     }
 }
