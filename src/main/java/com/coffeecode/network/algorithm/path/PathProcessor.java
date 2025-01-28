@@ -13,6 +13,12 @@ public final class PathProcessor {
         // private constructor to prevent instantiation
     }
 
+    public static PathProcessor createInstance() {
+
+        return new PathProcessor();
+
+    }
+
     public void processNeighbors(WaterNetwork network,
             WaterNodes current,
             Map<WaterNodes, PathInfo> pathInfo,
