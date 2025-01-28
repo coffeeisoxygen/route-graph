@@ -14,6 +14,7 @@ public class Edge {
     private double bandwidth;
     private double latency;
     private boolean active;
+    private boolean isActive;
 
     public boolean isValid() {
         return source != null &&
@@ -28,5 +29,17 @@ public class Edge {
 
     public boolean isConnected() {
         return active && source.isActive() && destination.isActive();
+    }
+
+    public boolean isActive() {
+
+        return active;
+
+    }
+
+    public void setActive(boolean active) {
+
+        this.active = active;
+
     }
 }

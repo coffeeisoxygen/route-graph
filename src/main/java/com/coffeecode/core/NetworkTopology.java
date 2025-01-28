@@ -5,16 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.coffeecode.validation.NetworkValidator;
+import com.coffeecode.validation.ValidationError;
+
 import lombok.Getter;
 
 @Getter
 public class NetworkTopology {
     private final Map<String, Node> nodes;
     private final List<Edge> edges;
+    private final NetworkValidator validator;
 
-    public NetworkTopology() {
+    public NetworkTopology(NetworkValidator validator) {
         this.nodes = new HashMap<>();
         this.edges = new ArrayList<>();
+        this.validator = validator;
     }
 
     public void addNode(Node node) {
@@ -22,6 +27,7 @@ public class NetworkTopology {
             throw new IllegalArgumentException("Invalid node or duplicate ID");
         }
         nodes.put(node.getId(), node);
+        validateState();
     }
 
     public void connect(String sourceId, String destId, double bandwidth, double latency) {
@@ -43,6 +49,7 @@ public class NetworkTopology {
         if (edge.isValid()) {
             edges.add(edge);
             source.addEdge(edge);
+            validateState();
         }
     }
 
@@ -63,5 +70,12 @@ public class NetworkTopology {
                 .anyMatch(e -> e.getSource().getId().equals(sourceId)
                         && e.getDestination().getId().equals(destId)
                         && e.isConnected());
+    }
+
+    private void validateState() {
+        List<ValidationError> errors = validator.validate(this);
+        if (!validator.isValid(this)) {
+            throw new IllegalStateException("Invalid network state: " + errors);
+        }
     }
 }

@@ -1,26 +1,98 @@
-// package com.coffeecode.simulation;
+package com.coffeecode.simulation;
 
-// package com.netsim.simulation;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
-// import java.util.List;
+import com.coffeecode.algorithms.RoutingStrategy;
+import com.coffeecode.core.Edge;
+import com.coffeecode.core.Node;
 
-// import org.apache.commons.math3.ml.neuralnet.Network;
+public class PacketFlow {
+    private final RoutingStrategy routingStrategy;
+    private final Queue<Packet> packetQueue;
+    private final AtomicLong processedPackets;
+    private final AtomicLong failedPackets;
+    private static final long TIMEOUT_MS = 5000;
 
-// public class PacketFlow {
-//     private Network network;
+    public PacketFlow(RoutingStrategy routingStrategy) {
+        this.routingStrategy = routingStrategy;
+        this.packetQueue = new ConcurrentLinkedQueue<>();
+        this.processedPackets = new AtomicLong(0);
+        this.failedPackets = new AtomicLong(0);
+    }
 
-//     public PacketFlow(Network network) {
-//         this.network = network;
-//     }
+    public void sendPacket(Packet packet) {
+        List<Node> route = routingStrategy.findPath(packet.getSource(), packet.getDestination());
 
-//     public void initiatePacketFlow(Node source, Node destination) {
-//         // Logic to initiate packet flow from source to destination
-//         List<Node> path = trackPath(source, destination);
-//         // Additional logic for packet flow simulation
-//     }
+        if (route.isEmpty() || !canTransmitPacket(packet, route)) {
+            handleFailedPacket(packet);
+            return;
+        }
 
-//     private List<Node> trackPath(Node source, Node destination) {
-//         // Logic to track the path taken through the network
-//         return null; // Placeholder for actual path tracking logic
-//     }
-// }
+        packetQueue.offer(packet);
+        packet.setStatus(Packet.PacketStatus.IN_TRANSIT);
+    }
+
+    private boolean canTransmitPacket(Packet packet, List<Node> route) {
+        for (int i = 0; i < route.size() - 1; i++) {
+            Node current = route.get(i);
+            Node next = route.get(i + 1);
+            Edge edge = findEdge(current, next);
+
+            if (edge == null || !edge.isConnected() || packet.getSize() > edge.getBandwidth()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Edge findEdge(Node source, Node destination) {
+        return source.getEdges().stream()
+                .filter(e -> e.getDestination().equals(destination))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void processPackets() {
+        while (!packetQueue.isEmpty()) {
+            Packet packet = packetQueue.poll();
+            if (packet == null)
+                continue;
+
+            if (isPacketTimedOut(packet)) {
+                handleFailedPacket(packet);
+                continue;
+            }
+
+            deliverPacket(packet);
+        }
+    }
+
+    private boolean isPacketTimedOut(Packet packet) {
+        return System.currentTimeMillis() - packet.getCreationTime() > TIMEOUT_MS;
+    }
+
+    private void deliverPacket(Packet packet) {
+        if (packet.getDestination().isActive()) {
+            packet.setStatus(Packet.PacketStatus.DELIVERED);
+            processedPackets.incrementAndGet();
+        } else {
+            handleFailedPacket(packet);
+        }
+    }
+
+    private void handleFailedPacket(Packet packet) {
+        packet.setStatus(Packet.PacketStatus.FAILED);
+        failedPackets.incrementAndGet();
+    }
+
+    public long getProcessedPacketsCount() {
+        return processedPackets.get();
+    }
+
+    public long getFailedPacketsCount() {
+        return failedPackets.get();
+    }
+}
