@@ -1,4 +1,4 @@
-package com.coffeecode.validation;
+package com.coffeecode.infrastructure.validation;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

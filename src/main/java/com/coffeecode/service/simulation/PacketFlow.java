@@ -1,4 +1,4 @@
-package com.coffeecode.simulation;
+package com.coffeecode.service.simulation;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -6,9 +6,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
 
-import com.coffeecode.algorithms.RoutingStrategy;
-import com.coffeecode.core.Node;
-import com.coffeecode.metrics.NetworkMonitor;
+import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.packet.Packet;
+import com.coffeecode.infrastructure.monitoring.NetworkMonitor;
+import com.coffeecode.service.routing.RoutingStrategy;
 
 import lombok.RequiredArgsConstructor;
 

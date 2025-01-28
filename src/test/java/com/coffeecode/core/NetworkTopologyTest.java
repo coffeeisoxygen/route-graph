@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.node.ClientNode;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.service.topology.NetworkTopology;
+
 class NetworkTopologyTest {
     private NetworkTopology network;
     private RouterNode router1;

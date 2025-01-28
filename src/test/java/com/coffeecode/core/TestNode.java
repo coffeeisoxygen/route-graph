@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.AbstractNode;
+
 class TestNode extends AbstractNode {
     public TestNode(String id) {
         super(id, NodeType.ROUTER);

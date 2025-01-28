@@ -12,6 +12,13 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.ClientNode;
+import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.service.topology.NetworkTopology;
+
 class NetworkTopologyStressTest {
     private NetworkTopology network;
     private static final int LARGE_NETWORK_SIZE = 100;

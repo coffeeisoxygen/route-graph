@@ -9,9 +9,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.core.NetworkTopology;
-import com.coffeecode.core.RouterNode;
-import com.coffeecode.core.ServerNode;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.domain.topology.NetworkTopology;
+import com.coffeecode.infrastructure.validation.ValidationError;
 
 class BaseNetworkValidatorTest {
     private NetworkValidator validator;

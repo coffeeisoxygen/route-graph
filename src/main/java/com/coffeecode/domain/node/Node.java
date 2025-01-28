@@ -1,6 +1,8 @@
-package com.coffeecode.core;
+package com.coffeecode.domain.node;
 
 import java.util.List;
+
+import com.coffeecode.domain.edge.Edge;
 
 public interface Node {
     String getId();

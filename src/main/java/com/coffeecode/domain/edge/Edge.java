@@ -1,4 +1,6 @@
-package com.coffeecode.core;
+package com.coffeecode.domain.edge;
+
+import com.coffeecode.domain.node.Node;
 
 import lombok.Builder;
 import lombok.Getter;

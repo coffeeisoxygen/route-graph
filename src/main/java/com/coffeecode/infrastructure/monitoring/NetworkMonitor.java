@@ -1,4 +1,4 @@
-package com.coffeecode.metrics;
+package com.coffeecode.infrastructure.monitoring;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.DoubleAdder;

@@ -1,32 +1,37 @@
-package com.coffeecode.validation;
+package com.coffeecode.infrastructure.validation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coffeecode.core.NetworkTopology;
+import org.springframework.stereotype.Component;
 
+import com.coffeecode.domain.topology.NetworkTopology;
+import com.coffeecode.infrastructure.validation.exception.NetworkValidationException;
+
+@Component
 public class BaseNetworkValidator implements NetworkValidator {
     private final List<ValidationError> errors = new ArrayList<>();
 
     @Override
     public boolean isValid(NetworkTopology topology) {
-        List<ValidationError> validationErrors = validate(topology);
-        return validationErrors.stream()
+        return validate(topology).stream()
                 .noneMatch(error -> error.getSeverity() == ValidationError.Severity.ERROR);
     }
 
     @Override
     public List<ValidationError> validate(NetworkTopology topology) {
         errors.clear();
-        if (topology == null) {
-            addError("NULL_TOPOLOGY", "Topology is null", ValidationError.Severity.ERROR);
-            return errors;
-        }
-
+        validateNull(topology);
         validateNodes(topology);
         validateConnections(topology);
         validateTopologyStructure(topology);
         return new ArrayList<>(errors);
+    }
+
+    private void validateNull(NetworkTopology topology) {
+        if (topology == null) {
+            throw new NetworkValidationException("NULL_TOPOLOGY", "Topology is null");
+        }
     }
 
     private void validateNodes(NetworkTopology topology) {
@@ -48,7 +53,6 @@ public class BaseNetworkValidator implements NetworkValidator {
     }
 
     private void validateTopologyStructure(NetworkTopology topology) {
-        // Check for isolated nodes
         topology.getNodes().values().forEach(node -> {
             if (node.getEdges().isEmpty()) {
                 addError("ISOLATED_NODE",

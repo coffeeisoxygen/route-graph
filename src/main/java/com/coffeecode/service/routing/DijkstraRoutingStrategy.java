@@ -1,4 +1,4 @@
-package com.coffeecode.algorithms;
+package com.coffeecode.service.routing;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 
-import com.coffeecode.core.Edge;
-import com.coffeecode.core.Node;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.Node;
 
 import lombok.Getter;
 

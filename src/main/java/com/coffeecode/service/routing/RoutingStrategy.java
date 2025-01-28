@@ -1,8 +1,8 @@
-package com.coffeecode.algorithms;
+package com.coffeecode.service.routing;
 
 import java.util.List;
 
-import com.coffeecode.core.Node;
+import com.coffeecode.domain.node.Node;
 
 public interface RoutingStrategy {
     List<Node> findPath(Node source, Node destination);

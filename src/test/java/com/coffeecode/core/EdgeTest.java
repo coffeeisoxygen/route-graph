@@ -6,6 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+
 class EdgeTest {
     private Node source;
     private Node destination;

@@ -1,37 +1,35 @@
-package com.coffeecode.core;
+package com.coffeecode.service.topology;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import com.coffeecode.validation.BaseNetworkValidator;
-import com.coffeecode.validation.NetworkValidator;
-import com.coffeecode.validation.ValidationError;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.topology.NetworkTopology;
+import com.coffeecode.infrastructure.validation.NetworkValidator;
+import com.coffeecode.infrastructure.validation.ValidationError;
 
 import lombok.Getter;
 
-@Component
+@Service
 @Getter
-public class NetworkTopology {
+public class NetworkTopologyServiceImpl implements NetworkTopologyService, NetworkTopology {
     private final Map<String, Node> nodes;
     private final List<Edge> edges;
     private final NetworkValidator validator;
 
-    public NetworkTopology() {
-        this(new BaseNetworkValidator());
-    }
-
-    @Autowired
-    public NetworkTopology(NetworkValidator validator) {
+    public NetworkTopologyServiceImpl(NetworkValidator validator) {
         this.nodes = new HashMap<>();
         this.edges = new ArrayList<>();
         this.validator = validator;
     }
 
+    @Override
     public void addNode(Node node) {
         if (node == null || nodes.containsKey(node.getId())) {
             throw new IllegalArgumentException("Invalid node or duplicate ID");
@@ -40,6 +38,16 @@ public class NetworkTopology {
         validateState();
     }
 
+    @Override
+    public void addEdge(Edge edge) {
+        if (edge.isValid()) {
+            edges.add(edge);
+            edge.getSource().addEdge(edge);
+            validateState();
+        }
+    }
+
+    @Override
     public void connect(String sourceId, String destId, double bandwidth, double latency) {
         Node source = nodes.get(sourceId);
         Node dest = nodes.get(destId);
@@ -63,6 +71,7 @@ public class NetworkTopology {
         }
     }
 
+    @Override
     public List<Node> getNeighbors(String nodeId) {
         Node node = nodes.get(nodeId);
         if (node == null) {
@@ -75,6 +84,12 @@ public class NetworkTopology {
                 .toList();
     }
 
+    @Override
+    public Optional<Node> getNode(String id) {
+        return Optional.ofNullable(nodes.get(id));
+    }
+
+    @Override
     public boolean isConnected(String sourceId, String destId) {
         return edges.stream()
                 .anyMatch(e -> e.getSource().getId().equals(sourceId)

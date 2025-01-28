@@ -1,4 +1,4 @@
-package com.coffeecode.core;
+package com.coffeecode.domain.node;
 
 import lombok.Getter;
 

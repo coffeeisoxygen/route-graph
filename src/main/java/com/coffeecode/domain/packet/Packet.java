@@ -1,6 +1,6 @@
-package com.coffeecode.simulation;
+package com.coffeecode.domain.packet;
 
-import com.coffeecode.core.Node;
+import com.coffeecode.domain.node.Node;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -18,10 +18,4 @@ public class Packet {
     @Setter
     private PacketStatus status;
 
-    public enum PacketStatus {
-        CREATED,
-        IN_TRANSIT,
-        DELIVERED,
-        FAILED
-    }
 }

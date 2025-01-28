@@ -1,4 +1,4 @@
-package com.coffeecode.metrics;
+package com.coffeecode.infrastructure.monitoring;
 
 public interface NetworkMetrics {
     double getAverageLatency();

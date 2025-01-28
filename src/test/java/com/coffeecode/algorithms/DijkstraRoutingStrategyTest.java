@@ -9,10 +9,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.core.Edge;
-import com.coffeecode.core.Node;
-import com.coffeecode.core.RouterNode;
-import com.coffeecode.core.ServerNode;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.service.routing.DijkstraRoutingStrategy;
 
 class DijkstraRoutingStrategyTest {
     private DijkstraRoutingStrategy strategy;

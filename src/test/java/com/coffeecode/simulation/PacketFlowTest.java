@@ -12,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.algorithms.RoutingStrategy;
-import com.coffeecode.core.RouterNode;
-import com.coffeecode.core.ServerNode;
-import com.coffeecode.metrics.NetworkMetrics;
+import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.domain.packet.Packet;
+import com.coffeecode.infrastructure.monitoring.NetworkMetrics;
+import com.coffeecode.service.routing.RoutingStrategy;
+import com.coffeecode.service.simulation.PacketFlow;
 
 @ExtendWith(MockitoExtension.class)
 class PacketFlowTest {

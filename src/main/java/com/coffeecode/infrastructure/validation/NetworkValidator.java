@@ -1,8 +1,8 @@
-package com.coffeecode.validation;
+package com.coffeecode.infrastructure.validation;
 
 import java.util.List;
 
-import com.coffeecode.core.NetworkTopology;
+import com.coffeecode.domain.topology.NetworkTopology;
 
 public interface NetworkValidator {
     boolean isValid(NetworkTopology topology);

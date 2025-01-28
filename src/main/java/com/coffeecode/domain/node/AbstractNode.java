@@ -1,7 +1,9 @@
-package com.coffeecode.core;
+package com.coffeecode.domain.node;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.coffeecode.domain.edge.Edge;
 
 import lombok.Getter;
 import lombok.NonNull;

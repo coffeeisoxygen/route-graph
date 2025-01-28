@@ -1,10 +1,10 @@
-package com.coffeecode.fault;
+package com.coffeecode.infrastructure.fault;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.coffeecode.core.Edge;
-import com.coffeecode.core.Node;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.Node;
 
 import lombok.Getter;
 
