@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.location.coordinates.impl.CartesianCoordinates;
@@ -101,32 +102,27 @@ class PathValidatorTest {
         }
     }
 
-        @Test
-        @DisplayName("Should handle empty network")
-        void shouldHandleEmptyNetwork() {
-            WaterNetwork emptyNetwork = WaterNetwork.builder().build();
+    @Test
+    @DisplayName("Should handle empty network")
+    void shouldHandleEmptyNetwork() {
+        WaterNetwork emptyNetwork = WaterNetwork.builder().build();
 
-            Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                validator.validateNodes(emptyNetwork, validSource, validDemand)
-            );
-            assertEquals("Source node not in network", exception.getMessage());
-        }
+        Exception exception = assertThrows(IllegalArgumentException.class, () ->
+            validator.validateNodes(emptyNetwork, validSource, validDemand)
+        );
+        assertEquals("Source node not in network", exception.getMessage());
+    }
 
-        @Test
-        @DisplayName("Should handle null inputs")
-        void shouldHandleNullInputs() {
-            assertAll(
-                () -> assertThrows(NullPointerException.class, () ->
-                    validator.validateNodes(null, validSource, validDemand)),
-                () -> assertThrows(NullPointerException.class, () ->
-                    validator.validateNodes(network, null, validDemand)),
-                () -> assertThrows(NullPointerException.class, () ->
-                    validator.validateNodes(network, validSource, null))
-            );
-        }
+    @Test
+    @DisplayName("Should handle null inputs")
+    void shouldHandleNullInputs() {
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () ->
+                validator.validateNodes(null, validSource, validDemand)),
+            () -> assertThrows(NullPointerException.class, () ->
+                validator.validateNodes(network, null, validDemand)),
+            () -> assertThrows(NullPointerException.class, () ->
+                validator.validateNodes(network, validSource, null))
+        );
     }
 }
-
-    @Nested
-    @DisplayName("Edge Cases")
-    class EdgeCases {

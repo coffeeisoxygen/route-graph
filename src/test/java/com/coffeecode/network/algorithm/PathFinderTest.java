@@ -52,14 +52,13 @@ class PathFinderTest {
 
         // Then
         assertAll(
-            () -> assertNotNull(paths, "Paths should not be null"),
-            () -> assertFalse(paths.isEmpty(), "Should find at least one path"),
-            () -> assertEquals(2, paths.get(0).getNodes().size(), "Path should have source and demand"),
-            () -> assertEquals(source, paths.get(0).getNodes().get(0), "Should start at source"),
-            () -> assertEquals(demand, paths.get(0).getNodes().get(1), "Should end at demand"),
-            () -> assertEquals(1, paths.get(0).getPipes().size(), "Should have one pipe"),
-            () -> assertEquals(pipe, paths.get(0).getPipes().get(0), "Should use correct pipe")
-        );
+                () -> assertNotNull(paths, "Paths should not be null"),
+                () -> assertFalse(paths.isEmpty(), "Should find at least one path"),
+                () -> assertEquals(2, paths.get(0).getNodes().size(), "Path should have source and demand"),
+                () -> assertEquals(source, paths.get(0).getNodes().get(0), "Should start at source"),
+                () -> assertEquals(demand, paths.get(0).getNodes().get(1), "Should end at demand"),
+                () -> assertEquals(1, paths.get(0).getPipes().size(), "Should have one pipe"),
+                () -> assertEquals(pipe, paths.get(0).getPipes().get(0), "Should use correct pipe"));
     }
 
     @Test
@@ -76,8 +75,9 @@ class PathFinderTest {
                 .build();
 
         // When/Then
-        assertThrows(IllegalArgumentException.class,
+        Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> pathFinder.findPaths(network, invalidSource, demand));
+        assertEquals("Source node not in network", exception.getMessage());
     }
 
     @Test
@@ -85,65 +85,46 @@ class PathFinderTest {
     void shouldHandleNoPath() {
         // Given - Create network without connections
         WaterNetwork networkWithoutPath = WaterNetwork.builder()
-            .addSource(source)
-            .addDemand(createDemand("Demand-2", 200, 200, 75.0))
-            .build();
+                .addSource(source)
+                .addDemand(createDemand("Demand-2", 200, 200, 75.0))
+                .build();
 
         // When
         List<PathFinder.Path> paths = pathFinder.findPaths(
-            networkWithoutPath,
-            source,
-            demand
-        );
+                networkWithoutPath,
+                source,
+                demand);
 
         // Then
         assertTrue(paths.isEmpty(), "Should return empty list when no path exists");
     }
 
-    @Test
-    @DisplayName("Should handle no path between nodes")
-    void shouldHandleNoPath() {
-        // Given
-        WaterSource source2 = createSource("Source-2", 0, 0, 100.0);
-        WaterDemand demand2 = createDemand("Demand-2", 200, 200, 75.0);
-
-        // Create network with unconnected nodes
-        WaterNetwork networkWithoutPath = WaterNetwork.builder()
-            .addSource(source2)
-            .addDemand(demand2)
-            .build();  // Will throw IllegalStateException - expected
-
-        // When/Then
-        assertThrows(IllegalStateException.class, () ->
-            pathFinder.findPaths(networkWithoutPath, source2, demand2));
-    }
-
     private WaterNetwork createNetwork(WaterSource source, WaterDemand demand, Pipe pipe) {
         return WaterNetwork.builder()
-            .addSource(source)
-            .addDemand(demand)
-            .connectNodes(source, demand, pipe)
-            .build();
+                .addSource(source)
+                .addDemand(demand)
+                .connectNodes(source, demand, pipe)
+                .build();
     }
 
     private WaterSource createSource(String name, double x, double y, double elevation) {
         return WaterSource.builder()
-            .name(name)
-            .coordinates(CartesianCoordinates.of(x, y, 0))
-            .elevation(Elevation.manual(elevation))
-            .capacity(Capacity.of(1000.0))
-            .flowRate(FlowRate.of(10.0))
-            .headPressure(HeadPressure.of(101325.0))
-            .build();
+                .name(name)
+                .coordinates(CartesianCoordinates.of(x, y, 0))
+                .elevation(Elevation.manual(elevation))
+                .capacity(Capacity.of(1000.0))
+                .flowRate(FlowRate.of(10.0))
+                .headPressure(HeadPressure.of(101325.0))
+                .build();
     }
 
     private WaterDemand createDemand(String name, double x, double y, double elevation) {
         return WaterDemand.builder()
-            .name(name)
-            .coordinates(CartesianCoordinates.of(x, y, 0))
-            .elevation(Elevation.manual(elevation))
-            .demand(FlowRate.of(5.0))
-            .minPressure(HeadPressure.of(50000.0))
-            .build();
+                .name(name)
+                .coordinates(CartesianCoordinates.of(x, y, 0))
+                .elevation(Elevation.manual(elevation))
+                .demand(FlowRate.of(5.0))
+                .minPressure(HeadPressure.of(50000.0))
+                .build();
     }
 }

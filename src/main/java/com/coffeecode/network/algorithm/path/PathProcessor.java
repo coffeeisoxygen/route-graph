@@ -9,10 +9,6 @@ import com.coffeecode.network.nodes.WaterNodes;
 
 public final class PathProcessor {
 
-    private PathProcessor() {
-        // private constructor to prevent instantiation
-    }
-
     public static PathProcessor createInstance() {
 
         return new PathProcessor();

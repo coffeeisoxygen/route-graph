@@ -5,8 +5,11 @@ import com.coffeecode.network.nodes.WaterDemand;
 import com.coffeecode.network.nodes.WaterSource;
 
 public class PathValidator {
-    private PathValidator() {
-        // private constructor to prevent instantiation
+
+    public static PathValidator createInstance() {
+
+        return new PathValidator();
+
     }
 
     public void validateNodes(WaterNetwork network, WaterSource source, WaterDemand target) {
