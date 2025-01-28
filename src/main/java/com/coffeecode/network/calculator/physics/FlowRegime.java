@@ -1,4 +1,4 @@
-package com.coffeecode.calculation;
+package com.coffeecode.network.calculator.physics;
 
 public enum FlowRegime {
     LAMINAR(0, 2300),

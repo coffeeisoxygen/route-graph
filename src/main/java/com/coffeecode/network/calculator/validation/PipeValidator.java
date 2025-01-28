@@ -1,4 +1,4 @@
-package com.coffeecode.calculation.validation;
+package com.coffeecode.network.calculator.validation;
 
 import com.coffeecode.network.edges.PipeMaterial;
 import com.coffeecode.network.nodes.Node;

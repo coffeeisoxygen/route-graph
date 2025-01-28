@@ -1,4 +1,4 @@
-package com.coffeecode.calculation.validation;
+package com.coffeecode.network.calculator.physics;
 
 public interface PhysicalConstraints {
     // Pipe constraints

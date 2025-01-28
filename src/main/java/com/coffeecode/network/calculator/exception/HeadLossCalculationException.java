@@ -1,4 +1,4 @@
-package com.coffeecode.calculation;
+package com.coffeecode.network.calculator.exception;
 
 import lombok.extern.slf4j.Slf4j;
 
