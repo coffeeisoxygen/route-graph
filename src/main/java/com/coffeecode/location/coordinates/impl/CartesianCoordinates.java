@@ -41,8 +41,7 @@ public class CartesianCoordinates implements Coordinates {
 
     private void validateCoordinate(double value, String axis) {
         if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException(
-                    String.format("%s coordinate must be finite", axis));
+            throw new IllegalArgumentException("Invalid coordinate value");
         }
         if (value < MIN_COORDINATE || value > MAX_COORDINATE) {
             throw new IllegalArgumentException(
@@ -78,9 +77,8 @@ public class CartesianCoordinates implements Coordinates {
             return new GeographicCoordinates(0.0, 0.0, z);
         }
 
-        // Fix conversion formulas
-        double lat = Math.toDegrees(Math.asin(y / radius));
-        double lon = Math.toDegrees(Math.atan2(y, x)); // Fixed: y/x instead of x/y
+        double lat = Math.toDegrees(Math.asin(z / EARTH_RADIUS_METERS));
+        double lon = Math.toDegrees(Math.atan2(y, x));
 
         return new GeographicCoordinates(lat, lon, z);
     }

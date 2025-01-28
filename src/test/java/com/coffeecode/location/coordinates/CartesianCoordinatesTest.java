@@ -24,10 +24,13 @@ class CartesianCoordinatesTest {
     @Test
     @DisplayName("Should reject invalid coordinates")
     void shouldRejectInvalidCoordinates() {
-        assertThrows(IllegalArgumentException.class,
-            () -> CartesianCoordinates.of(Double.POSITIVE_INFINITY, 0, 0));
-        assertThrows(IllegalArgumentException.class,
-            () -> CartesianCoordinates.of(0, Double.NaN, 0));
+        IllegalArgumentException exception1 = assertThrows(IllegalArgumentException.class,
+                () -> CartesianCoordinates.of(Double.POSITIVE_INFINITY, 0, 0));
+        assertEquals("Invalid coordinate value", exception1.getMessage());
+
+        IllegalArgumentException exception2 = assertThrows(IllegalArgumentException.class,
+                () -> CartesianCoordinates.of(0, Double.NaN, 0));
+        assertEquals("Invalid coordinate value", exception2.getMessage());
     }
 
     @Test
@@ -39,8 +42,8 @@ class CartesianCoordinatesTest {
         CartesianCoordinates p3 = CartesianCoordinates.of(3000, 4000, 1000);
 
         // When & Then
-        assertEquals(5.0, p1.getDistanceTo(p2), DELTA); // horizontal
-        assertEquals(5.099, p1.getDistanceTo(p3), 0.001); // with elevation
+        assertEquals(5.0, p1.getDistanceTo(p2), DELTA); // horizontal distance (5000 meters)
+        assertEquals(5.099, p1.getDistanceTo(p3), 0.001); // 3D distance including elevation
     }
 
     @Test

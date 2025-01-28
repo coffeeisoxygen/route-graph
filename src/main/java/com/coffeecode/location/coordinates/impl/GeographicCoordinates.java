@@ -66,10 +66,11 @@ public class GeographicCoordinates implements Coordinates {
         double lat = Math.toRadians(latitude);
         double lon = Math.toRadians(longitude);
 
-        double x = EARTH_RADIUS_METERS * Math.cos(lat) * Math.cos(lon);
-        double y = EARTH_RADIUS_METERS * Math.cos(lat) * Math.sin(lon);
+        double x = (EARTH_RADIUS_METERS + elevation) * Math.cos(lat) * Math.cos(lon);
+        double y = (EARTH_RADIUS_METERS + elevation) * Math.cos(lat) * Math.sin(lon);
+        double z = (EARTH_RADIUS_METERS + elevation) * Math.sin(lat);
 
-        return CartesianCoordinates.of(x, y, elevation);
+        return CartesianCoordinates.of(x, y, z);
     }
 
     @Override
