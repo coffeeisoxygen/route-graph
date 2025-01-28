@@ -1,95 +1,61 @@
-# Water Network System Planning
+## **Project-Specific Instructions: Network Topology Simulation**
 
-## 1. Core Components
+### **1. Core Components**
 
-### 1.1 Node Types
+#### **Node Types**
 
-- **Source Node**
-  - Properties: location, elevation, capacity, pressure
-  - Purpose: Water input points
-  - Validation: Capacity > 0, Pressure > 0
+- **Router Node:** Responsible for routing data packets.
+- **Client Node:** Represents devices that send or receive data.
+- **Server Node:** Acts as the data or service provider.
 
-- **Junction Node**
-  - Properties: location, elevation
-  - Purpose: Connection/distribution points
-  - Validation: Valid coordinates
+#### **Edge Types (Connections)**
 
-- **Demand Node**
-  - Properties: location, elevation, required flow
-  - Purpose: Consumption points
-  - Validation: Flow demand > 0
+- **Bandwidth:** Maximum data transmission capacity.
+- **Latency:** Time delay between sending and receiving data.
 
-### 1.2 Physical Components
+### **2. Simulation Features**
 
-- **Pipes**
-  - Properties: length, diameter, material
-  - Constraints: Valid dimensions
-  - Flow characteristics: roughness, capacity
+- Data packet flow simulation.
+- Route optimization using algorithms like **Dijkstra** or **Bellman-Ford**.
+- Evaluation of network efficiency based on latency and bandwidth utilization.
+- Fault-tolerance simulation by disabling nodes or connections.
 
-## 2. Calculations
+### **3. Calculations and Algorithms**
 
-### 2.1 Flow Analysis
+- Shortest path algorithms (Dijkstra, Floyd-Warshall).
+- Load balancing strategies for data routing.
+- Network graph validation.
 
-- Flow rate calculation
-- Mass balance validation
-- Flow direction determination
+### **4. Implementation Phases**
 
-### 2.2 Pressure Analysis
+#### **Phase 1: Basic Structure**
 
-- Head loss calculation
-- Pressure drop evaluation
-- Elevation impact assessment
+1. Define core node and edge components.
+2. Implement basic graph structure for the network.
+3. Validate network connections.
 
-## 3. Implementation Phases
+#### **Phase 2: Simulation Features**
 
-### Phase 1: Core Structure
+1. Implement data packet flow simulation.
+2. Integrate routing algorithms.
+3. Evaluate network efficiency metrics.
 
-1. Basic node implementations
-2. Simple network construction
-3. Initial validation rules
+#### **Phase 3: Optimization and Fault Tolerance**
 
-### Phase 2: Network Features
+1. Optimize routing strategies.
+2. Implement fault-tolerance mechanisms.
+3. Test for performance under varying conditions.
 
-1. Path finding algorithm
-2. Flow calculations
-3. Pressure analysis
+### **5. Testing Strategy**
 
-### Phase 3: Optimization
+- Unit tests for individual components.
+- Integration tests for the complete network simulation.
+- Performance testing for routing algorithms.
 
-1. Flow distribution
-2. Pressure balancing
-3. Network efficiency
+### **6. Continuous Improvement Guidelines**
 
-## 4. Testing Strategy
+- Actively seek cleaner and more efficient code solutions.
+- Suggest improvements for routing and fault-tolerance mechanisms.
 
-- Unit tests for components
-- Integration tests for network
-- Performance testing for algorithms
-
-## 5. Future Enhancements
-
-- GUI for network visualization
-- Real-time flow monitoring
-- Advanced optimization algorithms
-
-## 6. Additional Suggestions for Improvement
-
-1. **Edge Representation for Pipes:**
-   Define pipes as a separate class (e.g., `PipeEdge`) that connects two nodes, with properties such as maximum flow capacity and operational status. This will improve the maintainability of the network model.
-
-2. **Topology Validation:**
-   Implement a topology check using graph traversal algorithms (like DFS/BFS) to ensure the network is well-connected and free from isolated nodes.
-
-3. **Flow Direction Algorithm:**
-   Develop a simple mechanism to determine the direction of flow from source nodes to demand nodes based on elevation or predefined priorities.
-
-4. **Failure Simulation:**
-   Add the ability to simulate failures in pipes or nodes to test how the network handles disruptions.
-
-5. **Simplified Visualization:**
-   Since map rendering is not planned, focus on creating a straightforward graph-based visualization. Represent pipes as straight lines connecting nodes without complex components like valves or tanks.
-
-6. **Performance Optimization:**
-   Keep computation efficient by avoiding unnecessary recalculations for static properties and optimizing graph traversal during simulations.
-
-This plan provides a structured yet flexible approach for your initial water distribution simulation project, with room for iterative improvements as complexity grows.
+---
+This prompt ensures Copilot will assist thoughtfully and maintain a clear connection to the project context and best coding practices for a network topology simulation project.
