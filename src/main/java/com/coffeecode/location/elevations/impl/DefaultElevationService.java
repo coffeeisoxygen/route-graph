@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DefaultElevationService implements ElevationService {
-    private static final String API_URL = "https://api.open-elevation.com/api/v1/lookup";
+    private static final String API_URL = "https://api.opentopodata.org/v1/aster30m";
     private final ApiClient apiClient;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -43,12 +43,16 @@ public class DefaultElevationService implements ElevationService {
     }
 
     private String buildApiUrl(double latitude, double longitude) {
-        return String.format("%s?locations=%f,%f", API_URL, latitude, longitude);
+        return String.format("%s?locations=%f,%f&interpolation=cubic",
+                API_URL, latitude, longitude);
     }
 
     private double parseElevation(String response) throws AppException {
         try {
             ElevationResponse elevationResponse = mapper.readValue(response, ElevationResponse.class);
+            if (!"OK".equals(elevationResponse.getStatus())) {
+                throw new AppException("API returned non-OK status");
+            }
             if (elevationResponse.getResults() == null || elevationResponse.getResults().isEmpty()) {
                 throw new AppException("No elevation data in response");
             }
