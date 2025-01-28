@@ -1,4 +1,4 @@
-package com.coffeecode.network.calculator.physics;
+package com.coffeecode.network.calculator.physics.properties;
 
 @FunctionalInterface
 public interface FrictionFactorCalculator {
