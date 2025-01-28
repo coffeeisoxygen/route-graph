@@ -1,14 +1,16 @@
 package com.coffeecode.algorithms;
 
+import java.util.List;
+
 import com.coffeecode.core.Node;
 
 public interface RoutingStrategy {
     /**
-     * Determines the best path between two nodes in the network.
+     * Finds the shortest path between source and destination nodes
      *
-     * @param source      the starting node
-     * @param destination the target node
-     * @return an array of nodes representing the best path
+     * @param source      Starting node
+     * @param destination Target node
+     * @return List of nodes representing the path, empty if no path exists
      */
-    Node[] findBestPath(Node source, Node destination);
+    List<Node> findPath(Node source, Node destination);
 }

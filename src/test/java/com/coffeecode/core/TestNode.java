@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TestNode extends AbstractNode {
@@ -13,22 +14,27 @@ class TestNode extends AbstractNode {
 }
 
 class AbstractNodeTest {
+    private TestNode source;
+    private TestNode destination;
+
+    @BeforeEach
+    void setUp() {
+        source = new TestNode("source");
+        destination = new TestNode("dest");
+    }
+
     @Test
     void testNodeCreation() {
-        TestNode node = new TestNode("test1");
-        assertEquals("test1", node.getId());
-        assertTrue(node.isActive());
-        assertTrue(node.getEdges().isEmpty());
+        assertEquals("source", source.getId());
+        assertTrue(source.isActive());
+        assertTrue(source.getEdges().isEmpty());
     }
 
     @Test
     void testAddValidEdge() {
-        TestNode source = new TestNode("source");
-        TestNode dest = new TestNode("dest");
-
         Edge edge = Edge.builder()
                 .source(source)
-                .destination(dest)
+                .destination(destination)
                 .bandwidth(100)
                 .latency(10)
                 .active(true)
@@ -39,13 +45,30 @@ class AbstractNodeTest {
     }
 
     @Test
-    void testAddInvalidEdge() {
-        TestNode source = new TestNode("source");
+    void testAddInvalidEdgeWithZeroBandwidth() {
         Edge invalidEdge = Edge.builder()
                 .source(source)
-                .bandwidth(-1)
+                .destination(destination)
+                .bandwidth(0)
+                .latency(10)
+                .active(true)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> source.addEdge(invalidEdge));
+        assertThrows(IllegalArgumentException.class,
+                () -> source.addEdge(invalidEdge));
+    }
+
+    @Test
+    void testAddInvalidEdgeWithNegativeLatency() {
+        Edge invalidEdge = Edge.builder()
+                .source(source)
+                .destination(destination)
+                .bandwidth(100)
+                .latency(-1)
+                .active(true)
+                .build();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> source.addEdge(invalidEdge));
     }
 }
