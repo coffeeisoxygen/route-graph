@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class WaterSource extends Node {
+public class WaterSource extends WaterNodes {
     private final Capacity capacity;
     private final FlowRate flowRate;
     private final HeadPressure headPressure;

@@ -1,7 +1,7 @@
 package com.coffeecode.network.calculator.validation;
 
 import com.coffeecode.network.edges.PipeMaterial;
-import com.coffeecode.network.nodes.Node;
+import com.coffeecode.network.nodes.WaterNodes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,14 +10,14 @@ public class PipeValidator {
     private static final double MIN_DIAMETER = 0.05;
     private static final double MAX_DIAMETER = 2.0;
 
-    public void validateBuilder(Node start, Node end, double diameter, PipeMaterial material) {
+    public void validateBuilder(WaterNodes start, WaterNodes end, double diameter, PipeMaterial material) {
         validateNodes(start, end);
         validateDiameter(diameter);
         validateMaterial(material);
         log.debug("Pipe validation successful");
     }
 
-    private void validateNodes(Node start, Node end) {
+    private void validateNodes(WaterNodes start, WaterNodes end) {
         if (start == null) {
             throw new IllegalArgumentException("Start node cannot be null");
         }

@@ -9,14 +9,14 @@ import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
-public abstract class Node {
+public abstract class WaterNodes {
     private final UUID id;
     private final String name;
     private final Coordinates coordinates;
     private final Elevation elevation;
     private final NodeType type;
 
-    protected Node(
+    protected WaterNodes(
             @NonNull String name,
             @NonNull Coordinates coordinates,
             @NonNull Elevation elevation,
