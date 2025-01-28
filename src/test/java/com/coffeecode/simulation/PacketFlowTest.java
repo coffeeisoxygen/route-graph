@@ -14,12 +14,12 @@ import org.mockito.Mock;
 import com.coffeecode.algorithms.RoutingStrategy;
 import com.coffeecode.core.RouterNode;
 import com.coffeecode.core.ServerNode;
-import com.coffeecode.metrics.NetworkMetrics;
+import com.coffeecode.metrics.NetworkMonitor;
 
 class PacketFlowTest {
         @Mock
         private RoutingStrategy routingStrategy;
-        private NetworkMetrics networkMetrics;
+        private NetworkMonitor networkMonitor; // Changed from NetworkMetrics
         private PacketFlow packetFlow;
         private RouterNode source;
         private ServerNode destination;
@@ -27,8 +27,8 @@ class PacketFlowTest {
         @BeforeEach
         void setUp() {
                 routingStrategy = mock(RoutingStrategy.class);
-                networkMetrics = mock(NetworkMetrics.class);
-                packetFlow = new PacketFlow(routingStrategy, networkMetrics);
+                networkMonitor = mock(NetworkMonitor.class); // Changed from NetworkMetrics
+                packetFlow = new PacketFlow(routingStrategy, networkMonitor);
                 source = new RouterNode("R1", 10);
                 destination = new ServerNode("S1", 100, 1000);
         }
@@ -54,6 +54,6 @@ class PacketFlowTest {
                 // Assert
                 assertEquals(Packet.PacketStatus.FAILED, packet.getStatus());
                 assertEquals(1, packetFlow.getFailedPacketsCount());
-                verify(networkMetrics).recordFailedDelivery();
+                verify(networkMonitor).recordFailedDelivery();
         }
 }

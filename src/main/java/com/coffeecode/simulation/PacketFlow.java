@@ -93,7 +93,9 @@ public class PacketFlow {
     private void handleFailedPacket(Packet packet) {
         packet.setStatus(Packet.PacketStatus.FAILED);
         failedPackets.incrementAndGet();
-        monitor.recordFailedDelivery();
+        if (monitor != null) {
+            monitor.recordFailedDelivery();
+        }
     }
 
     private double calculateRequiredBandwidth(Packet packet) {
