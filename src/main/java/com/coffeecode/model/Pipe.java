@@ -8,6 +8,9 @@ import lombok.Value;
  */
 @Value
 public class Pipe {
+    private static final double MIN_DIAMETER = 0.05; // meters
+    private static final double MAX_DIAMETER = 2.0; // meters
+
     Node start;
     Node end;
     double length;
@@ -47,6 +50,11 @@ public class Pipe {
     private static void validateDimensions(double diameter) {
         if (diameter <= 0) {
             throw new IllegalArgumentException("Diameter must be positive");
+        }
+        if (diameter < MIN_DIAMETER || diameter > MAX_DIAMETER) {
+            throw new IllegalArgumentException(
+                    String.format("Diameter must be between %.2f and %.2f meters",
+                            MIN_DIAMETER, MAX_DIAMETER));
         }
     }
 
