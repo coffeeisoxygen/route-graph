@@ -1,7 +1,7 @@
 package com.coffeecode.calculation.validation;
 
-import com.coffeecode.model.Node;
-import com.coffeecode.model.PipeMaterial;
+import com.coffeecode.network.edges.PipeMaterial;
+import com.coffeecode.network.nodes.Node;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.coffeecode.model;
+package com.coffeecode.network.edges;
 
 public enum PipeMaterial {
     PVC(0.0015e-3),

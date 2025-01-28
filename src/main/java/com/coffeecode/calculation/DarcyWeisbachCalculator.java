@@ -1,7 +1,7 @@
 package com.coffeecode.calculation;
 
 import com.coffeecode.config.AppProperties;
-import com.coffeecode.model.Pipe;
+import com.coffeecode.network.edges.Pipe;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

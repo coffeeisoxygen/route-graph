@@ -1,6 +1,7 @@
-package com.coffeecode.model;
+package com.coffeecode.network.edges;
 
 import com.coffeecode.calculation.validation.PipeValidator;
+import com.coffeecode.network.nodes.Node;
 
 import lombok.Value;
 
