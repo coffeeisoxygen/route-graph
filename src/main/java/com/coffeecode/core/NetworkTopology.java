@@ -5,17 +5,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.coffeecode.validation.BaseNetworkValidator;
 import com.coffeecode.validation.NetworkValidator;
 import com.coffeecode.validation.ValidationError;
 
 import lombok.Getter;
 
+@Component
 @Getter
 public class NetworkTopology {
     private final Map<String, Node> nodes;
     private final List<Edge> edges;
     private final NetworkValidator validator;
 
+    public NetworkTopology() {
+        this(new BaseNetworkValidator());
+    }
+
+    @Autowired
     public NetworkTopology(NetworkValidator validator) {
         this.nodes = new HashMap<>();
         this.edges = new ArrayList<>();

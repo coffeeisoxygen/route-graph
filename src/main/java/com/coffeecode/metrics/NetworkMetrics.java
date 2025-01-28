@@ -10,4 +10,10 @@ public interface NetworkMetrics {
     long getTotalPacketsProcessed();
 
     double getNetworkThroughput();
+
+    void recordPacketTransmission(double size);
+
+    void recordSuccessfulDelivery(double latency, double bandwidth);
+
+    void recordFailedDelivery();
 }

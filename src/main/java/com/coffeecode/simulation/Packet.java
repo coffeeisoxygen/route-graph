@@ -4,16 +4,19 @@ import com.coffeecode.core.Node;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
 public class Packet {
-    private String id;
-    private Node source;
-    private Node destination;
-    private double size;
+    private final String id;
+    private final Node source;
+    private final Node destination;
+    private final double size;
+    private final long creationTime;
+
+    @Setter
     private PacketStatus status;
-    private long creationTime;
 
     public enum PacketStatus {
         CREATED,
@@ -21,17 +24,4 @@ public class Packet {
         DELIVERED,
         FAILED
     }
-
-    public void setStatus(PacketStatus status) {
-
-        this.status = status;
-
-    }
-
-    public PacketStatus getStatus() {
-
-        return status;
-
-    }
-
 }

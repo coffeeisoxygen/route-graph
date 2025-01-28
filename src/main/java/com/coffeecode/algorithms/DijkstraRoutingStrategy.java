@@ -6,59 +6,69 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.PriorityQueue;
 
 import com.coffeecode.core.Edge;
 import com.coffeecode.core.Node;
 
+import lombok.Getter;
+
+@Getter
 public class DijkstraRoutingStrategy implements RoutingStrategy {
     private final Map<Node, Double> distances = new HashMap<>();
     private final Map<Node, Node> previousNodes = new HashMap<>();
-    private final PriorityQueue<Node> unvisited = new PriorityQueue<>(
-            Comparator.comparingDouble(distances::get));
+    private final PriorityQueue<Node> unvisitedNodes;
+
+    public DijkstraRoutingStrategy() {
+        this.unvisitedNodes = new PriorityQueue<>(
+                Comparator.comparingDouble(node -> distances.getOrDefault(node, Double.MAX_VALUE)));
+    }
 
     @Override
     public List<Node> findPath(Node source, Node destination) {
-        if (!source.isActive() || !destination.isActive()) {
+        if (!isValidEndpoints(source, destination)) {
             return Collections.emptyList();
         }
 
-        initialize(source);
+        initializeSearch(source);
 
-        while (!unvisited.isEmpty()) {
-            Node current = unvisited.poll();
-
+        while (!unvisitedNodes.isEmpty()) {
+            Node current = unvisitedNodes.poll();
             if (current.equals(destination)) {
                 return buildPath(destination);
             }
-
+            if (distances.get(current) == Double.MAX_VALUE) {
+                break;
+            }
             processNeighbors(current);
         }
 
         return Collections.emptyList();
     }
 
-    private void initialize(Node source) {
+    private void initializeSearch(Node source) {
         distances.clear();
         previousNodes.clear();
-        unvisited.clear();
-
+        unvisitedNodes.clear();
         distances.put(source, 0.0);
-        unvisited.add(source);
+        unvisitedNodes.add(source);
     }
 
     private void processNeighbors(Node current) {
+        double currentDistance = distances.get(current);
+
         for (Edge edge : current.getEdges()) {
             if (!edge.isConnected())
                 continue;
 
             Node neighbor = edge.getDestination();
-            double newDist = distances.get(current) + edge.getWeight();
+            double newDistance = currentDistance + edge.getWeight();
 
-            if (!distances.containsKey(neighbor) || newDist < distances.get(neighbor)) {
-                distances.put(neighbor, newDist);
+            if (newDistance < distances.getOrDefault(neighbor, Double.MAX_VALUE)) {
+                distances.put(neighbor, newDistance);
                 previousNodes.put(neighbor, current);
-                unvisited.add(neighbor);
+                unvisitedNodes.add(neighbor);
             }
         }
     }
@@ -73,5 +83,47 @@ public class DijkstraRoutingStrategy implements RoutingStrategy {
         }
 
         return path;
+    }
+
+    @Override
+    public double calculatePathCost(List<Node> path) {
+        double cost = 0;
+        for (int i = 0; i < path.size() - 1; i++) {
+            Node current = path.get(i);
+            Node next = path.get(i + 1);
+            Optional<Edge> edge = current.getEdges().stream()
+                    .filter(e -> e.getDestination().equals(next))
+                    .findFirst();
+            if (edge.isPresent()) {
+                cost += edge.get().getWeight();
+            }
+        }
+        return cost;
+    }
+
+    @Override
+    public boolean isValidPath(List<Node> path) {
+        if (path == null || path.size() < 2)
+            return false;
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            Node current = path.get(i);
+            Node next = path.get(i + 1);
+            boolean hasConnection = current.getEdges().stream()
+                    .anyMatch(e -> e.getDestination().equals(next) && e.isConnected());
+            if (!hasConnection)
+                return false;
+        }
+        return true;
+    }
+
+    private boolean isValidEndpoints(Node source, Node destination) {
+        return source != null && destination != null &&
+                source.isActive() && destination.isActive();
+    }
+
+    @Override
+    public String getAlgorithmName() {
+        return "Dijkstra";
     }
 }

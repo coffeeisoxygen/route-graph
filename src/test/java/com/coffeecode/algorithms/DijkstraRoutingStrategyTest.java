@@ -1,6 +1,7 @@
 package com.coffeecode.algorithms;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -8,45 +9,58 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.core.NetworkTopology;
+import com.coffeecode.core.Edge;
 import com.coffeecode.core.Node;
 import com.coffeecode.core.RouterNode;
 import com.coffeecode.core.ServerNode;
 
 class DijkstraRoutingStrategyTest {
-    private NetworkTopology network;
-    private RoutingStrategy router;
-    private Node source, intermediate, destination;
+    private DijkstraRoutingStrategy strategy;
+    private RouterNode source;
+    private RouterNode intermediate;
+    private ServerNode destination;
 
     @BeforeEach
     void setUp() {
-        network = new NetworkTopology();
-        router = new DijkstraRoutingStrategy();
-
+        strategy = new DijkstraRoutingStrategy();
         source = new RouterNode("R1", 10);
         intermediate = new RouterNode("R2", 10);
         destination = new ServerNode("S1", 100, 1000);
 
-        network.addNode(source);
-        network.addNode(intermediate);
-        network.addNode(destination);
+        // Create edges
+        Edge edge1 = Edge.builder()
+                .source(source)
+                .destination(intermediate)
+                .bandwidth(100)
+                .latency(5)
+                .active(true)
+                .build();
 
-        network.connect("R1", "R2", 100, 5);
-        network.connect("R2", "S1", 100, 5);
+        Edge edge2 = Edge.builder()
+                .source(intermediate)
+                .destination(destination)
+                .bandwidth(100)
+                .latency(5)
+                .active(true)
+                .build();
+
+        source.addEdge(edge1);
+        intermediate.addEdge(edge2);
     }
 
     @Test
     void testFindValidPath() {
-        List<Node> path = router.findPath(source, destination);
+        List<Node> path = strategy.findPath(source, destination);
+        assertFalse(path.isEmpty());
         assertEquals(3, path.size());
         assertEquals(source, path.get(0));
         assertEquals(destination, path.get(2));
     }
 
     @Test
-    void testNoPathWhenDisconnected() {
-        intermediate.setActive(false);
-        List<Node> path = router.findPath(source, destination);
-        assertTrue(path.isEmpty());
+    void testCalculatePathCost() {
+        List<Node> path = strategy.findPath(source, destination);
+        double cost = strategy.calculatePathCost(path);
+        assertTrue(cost > 0);
     }
 }

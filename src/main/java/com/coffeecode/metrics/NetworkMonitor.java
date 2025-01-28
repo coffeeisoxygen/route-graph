@@ -11,6 +11,7 @@ public class NetworkMonitor implements NetworkMetrics {
     private final AtomicLong packetCount = new AtomicLong(0);
     private final AtomicLong lostPackets = new AtomicLong(0);
     private final DoubleAdder totalBandwidth = new DoubleAdder();
+    private final DoubleAdder transmittedData = new DoubleAdder();
     private final long startTime = System.currentTimeMillis();
 
     public void recordPacketDelivery(double latency, double bandwidth) {
@@ -48,5 +49,26 @@ public class NetworkMonitor implements NetworkMetrics {
     public double getNetworkThroughput() {
         long duration = System.currentTimeMillis() - startTime;
         return duration > 0 ? (packetCount.get() * 1000.0) / duration : 0;
+    }
+
+    @Override
+    public void recordPacketTransmission(double size) {
+        transmittedData.add(size);
+    }
+
+    @Override
+    public void recordSuccessfulDelivery(double latency, double bandwidth) {
+        totalLatency.add(latency);
+        totalBandwidth.add(bandwidth);
+        packetCount.incrementAndGet();
+    }
+
+    @Override
+    public void recordFailedDelivery() {
+        lostPackets.incrementAndGet();
+    }
+
+    public double getTransmittedData() {
+        return transmittedData.sum();
     }
 }
