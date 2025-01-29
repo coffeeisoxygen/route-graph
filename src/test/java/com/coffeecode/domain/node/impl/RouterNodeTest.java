@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,26 +67,37 @@ class RouterNodeTest {
         void shouldHandleConcurrentConnections() throws InterruptedException {
             // Given
             int threadCount = 10;
+            CountDownLatch startLatch = new CountDownLatch(1);
+            CountDownLatch completionLatch = new CountDownLatch(threadCount);
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-            CountDownLatch latch = new CountDownLatch(threadCount);
+            AtomicInteger successCount = new AtomicInteger(0);
 
             // When
             for (int i = 0; i < threadCount; i++) {
                 executor.submit(() -> {
                     try {
-                        routerNode.addConnection(createValidEdge(routerNode));
+                        startLatch.await(); // Ensure concurrent start
+                        NetworkEdge edge = createValidEdge(routerNode);
+                        if (routerNode.addConnection(edge)) {
+                            successCount.incrementAndGet();
+                        }
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     } finally {
-                        latch.countDown();
+                        completionLatch.countDown();
                     }
                 });
             }
 
-            latch.await();
+            startLatch.countDown(); // Start all threads
+            completionLatch.await(); // Wait for completion
             executor.shutdown();
 
             // Then
+            assertThat(successCount.get())
+                    .isEqualTo(properties.getMaxConnections());
             assertThat(routerNode.getCurrentConnections())
-                    .isLessThanOrEqualTo(properties.getMaxConnections());
+                    .isEqualTo(properties.getMaxConnections());
         }
     }
 
@@ -122,7 +134,10 @@ class RouterNodeTest {
 
     private NetworkEdge createValidEdge(RouterNode source) {
         NetworkNode destination = RouterNode.create(properties);
-        EdgeProperties edgeProps = new EdgeProperties(100.0, 10.0);
+        EdgeProperties edgeProps = EdgeProperties.builder()
+                .bandwidth(100.0)
+                .latency(10.0)
+                .build();
 
         return NetworkEdge.builder()
                 .source(source)
