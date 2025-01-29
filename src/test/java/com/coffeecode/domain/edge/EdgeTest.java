@@ -12,9 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.entities.edge.Edge;
-import com.coffeecode.domain.entities.edge.EdgeProperties;
-import com.coffeecode.domain.entities.node.base.Node;
+import com.coffeecode.domain.edge.properties.EdgeProperties;
+import com.coffeecode.domain.node.base.Node;
 
 @ExtendWith(MockitoExtension.class)
 class EdgeTest {

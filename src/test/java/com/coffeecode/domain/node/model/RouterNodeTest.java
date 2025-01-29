@@ -11,8 +11,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.entities.node.base.NodeType;
-import com.coffeecode.domain.entities.node.impl.RouterNode;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.impl.RouterNode;
 
 class RouterNodeTest {
     private RouterNode routerNode;

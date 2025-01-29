@@ -1,35 +1,35 @@
-package com.coffeecode.domain.entities.node.impl;
+package com.coffeecode.domain.node.impl;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.entities.edge.Edge;
-import com.coffeecode.domain.entities.node.base.Node;
-import com.coffeecode.domain.entities.node.base.NodeType;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
 
 import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-public class ServerNode implements Node {
+public class ClientNode implements Node {
     private final Identity identity;
     private final List<Edge> connections;
-    private final ServerNodeProperties properties;
-    private final AtomicInteger currentLoad;
+    private final ClientNodeProperties properties;
+    private double currentUsage;
     private boolean active;
 
-    public ServerNode(ServerNodeProperties props) {
-        this.identity = Identity.create(NodeType.SERVER.getNamePrefix());
+    public ClientNode(ClientNodeProperties props) {
+        this.identity = Identity.create(NodeType.CLIENT.getNamePrefix());
         this.connections = new ArrayList<>();
         this.properties = props;
-        this.currentLoad = new AtomicInteger(0);
+        this.currentUsage = 0;
         this.active = true;
     }
 
     @Override
     public NodeType getType() {
-        return NodeType.SERVER;
+        return NodeType.CLIENT;
     }
 
     @Override
@@ -55,23 +55,24 @@ public class ServerNode implements Node {
 
     @Override
     public void setActive(boolean active) {
+        if (active) {
+            resetUsage();
+        }
         this.active = active;
     }
 
-    public boolean canHandleRequest() {
-        return currentLoad.get() < properties.getCapacity();
+    public synchronized boolean canTransmit(double dataSize) {
+        return (currentUsage + dataSize) <= properties.getDataRate();
     }
 
-    public boolean addRequest() {
-        return currentLoad.get() < properties.getCapacity() &&
-                currentLoad.incrementAndGet() <= properties.getCapacity();
+    public synchronized void recordTransmission(double dataSize) {
+        if (!canTransmit(dataSize)) {
+            throw new IllegalArgumentException("Transmission would exceed capacity");
+        }
+        currentUsage += dataSize;
     }
 
-    public void completeRequest() {
-        currentLoad.updateAndGet(load -> Math.max(0, load - 1));
-    }
-
-    public double getLoadPercentage() {
-        return (currentLoad.get() * 100.0) / properties.getCapacity();
+    public synchronized void resetUsage() {
+        currentUsage = 0;
     }
 }

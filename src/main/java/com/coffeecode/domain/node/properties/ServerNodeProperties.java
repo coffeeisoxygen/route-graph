@@ -1,4 +1,4 @@
-package com.coffeecode.domain.entities.node.impl;
+package com.coffeecode.domain.node.properties;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;

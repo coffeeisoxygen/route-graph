@@ -1,4 +1,4 @@
-package com.coffeecode.domain.entities.edge;
+package com.coffeecode.domain.edge.properties;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;

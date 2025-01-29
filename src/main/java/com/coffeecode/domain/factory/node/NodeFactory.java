@@ -1,11 +1,11 @@
 package com.coffeecode.domain.factory.node;
 
-import com.coffeecode.domain.entities.node.base.Node;
-import com.coffeecode.domain.entities.node.base.NodeType;
-import com.coffeecode.domain.entities.node.impl.ClientNodeProperties;
-import com.coffeecode.domain.entities.node.impl.RouterNodeProperties;
-import com.coffeecode.domain.entities.node.impl.ServerNodeProperties;
-import com.coffeecode.domain.node.properties.*;
+import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
+import com.coffeecode.domain.node.properties.RouterNodeProperties;
+import com.coffeecode.domain.node.properties.ServerNodeProperties;
+
 import java.util.List;
 
 public interface NodeFactory {

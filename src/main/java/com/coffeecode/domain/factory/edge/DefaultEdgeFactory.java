@@ -1,8 +1,8 @@
 package com.coffeecode.domain.factory.edge;
 
-import com.coffeecode.domain.entities.edge.Edge;
-import com.coffeecode.domain.entities.edge.EdgeProperties;
-import com.coffeecode.domain.entities.node.base.Node;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.edge.properties.EdgeProperties;
+import com.coffeecode.domain.node.base.Node;
 
 import org.springframework.stereotype.Component;
 import java.util.List;

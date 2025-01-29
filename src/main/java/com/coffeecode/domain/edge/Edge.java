@@ -1,7 +1,8 @@
-package com.coffeecode.domain.entities.edge;
+package com.coffeecode.domain.edge;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.entities.node.base.Node;
+import com.coffeecode.domain.edge.properties.EdgeProperties;
+import com.coffeecode.domain.node.base.Node;
 
 import lombok.Builder;
 import lombok.Getter;

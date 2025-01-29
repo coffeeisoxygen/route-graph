@@ -1,14 +1,14 @@
 package com.coffeecode.domain.factory.node;
 
-import com.coffeecode.domain.entities.node.base.Node;
-import com.coffeecode.domain.entities.node.impl.ClientNode;
-import com.coffeecode.domain.entities.node.impl.ClientNodeProperties;
-import com.coffeecode.domain.entities.node.impl.RouterNode;
-import com.coffeecode.domain.entities.node.impl.RouterNodeProperties;
-import com.coffeecode.domain.entities.node.impl.ServerNode;
-import com.coffeecode.domain.entities.node.impl.ServerNodeProperties;
-import com.coffeecode.domain.node.impl.*;
-import com.coffeecode.domain.node.properties.*;
+import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.impl.ClientNode;
+import com.coffeecode.domain.node.impl.RouterNode;
+import com.coffeecode.domain.node.impl.ServerNode;
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
+import com.coffeecode.domain.node.properties.RouterNodeProperties;
+import com.coffeecode.domain.node.properties.ServerNodeProperties;
+
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -18,30 +18,25 @@ public class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public Node createRouter(RouterNodeProperties props) {
-        if (!props.isValid()) {
-            throw new IllegalArgumentException("Invalid router properties");
-        }
+        validateProperties(props);
         return new RouterNode(props);
     }
 
     @Override
     public Node createClient(ClientNodeProperties props) {
-        if (!props.isValid()) {
-            throw new IllegalArgumentException("Invalid client properties");
-        }
+        validateProperties(props);
         return new ClientNode(props);
     }
 
     @Override
     public Node createServer(ServerNodeProperties props) {
-        if (!props.isValid()) {
-            throw new IllegalArgumentException("Invalid server properties");
-        }
+        validateProperties(props);
         return new ServerNode(props);
     }
 
     @Override
     public List<Node> createBatch(NodeType type, int count, Object properties) {
+        validateBatchParameters(type, count, properties);
         return IntStream.range(0, count)
                 .mapToObj(i -> createNode(type, properties))
                 .toList();
@@ -53,5 +48,21 @@ public class DefaultNodeFactory implements NodeFactory {
             case CLIENT -> createClient((ClientNodeProperties) properties);
             case SERVER -> createServer((ServerNodeProperties) properties);
         };
+    }
+
+    private void validateProperties(Object props) {
+        if (props == null) {
+            throw new IllegalArgumentException("Properties cannot be null");
+        }
+    }
+
+    private void validateBatchParameters(NodeType type, int count, Object properties) {
+        if (type == null) {
+            throw new IllegalArgumentException("Node type cannot be null");
+        }
+        if (count <= 0) {
+            throw new IllegalArgumentException("Count must be positive");
+        }
+        validateProperties(properties);
     }
 }

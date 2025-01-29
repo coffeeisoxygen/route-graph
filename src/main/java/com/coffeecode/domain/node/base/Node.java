@@ -1,9 +1,9 @@
-package com.coffeecode.domain.entities.node.base;
+package com.coffeecode.domain.node.base;
 
 import java.util.List;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.entities.edge.Edge;
+import com.coffeecode.domain.edge.Edge;
 
 public interface Node {
     /**

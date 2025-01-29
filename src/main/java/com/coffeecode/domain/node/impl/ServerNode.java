@@ -1,9 +1,10 @@
-package com.coffeecode.domain.entities.node.impl;
+package com.coffeecode.domain.node.impl;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.entities.edge.Edge;
-import com.coffeecode.domain.entities.node.base.Node;
-import com.coffeecode.domain.entities.node.base.NodeType;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 import lombok.Getter;
 import java.util.ArrayList;
@@ -12,24 +13,24 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-public class RouterNode implements Node {
+public class ServerNode implements Node {
     private final Identity identity;
     private final List<Edge> connections;
-    private final RouterNodeProperties properties;
-    private final AtomicInteger currentRoutes;
+    private final ServerNodeProperties properties;
+    private final AtomicInteger currentLoad;
     private boolean active;
 
-    public RouterNode(RouterNodeProperties props) {
-        this.identity = Identity.create(NodeType.ROUTER.getNamePrefix());
+    public ServerNode(ServerNodeProperties props) {
+        this.identity = Identity.create(NodeType.SERVER.getNamePrefix());
         this.connections = new ArrayList<>();
         this.properties = props;
-        this.currentRoutes = new AtomicInteger(0);
+        this.currentLoad = new AtomicInteger(0);
         this.active = true;
     }
 
     @Override
     public NodeType getType() {
-        return NodeType.ROUTER;
+        return NodeType.SERVER;
     }
 
     @Override
@@ -58,16 +59,20 @@ public class RouterNode implements Node {
         this.active = active;
     }
 
-    public boolean canAddRoute() {
-        return currentRoutes.get() < properties.getRoutingCapacity();
+    public boolean canHandleRequest() {
+        return currentLoad.get() < properties.getCapacity();
     }
 
-    public boolean addRoute() {
-        return currentRoutes.get() < properties.getRoutingCapacity() &&
-                currentRoutes.incrementAndGet() <= properties.getRoutingCapacity();
+    public boolean addRequest() {
+        return currentLoad.get() < properties.getCapacity() &&
+                currentLoad.incrementAndGet() <= properties.getCapacity();
     }
 
-    public void removeRoute() {
-        currentRoutes.updateAndGet(routes -> Math.max(0, routes - 1));
+    public void completeRequest() {
+        currentLoad.updateAndGet(load -> Math.max(0, load - 1));
+    }
+
+    public double getLoadPercentage() {
+        return (currentLoad.get() * 100.0) / properties.getCapacity();
     }
 }

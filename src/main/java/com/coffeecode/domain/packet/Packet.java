@@ -3,7 +3,7 @@ package com.coffeecode.domain.packet;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.coffeecode.domain.entities.node.base.Node;
+import com.coffeecode.domain.node.base.Node;
 
 import lombok.Builder;
 import lombok.Getter;
