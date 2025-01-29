@@ -3,18 +3,24 @@ package com.coffeecode.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.coffeecode.domain.factory.edge.EdgeFactory;
 import com.coffeecode.domain.factory.node.NodeFactory;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 
-@SpringJUnitConfig(classes = {NetworkConfig.class, TestConfig.class})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {NetworkConfig.class, TestConfig.class})
 class NetworkConfigTest {
-    @Autowired private NodeFactory nodeFactory;
-    @Autowired private EdgeFactory edgeFactory;
+    @Autowired
+    private NodeFactory nodeFactory;
+
+    @Autowired
+    private EdgeFactory edgeFactory;
 
     @Test
     void shouldCreateFactories() {
