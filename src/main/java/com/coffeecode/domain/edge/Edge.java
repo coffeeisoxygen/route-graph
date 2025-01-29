@@ -1,6 +1,6 @@
 package com.coffeecode.domain.edge;
 
-import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.model.Node;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,6 @@ public class Edge {
     private double bandwidth;
     private double latency;
     private boolean active;
-    private boolean isActive;
 
     public boolean isValid() {
         return source != null &&

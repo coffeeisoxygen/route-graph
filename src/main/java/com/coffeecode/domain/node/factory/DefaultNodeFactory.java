@@ -7,12 +7,11 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.node.ClientNode;
-import com.coffeecode.domain.node.Node;
-import com.coffeecode.domain.node.NodeFactory;
-import com.coffeecode.domain.node.NodeType;
-import com.coffeecode.domain.node.RouterNode;
-import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.domain.node.model.ClientNode;
+import com.coffeecode.domain.node.model.Node;
+import com.coffeecode.domain.node.model.NodeType;
+import com.coffeecode.domain.node.model.RouterNode;
+import com.coffeecode.domain.node.model.ServerNode;
 import com.coffeecode.domain.node.properties.NodeProperties;
 
 @Component

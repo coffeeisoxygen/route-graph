@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node;
+package com.coffeecode.domain.node.model;
 
 import java.util.List;
 import java.util.UUID;
@@ -75,11 +75,11 @@ public class ClientNode extends AbstractNode {
 
     @Override
     public void batchProcess(List<Edge> edges) {
-
+        edges.forEach(this::addEdge);
     }
 
     @Override
     public boolean isValid() {
-        return dataRate > 0;
+        return getId() != null && getType() != null && getEdges() != null;
     }
 }

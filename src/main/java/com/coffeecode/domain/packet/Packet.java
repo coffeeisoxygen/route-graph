@@ -1,6 +1,6 @@
 package com.coffeecode.domain.packet;
 
-import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.model.Node;
 
 import lombok.Builder;
 import lombok.Getter;

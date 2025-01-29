@@ -8,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.AbstractNode;
+import com.coffeecode.domain.node.model.AbstractNode;
+import com.coffeecode.domain.node.model.NodeType;
 
 class TestNode extends AbstractNode {
     public TestNode(String id) {

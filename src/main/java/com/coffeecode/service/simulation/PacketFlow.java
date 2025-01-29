@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
 
-import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.model.Node;
 import com.coffeecode.domain.packet.Packet;
 import com.coffeecode.infrastructure.monitoring.NetworkMonitor;
 import com.coffeecode.service.routing.RoutingStrategy;

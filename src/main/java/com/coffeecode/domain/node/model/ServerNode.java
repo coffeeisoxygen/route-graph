@@ -1,9 +1,12 @@
-package com.coffeecode.domain.node;
+package com.coffeecode.domain.node.model;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.validation.constraints.Positive;
+
+import com.coffeecode.domain.edge.Edge;
 
 import lombok.Getter;
 
@@ -70,5 +73,15 @@ public class ServerNode extends AbstractNode {
      */
     public double getLoadPercentage() {
         return (currentLoad.get() * 100.0) / capacity;
+    }
+
+    @Override
+    public void batchProcess(List<Edge> edges) {
+        edges.forEach(this::addEdge);
+    }
+
+    @Override
+    public boolean isValid() {
+        return getId() != null && getType() != null && getEdges() != null;
     }
 }

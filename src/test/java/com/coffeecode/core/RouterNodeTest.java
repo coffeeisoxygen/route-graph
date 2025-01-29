@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.node.RouterNode;
+import com.coffeecode.domain.node.model.RouterNode;
 
 class RouterNodeTest {
     @Test

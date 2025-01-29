@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node;
+package com.coffeecode.domain.node.model;
 
 import java.util.ArrayList;
 import java.util.List;

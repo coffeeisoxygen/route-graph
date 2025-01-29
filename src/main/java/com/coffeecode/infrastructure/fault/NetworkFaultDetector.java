@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.Node;
+import com.coffeecode.domain.node.model.Node;
 
 import lombok.Getter;
 

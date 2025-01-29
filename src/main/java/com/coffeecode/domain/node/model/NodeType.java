@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node;
+package com.coffeecode.domain.node.model;
 
 public enum NodeType {
     ROUTER,

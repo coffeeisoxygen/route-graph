@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.node.RouterNode;
-import com.coffeecode.domain.node.ServerNode;
+import com.coffeecode.domain.node.model.RouterNode;
+import com.coffeecode.domain.node.model.ServerNode;
 import com.coffeecode.domain.packet.Packet;
 import com.coffeecode.infrastructure.monitoring.NetworkMetrics;
 import com.coffeecode.service.routing.RoutingStrategy;

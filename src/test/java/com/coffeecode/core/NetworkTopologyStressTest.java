@@ -13,11 +13,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.ClientNode;
-import com.coffeecode.domain.node.Node;
-import com.coffeecode.domain.node.RouterNode;
-import com.coffeecode.domain.node.ServerNode;
-import com.coffeecode.service.topology.NetworkTopology;
+import com.coffeecode.domain.node.model.ClientNode;
+import com.coffeecode.domain.node.model.Node;
+import com.coffeecode.domain.node.model.RouterNode;
+import com.coffeecode.domain.node.model.ServerNode;
+import com.coffeecode.domain.topology.NetworkTopology;
 
 class NetworkTopologyStressTest {
     private NetworkTopology network;

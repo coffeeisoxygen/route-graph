@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node;
+package com.coffeecode.domain.node.model;
 
 import java.util.List;
 import java.util.UUID;
