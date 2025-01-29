@@ -55,4 +55,11 @@ public interface Node {
      * @param edge Edge to remove
      */
     void removeConnection(Edge edge);
+
+    /**
+     * Gets the properties specific to this node type
+     *
+     * @return Node properties object
+     */
+    Object getProperties();
 }

@@ -1,5 +1,9 @@
 package com.coffeecode.domain.node.base;
 
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
+import com.coffeecode.domain.node.properties.RouterNodeProperties;
+import com.coffeecode.domain.node.properties.ServerNodeProperties;
+
 import lombok.Getter;
 
 /**
@@ -37,6 +41,30 @@ public enum NodeType {
      */
     public boolean canInitiateConnection() {
         return this != ROUTER;
+    }
+
+    /**
+     * Creates default properties for this node type
+     *
+     * @return Properties object specific to node type
+     */
+    public Object createDefaultProperties() {
+        return switch (this) {
+            case ROUTER -> RouterNodeProperties.builder()
+                    .routingCapacity(defaultCapacity)
+                    .bufferSize(1024.0)
+                    .supportsQos(true)
+                    .build();
+            case CLIENT -> ClientNodeProperties.builder()
+                    .dataRate(100.0)
+                    .maxBandwidth((double) defaultCapacity)
+                    .build();
+            case SERVER -> ServerNodeProperties.builder()
+                    .capacity(defaultCapacity)
+                    .processingPower(1000.0)
+                    .maxConnections(100)
+                    .build();
+        };
     }
 
 }
