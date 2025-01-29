@@ -42,12 +42,14 @@ public class ConnectionManager implements RouterComponent {
 
     @Override
     public void clear() {
-        connections.clear();
+        this.active = false; // Set inactive first
+        this.connections.clear();
     }
 
     @Override
     public void initialize() {
-        active = true;
+        this.connections.clear(); // Clear first
+        this.active = true;
     }
 
     @Override

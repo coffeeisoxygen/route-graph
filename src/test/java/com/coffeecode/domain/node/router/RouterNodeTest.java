@@ -84,26 +84,17 @@ class RouterNodeTest {
     @DisplayName("Route Management")
     class RouteTests {
         private NetworkIdentity destination;
-        private NetworkIdentity nextHop;
+        private RouterNode nextHopNode;
         private double metric;
 
         @BeforeEach
         void setUp() {
             destination = NetworkIdentity.create(NodeType.SERVER);
-            nextHop = NetworkIdentity.create(NodeType.ROUTER);
+            nextHopNode = RouterNode.create(properties);
             metric = 10.0;
 
-            // Create connection to nextHop
-            NetworkEdge edge = NetworkEdge.builder()
-                    .source(routerNode)
-                    .destination(RouterNode.create(properties))
-                    .properties(EdgeProperties.builder()
-                            .bandwidth(100.0)
-                            .latency(10.0)
-                            .build())
-                    .active(true)
-                    .build();
-
+            // Create and add connection to nextHop
+            NetworkEdge edge = createEdge(routerNode, nextHopNode);
             routerNode.addConnection(edge);
         }
 
@@ -111,24 +102,23 @@ class RouterNodeTest {
         @DisplayName("Should update and find route")
         void shouldUpdateAndFindRoute() {
             // When
-            routerNode.updateRoute(destination, nextHop, metric);
+            routerNode.updateRoute(destination, nextHopNode.getIdentity(), metric);
 
             // Then
             Optional<RouteInfo> route = routerNode.findRoute(destination);
             assertThat(route)
-                    .isPresent()
-                    .get()
-                    .satisfies(r -> {
-                        assertThat(r.getNextHop()).isEqualTo(nextHop);
-                        assertThat(r.getMetric()).isEqualTo(metric);
-                    });
+                .isPresent()
+                .hasValueSatisfying(r -> {
+                    assertThat(r.getNextHop()).isEqualTo(nextHopNode.getIdentity());
+                    assertThat(r.getMetric()).isEqualTo(metric);
+                });
         }
 
         @Test
         @DisplayName("Should not find route when inactive")
         void shouldNotFindRouteWhenInactive() {
             // Given
-            routerNode.updateRoute(destination, nextHop, metric);
+            routerNode.updateRoute(destination, nextHopNode.getIdentity(), metric);
 
             // When
             routerNode.setActive(false);
@@ -150,6 +140,18 @@ class RouterNodeTest {
 
             // Then
             assertThat(routerNode.findRoute(destination)).isEmpty();
+        }
+
+        private NetworkEdge createEdge(RouterNode source, RouterNode target) {
+            return NetworkEdge.builder()
+                .source(source)
+                .destination(target)
+                .properties(EdgeProperties.builder()
+                    .bandwidth(100.0)
+                    .latency(10.0)
+                    .build())
+                .active(true)
+                .build();
         }
     }
 
