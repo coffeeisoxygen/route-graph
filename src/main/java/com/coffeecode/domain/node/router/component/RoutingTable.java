@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node.impl;
+package com.coffeecode.domain.node.router.component;
 
 import java.util.Map;
 import java.util.Optional;
@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.coffeecode.domain.model.NetworkIdentity;
+import com.coffeecode.domain.node.router.model.RouteInfo;
 
 import lombok.Getter;
 
@@ -14,7 +15,8 @@ import lombok.Getter;
  * Manages network routes and their associated metrics.
  */
 @Getter
-public class RoutingTable {
+public class RoutingTable implements RouterComponent {
+    private volatile boolean active;
     private final Map<NetworkIdentity, RouteInfo> routes;
 
     public RoutingTable() {
@@ -65,8 +67,10 @@ public class RoutingTable {
     /**
      * Clears all routes from the table
      */
+    @Override
     public void clear() {
         routes.clear();
+        active = false;
     }
 
     /**
@@ -85,5 +89,10 @@ public class RoutingTable {
         if (routeInfo == null) {
             throw new IllegalArgumentException("Route info cannot be null");
         }
+    }
+
+    @Override
+    public void initialize() {
+        active = true;
     }
 }

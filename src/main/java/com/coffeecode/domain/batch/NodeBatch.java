@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coffeecode.domain.model.NodeType;
-import com.coffeecode.domain.node.impl.RouterNode;
+import com.coffeecode.domain.node.router.RouterNode;
 import com.coffeecode.domain.properties.NodeProperties;
 
 import lombok.Builder;

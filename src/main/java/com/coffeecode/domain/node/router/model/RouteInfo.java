@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node.impl;
+package com.coffeecode.domain.node.router.model;
 
 import com.coffeecode.domain.model.NetworkIdentity;
 
@@ -10,7 +10,8 @@ import lombok.Value;
 public class RouteInfo {
     NetworkIdentity nextHop;
     double metric;
-    long timestamp;
+    @Builder.Default
+    long timestamp = System.currentTimeMillis();
 
     public boolean isValid() {
         return nextHop != null && metric >= 0;

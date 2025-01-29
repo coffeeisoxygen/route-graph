@@ -22,6 +22,8 @@ import com.coffeecode.domain.edge.NetworkEdge;
 import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.model.NodeType;
 import com.coffeecode.domain.node.NetworkNode;
+import com.coffeecode.domain.node.router.RouterNode;
+import com.coffeecode.domain.node.router.model.RouteInfo;
 import com.coffeecode.domain.properties.EdgeProperties;
 import com.coffeecode.domain.properties.NodeProperties;
 

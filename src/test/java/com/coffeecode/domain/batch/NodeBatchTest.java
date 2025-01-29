@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.model.NodeType;
-import com.coffeecode.domain.node.impl.RouterNode;
+import com.coffeecode.domain.node.router.RouterNode;
 import com.coffeecode.domain.properties.NodeProperties;
 
 @DisplayName("NodeBatch Tests")

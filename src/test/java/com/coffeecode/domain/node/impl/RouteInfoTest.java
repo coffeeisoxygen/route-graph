@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.model.NetworkIdentity;
+import com.coffeecode.domain.node.router.model.RouteInfo;
 
 public class RouteInfoTest {
 

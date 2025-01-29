@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.model.NetworkIdentity;
+import com.coffeecode.domain.node.router.component.RoutingTable;
+import com.coffeecode.domain.node.router.model.RouteInfo;
 
 public class RoutingTableTest {
 
