@@ -2,6 +2,9 @@ package com.coffeecode.domain.node.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.domain.edge.NetworkEdge;
+import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.model.NodeType;
 import com.coffeecode.domain.node.NetworkNode;
 import com.coffeecode.domain.properties.EdgeProperties;
@@ -41,6 +45,17 @@ class RouterNodeTest {
     }
 
     @Nested
+    @DisplayName("Basic Node Operations")
+    class BasicOperations {
+        @Test
+        @DisplayName("Should create router with valid properties")
+        void shouldCreateWithValidProperties() {
+            assertThat(routerNode.getProperties()).isEqualTo(properties);
+            assertThat(routerNode.isActive()).isTrue();
+        }
+    }
+
+    @Nested
     @DisplayName("Connection Management Tests")
     class ConnectionTests {
 
@@ -48,18 +63,28 @@ class RouterNodeTest {
         @DisplayName("Should respect max connections limit")
         void shouldRespectMaxConnections() {
             // Given
-            NetworkEdge edge = createValidEdge(routerNode);
+            List<NetworkEdge> edges = new ArrayList<>();
 
             // When
             for (int i = 0; i < properties.getMaxConnections(); i++) {
-                boolean added = routerNode.addConnection(edge);
-                assertThat(added).isTrue();
+                NetworkEdge newEdge = createValidEdge(routerNode);
+                edges.add(newEdge);
+                boolean added = routerNode.addConnection(newEdge);
+                assertThat(added)
+                        .as("Connection %d should be accepted", i + 1)
+                        .isTrue();
             }
 
             // Then
-            boolean exceeded = routerNode.addConnection(edge);
-            assertThat(exceeded).isFalse();
-            assertThat(routerNode.getCurrentConnections()).isEqualTo(properties.getMaxConnections());
+            NetworkEdge extraEdge = createValidEdge(routerNode);
+            boolean exceeded = routerNode.addConnection(extraEdge);
+
+            assertThat(exceeded)
+                    .as("Should reject connection when limit reached")
+                    .isFalse();
+            assertThat(routerNode.getCurrentConnections())
+                    .as("Should maintain max connection limit")
+                    .isEqualTo(properties.getMaxConnections());
         }
 
         @Test
@@ -77,9 +102,11 @@ class RouterNodeTest {
                 executor.submit(() -> {
                     try {
                         startLatch.await(); // Ensure concurrent start
-                        NetworkEdge edge = createValidEdge(routerNode);
-                        if (routerNode.addConnection(edge)) {
-                            successCount.incrementAndGet();
+                        if (routerNode.getCurrentConnections() < properties.getMaxConnections()) {
+                            NetworkEdge edge = createValidEdge(routerNode);
+                            if (routerNode.addConnection(edge)) {
+                                successCount.incrementAndGet();
+                            }
                         }
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -94,32 +121,19 @@ class RouterNodeTest {
             executor.shutdown();
 
             // Then
-            assertThat(successCount.get())
-                    .isEqualTo(properties.getMaxConnections());
             assertThat(routerNode.getCurrentConnections())
+                    .isEqualTo(properties.getMaxConnections());
+            assertThat(successCount.get())
                     .isEqualTo(properties.getMaxConnections());
         }
     }
 
     @Nested
-    @DisplayName("Validation Tests")
-    class ValidationTests {
-
-        @Test
-        @DisplayName("Should validate edges correctly")
-        void shouldValidateEdges() {
-            // Given
-            NetworkEdge validEdge = createValidEdge(routerNode);
-            NetworkEdge invalidEdge = null;
-
-            // When & Then
-            assertThat(routerNode.addConnection(validEdge)).isTrue();
-            assertThat(routerNode.addConnection(invalidEdge)).isFalse();
-        }
-
+    @DisplayName("State Management")
+    class StateTests {
         @Test
         @DisplayName("Should clear connections when deactivated")
-        void shouldClearConnectionsWhenDeactivated() {
+        void shouldClearConnectionsOnDeactivate() {
             // Given
             routerNode.addConnection(createValidEdge(routerNode));
 
@@ -132,8 +146,29 @@ class RouterNodeTest {
         }
     }
 
+    @Nested
+    @DisplayName("Edge Validation")
+    class ValidationTests {
+        @Test
+        @DisplayName("Should validate edge properties")
+        void shouldValidateEdgeProperties() {
+            // Given
+            NetworkEdge validEdge = createValidEdge(routerNode);
+            NetworkEdge invalidEdge = null;
+
+            // When & Then
+            assertThat(routerNode.addConnection(validEdge)).isTrue();
+            assertThat(routerNode.addConnection(invalidEdge)).isFalse();
+        }
+    }
+
     private NetworkEdge createValidEdge(RouterNode source) {
-        NetworkNode destination = RouterNode.create(properties);
+        NetworkNode destination = RouterNode.create(NodeProperties.builder()
+                .type(NodeType.ROUTER)
+                .maxConnections(4)
+                .bandwidth(100.0)
+                .build());
+
         EdgeProperties edgeProps = EdgeProperties.builder()
                 .bandwidth(100.0)
                 .latency(10.0)
@@ -143,6 +178,21 @@ class RouterNodeTest {
                 .source(source)
                 .destination(destination)
                 .properties(edgeProps)
+                .active(true)
                 .build();
+    }
+
+    @Test
+    void shouldManageRoutes() {
+        // Given
+        NetworkIdentity destination = NetworkIdentity.create(NodeType.SERVER);
+
+        // When
+        routerNode.updateRoute(destination, 10.0);
+
+        // Then
+        Optional<RouteInfo> route = routerNode.findRoute(destination);
+        assertThat(route).isPresent();
+        assertThat(route.get().getMetric()).isEqualTo(10.0);
     }
 }

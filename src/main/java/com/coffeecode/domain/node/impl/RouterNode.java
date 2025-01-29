@@ -1,5 +1,6 @@
 package com.coffeecode.domain.node.impl;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -85,8 +86,12 @@ public class RouterNode implements NetworkNode {
         if (!canAcceptConnection() || !validateEdge(edge)) {
             return false;
         }
+
         lock.writeLock().lock();
         try {
+            if (connections.size() >= properties.getMaxConnections()) {
+                return false;
+            }
             return connections.add(edge);
         } finally {
             lock.writeLock().unlock();
@@ -108,5 +113,19 @@ public class RouterNode implements NetworkNode {
         return edge != null &&
                 (edge.getSource().equals(this) || edge.getDestination().equals(this)) &&
                 edge.isValid();
+    }
+
+    // Add routing methods
+    public Optional<RouteInfo> findRoute(NetworkIdentity destination) {
+        return routingTable.getRoute(destination);
+    }
+
+    public void updateRoute(NetworkIdentity destination, double metric) {
+        RouteInfo route = RouteInfo.builder()
+                .nextHop(destination)
+                .metric(metric)
+                .timestamp(System.currentTimeMillis())
+                .build();
+        routingTable.updateRoute(destination, route);
     }
 }
