@@ -26,11 +26,7 @@ public class MetricsCollector implements RouterComponent {
         }
 
         MetricsWindow window = metricsWindows.get(target);
-        if (window == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(window.getSnapshot());
+        return window != null ? Optional.of(window.getSnapshot()) : Optional.empty();
     }
 
     public void updateMetric(NetworkIdentity target, double metric) {

@@ -19,7 +19,7 @@ import lombok.Getter;
  */
 @Getter
 public class RouterNode implements NetworkNode {
-    private static final long ROUTE_EXPIRY_MS = 30_000; // 30 seconds
+    private static final long ROUTE_EXPIRY_MS = 30000; // 30 seconds
 
     private final NetworkIdentity identity;
     private final NodeProperties properties;
@@ -34,6 +34,7 @@ public class RouterNode implements NetworkNode {
         initialize();
     }
 
+    // Core operations
     public static RouterNode create(NodeProperties properties) {
         if (properties == null) {
             throw new IllegalArgumentException("Properties cannot be null");
@@ -44,7 +45,7 @@ public class RouterNode implements NetworkNode {
                 .build();
     }
 
-    public void initialize() {
+    private void initialize() {
         this.active = true;
         components.initialize();
     }
@@ -65,6 +66,7 @@ public class RouterNode implements NetworkNode {
                 components.getConnections().getConnectionCount() < properties.getMaxConnections();
     }
 
+    // Connection management
     public boolean addConnection(NetworkEdge edge) {
         if (!canAcceptConnection()) {
             return false;
@@ -72,30 +74,58 @@ public class RouterNode implements NetworkNode {
         return components.getConnections().addConnection(edge);
     }
 
+    public boolean removeConnection(NetworkEdge edge) {
+        return components.getConnections().removeConnection(edge);
+    }
+
+    // Route operations
     public Optional<RouteInfo> findRoute(NetworkIdentity destination) {
-        if (!isActive()) {
+        if (!isActive() || destination == null) {
             return Optional.empty();
         }
+
         return components.getRoutes()
                 .getRoute(destination)
-                .filter(this::isRouteActive);
+                .filter(this::isRouteValid);
     }
 
     public void updateRoute(NetworkIdentity destination, NetworkIdentity nextHop, double metric) {
-        if (!isActive())
-            return;
+        validateRouteUpdate(destination, nextHop, metric);
 
         RouteInfo route = RouteInfo.builder()
                 .nextHop(nextHop)
                 .metric(metric)
+                .timestamp(System.currentTimeMillis())
                 .build();
 
-        if (route.isValid()) {
-            components.getRoutes().updateRoute(destination, route);
-            components.getMetrics().updateMetric(destination, metric);
+        components.getRoutes().updateRoute(destination, route);
+        components.getMetrics().updateMetric(destination, metric);
+    }
+
+    private void validateRouteUpdate(NetworkIdentity destination, NetworkIdentity nextHop, double metric) {
+        if (destination == null || nextHop == null) {
+            throw new IllegalArgumentException("Destination and nextHop cannot be null");
+        }
+        if (metric < 0) {
+            throw new IllegalArgumentException("Invalid metric: must be non-negative");
+        }
+        if (!isNodeReachable(nextHop)) {
+            throw new IllegalArgumentException("Next hop node is not reachable");
         }
     }
 
+    private boolean isRouteValid(RouteInfo route) {
+        if (route == null)
+            return false;
+
+        long currentTime = System.currentTimeMillis();
+        long routeAge = currentTime - route.getTimestamp();
+
+        return routeAge <= ROUTE_EXPIRY_MS &&
+                isNodeReachable(route.getNextHop());
+    }
+
+    // Metrics operations
     public MetricsSnapshot getMetricsFor(NetworkIdentity target) {
         if (!active || target == null) {
             return MetricsSnapshot.empty();
