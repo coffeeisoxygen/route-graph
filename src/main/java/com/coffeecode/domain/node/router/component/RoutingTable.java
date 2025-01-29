@@ -51,8 +51,14 @@ public class RoutingTable implements RouterComponent {
      * @param destination Target node identity
      * @return Removed route information if existed
      */
-    public Optional<RouteInfo> removeRoute(NetworkIdentity destination) {
-        return Optional.ofNullable(routes.remove(destination));
+    /**
+     * Removes route information for the specified destination
+     */
+    public boolean removeRoute(NetworkIdentity destination) {
+        if (destination == null) {
+            return false;
+        }
+        return routes.remove(destination) != null;
     }
 
     /**

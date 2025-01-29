@@ -52,4 +52,13 @@ public class MetricsCollector implements RouterComponent {
     public boolean isActive() {
         return active;
     }
+
+    /**
+     * Clears metrics for specified destination
+     */
+    public void clearMetrics(NetworkIdentity destination) {
+        if (destination != null) {
+            metricsWindows.remove(destination);
+        }
+    }
 }

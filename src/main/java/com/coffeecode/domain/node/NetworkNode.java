@@ -18,4 +18,7 @@ public interface NetworkNode {
     boolean canInitiateConnection();
 
     boolean connect(NetworkNode target, EdgeProperties props);
+
+    
+    boolean removeRoute(NetworkIdentity destination);
 }

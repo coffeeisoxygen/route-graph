@@ -79,12 +79,26 @@ class RouterRouteTest extends RouterNodeTest {
     @Test
     @DisplayName("Should not find route when next hop is not connected")
     void shouldNotFindRouteWithoutConnection() {
+        // Given
+        routerNode.setActive(true);
+        assertThat(isNodeReachable(nextHop)).isFalse();
+
         // When
         routerNode.updateRoute(destination, nextHop, metric);
 
         // Then
         Optional<RouteInfo> route = routerNode.findRoute(destination);
         assertThat(route).isEmpty();
+    }
+
+    private boolean isNodeReachable(NetworkIdentity nodeId) {
+        return routerNode.getComponents()
+                .getConnections()
+                .getConnections()
+                .stream()
+                .anyMatch(edge -> edge.getDestination()
+                        .getIdentity()
+                        .equals(nodeId));
     }
 
     @Test
@@ -94,4 +108,53 @@ class RouterRouteTest extends RouterNodeTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Invalid metric");
     }
+
+    @Test
+    @DisplayName("Should expire old routes")
+    void shouldExpireOldRoutes() throws InterruptedException {
+        // Given
+        setupValidNextHopConnection();
+        routerNode.updateRoute(destination, nextHop, metric);
+
+        // When
+        Thread.sleep(ROUTE_EXPIRY_MS + 100);
+
+        // Then
+        Optional<RouteInfo> route = routerNode.findRoute(destination);
+        assertThat(route).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should update existing route")
+    void shouldUpdateExistingRoute() {
+        // Given
+        setupValidNextHopConnection();
+        routerNode.updateRoute(destination, nextHop, metric);
+        double newMetric = 20.0;
+
+        // When
+        routerNode.updateRoute(destination, nextHop, newMetric);
+
+        // Then
+        Optional<RouteInfo> route = routerNode.findRoute(destination);
+        assertThat(route)
+                .isPresent()
+                .hasValueSatisfying(r -> assertThat(r.getMetric()).isEqualTo(newMetric));
+    }
+
+    @Test
+    @DisplayName("Should remove route")
+    void shouldRemoveRoute() {
+        // Given
+        setupValidNextHopConnection();
+        routerNode.updateRoute(destination, nextHop, metric);
+
+        // When
+        routerNode.removeRoute(destination);
+
+        // Then
+        Optional<RouteInfo> route = routerNode.findRoute(destination);
+        assertThat(route).isEmpty();
+    }
+
 }

@@ -97,4 +97,9 @@ public class ClientNode implements NetworkNode {
                         .getIdentity()
                         .equals(target));
     }
+
+    @Override
+    public boolean removeRoute(NetworkIdentity destination) {
+        return false; // Clients do not have routing tables
+    }
 }
