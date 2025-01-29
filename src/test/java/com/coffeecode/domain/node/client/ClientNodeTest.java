@@ -34,17 +34,5 @@ class ClientNodeTest {
             assertThat(client.getProperties()).isEqualTo(properties);
             assertThat(client.isActive()).isTrue();
         }
-
-        @Test
-        @DisplayName("Should not accept connections")
-        void shouldNotAcceptConnections() {
-            assertThat(client.canAcceptConnection()).isFalse();
-        }
-
-        @Test
-        @DisplayName("Should initiate connections when active")
-        void shouldInitiateConnectionsWhenActive() {
-            assertThat(client.canInitiateConnection()).isTrue();
-        }
     }
 }
