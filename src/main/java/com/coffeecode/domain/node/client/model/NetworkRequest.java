@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Value;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 public class NetworkRequest {
     NetworkIdentity target;
     RequestType type;
