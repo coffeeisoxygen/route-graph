@@ -13,15 +13,27 @@ public class DefaultEdgeFactory implements EdgeFactory {
 
     @Override
     public Edge createEdge(Node source, Node target, EdgeProperties props) {
-        if (!props.isValid()) {
-            throw new IllegalArgumentException("Invalid edge properties");
-        }
-        return Edge.builder()
+        validateEdgeCreation(source, target, props);
+        Edge edge = Edge.builder()
                 .source(source)
                 .destination(target)
                 .properties(props)
                 .active(true)
                 .build();
+        source.addConnection(edge);
+        return edge;
+    }
+
+    private void validateEdgeCreation(Node source, Node target, EdgeProperties props) {
+        if (!props.isValid()) {
+            throw new IllegalArgumentException("Invalid edge properties");
+        }
+        if (source == null || target == null) {
+            throw new IllegalArgumentException("Source and target nodes must not be null");
+        }
+        if (!source.isActive() || !target.isActive()) {
+            throw new IllegalArgumentException("Both nodes must be active");
+        }
     }
 
     @Override

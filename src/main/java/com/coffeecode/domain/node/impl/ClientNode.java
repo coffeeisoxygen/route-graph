@@ -1,6 +1,7 @@
 package com.coffeecode.domain.node.impl;
 
 import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.edge.Edge;
 import com.coffeecode.domain.node.base.Node;
 import com.coffeecode.domain.node.base.NodeType;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.coffeecode.domain.common.connection.ConnectionManager;
 
 @Component
 @Scope("prototype")

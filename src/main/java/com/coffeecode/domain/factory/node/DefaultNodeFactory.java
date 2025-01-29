@@ -1,5 +1,6 @@
 package com.coffeecode.domain.factory.node;
 
+import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.node.base.Node;
 import com.coffeecode.domain.node.base.NodeType;
 import com.coffeecode.domain.node.impl.ClientNode;
@@ -10,28 +11,34 @@ import com.coffeecode.domain.node.properties.RouterNodeProperties;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Component
 public class DefaultNodeFactory implements NodeFactory {
+    private final ConnectionManager connectionManager;
+
+    public DefaultNodeFactory(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     @Override
     public Node createRouter(RouterNodeProperties props) {
         validateProperties(props);
-        return new RouterNode(props);
+        return new RouterNode(props, connectionManager);
     }
 
     @Override
     public Node createClient(ClientNodeProperties props) {
         validateProperties(props);
-        return new ClientNode(props);
+        return new ClientNode(props, connectionManager);
     }
 
     @Override
     public Node createServer(ServerNodeProperties props) {
         validateProperties(props);
-        return new ServerNode(props);
+        return new ServerNode(props, connectionManager);
     }
 
     @Override

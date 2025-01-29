@@ -1,4 +1,4 @@
-package com.coffeecode.domain.common.connection;
+package com.coffeecode.domain.connection;
 
 import com.coffeecode.domain.edge.Edge;
 import com.coffeecode.domain.node.base.Node;

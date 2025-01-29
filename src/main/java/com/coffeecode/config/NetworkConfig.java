@@ -4,12 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.coffeecode.domain.factory.node.DefaultNodeFactory;
-import com.coffeecode.domain.factory.node.NodeFactory;
+import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.factory.edge.DefaultEdgeFactory;
 import com.coffeecode.domain.factory.edge.EdgeFactory;
-import com.coffeecode.domain.common.connection.ConnectionManager;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.factory.node.DefaultNodeFactory;
+import com.coffeecode.domain.factory.node.NodeFactory;
 import com.coffeecode.domain.node.base.NodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
@@ -19,8 +18,8 @@ import com.coffeecode.domain.node.properties.ServerNodeProperties;
 public class NetworkConfig {
 
     @Bean
-    public NodeFactory nodeFactory() {
-        return new DefaultNodeFactory();
+    public NodeFactory nodeFactory(ConnectionManager connectionManager) {
+        return new DefaultNodeFactory(connectionManager);
     }
 
     @Bean
@@ -59,7 +58,7 @@ public class NetworkConfig {
 
     @Bean
     @Scope("prototype")
-    public ConnectionManager connectionManager(Node owner) {
-        return new ConnectionManager(owner);
+    public ConnectionManager connectionManager() {
+        return new ConnectionManager(null);
     }
 }

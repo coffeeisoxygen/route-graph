@@ -1,7 +1,7 @@
 package com.coffeecode.domain.node.impl;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.common.connection.ConnectionManager;
+import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.edge.Edge;
 import com.coffeecode.domain.node.base.Node;
 import com.coffeecode.domain.node.base.NodeType;
