@@ -8,6 +8,7 @@ import com.coffeecode.domain.node.NetworkNode;
 import com.coffeecode.domain.node.router.component.RouterComponents;
 import com.coffeecode.domain.node.router.model.MetricsSnapshot;
 import com.coffeecode.domain.node.router.model.RouteInfo;
+import com.coffeecode.domain.properties.EdgeProperties;
 import com.coffeecode.domain.properties.NodeProperties;
 
 import lombok.Builder;
@@ -78,6 +79,46 @@ public class RouterNode implements NetworkNode {
         return components.getConnections().removeConnection(edge);
     }
 
+    /**
+     * Establishes a connection to another node
+     * @param target The node to connect to
+     * @param props The connection properties
+     * @return true if connection was successfully established
+     * @throws IllegalArgumentException if validation fails
+     */
+    @Override  // Make sure NetworkNode interface declares this
+    public boolean connect(NetworkNode target, EdgeProperties props) {
+        if (!canInitiateConnection() || !target.canAcceptConnection()) {
+            return false;
+        }
+
+        validateConnectionRequest(target, props);
+
+        NetworkEdge edge = NetworkEdge.builder()
+            .source(this)
+            .destination(target)
+            .properties(props)
+            .active(true)
+            .build();
+
+        return components.getConnections().addConnection(edge);
+    }
+
+    private void validateConnectionRequest(NetworkNode target, EdgeProperties props) {
+        if (target == null) {
+            throw new IllegalArgumentException("Target node cannot be null");
+        }
+        if (props == null) {
+            throw new IllegalArgumentException("Edge properties cannot be null");
+        }
+        if (!target.isActive()) {
+            throw new IllegalArgumentException("Cannot connect to inactive node");
+        }
+        if (!props.isValid()) {
+            throw new IllegalArgumentException("Invalid edge properties");
+        }
+    }
+
     // Route operations
     public Optional<RouteInfo> findRoute(NetworkIdentity destination) {
         if (!isActive() || destination == null) {
@@ -124,6 +165,7 @@ public class RouterNode implements NetworkNode {
         long currentTime = System.currentTimeMillis();
         long routeAge = currentTime - route.getTimestamp();
 
+        // Simplified validation
         return isActive() &&
                 routeAge <= ROUTE_EXPIRY_MS &&
                 isNodeReachable(route.getNextHop());
@@ -140,23 +182,15 @@ public class RouterNode implements NetworkNode {
                 .orElse(MetricsSnapshot.empty());
     }
 
-    // private boolean isRouteActive(RouteInfo route) {
-    // long currentTime = System.currentTimeMillis();
-    // long routeAge = currentTime - route.getTimestamp();
-    // return routeAge <= ROUTE_EXPIRY_MS &&
-    // isNodeReachable(route.getNextHop());
-    // }
-
     private boolean isNodeReachable(NetworkIdentity nodeId) {
-        if (!isActive() || nodeId == null) {
-            return false;
-        }
-
-        return components.getConnections()
-                .getConnections()
-                .stream()
-                .filter(NetworkEdge::isActive)
-                .anyMatch(edge -> edge.getDestination().getIdentity().equals(nodeId));
+        return isActive() && nodeId != null &&
+                components.getConnections()
+                        .getConnections()
+                        .stream()
+                        .anyMatch(edge -> edge.isActive() &&
+                                edge.getDestination()
+                                        .getIdentity()
+                                        .equals(nodeId));
     }
 
     @Override

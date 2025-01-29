@@ -8,49 +8,60 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.edge.NetworkEdge;
 import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.model.NodeType;
 import com.coffeecode.domain.node.router.RouterNode;
 import com.coffeecode.domain.node.router.base.RouterNodeTest;
 import com.coffeecode.domain.node.router.model.RouteInfo;
 import com.coffeecode.domain.properties.EdgeProperties;
+import com.coffeecode.domain.properties.NodeProperties;
 
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Router Route Tests")
 class RouterRouteTest extends RouterNodeTest {
+    private RouterNode routerNode;
+    private RouterNode nextHopRouter;
     private NetworkIdentity destination;
     private NetworkIdentity nextHop;
-    private RouterNode nextHopNode;
     private double metric;
 
     @BeforeEach
-    void setUpRoutes() {
-        destination = NetworkIdentity.create(NodeType.SERVER);
-        nextHopNode = RouterNode.create(properties);
-        nextHop = nextHopNode.getIdentity();
-        metric = 10.0;
+    void setUp() {
+        // Initialize router with properties
+        NodeProperties properties = NodeProperties.builder()
+                .type(NodeType.ROUTER)
+                .maxConnections(4)
+                .bandwidth(100.0)
+                .build();
 
-        // Setup connection to next hop
+        routerNode = RouterNode.create(properties);
+        nextHopRouter = RouterNode.create(properties);
+
+        destination = NetworkIdentity.create(NodeType.SERVER);
+        nextHop = nextHopRouter.getIdentity();
+        metric = 10.0;
+    }
+
+    private void setupValidNextHopConnection() {
         EdgeProperties edgeProps = EdgeProperties.builder()
                 .bandwidth(100.0)
                 .latency(10.0)
                 .build();
 
-        NetworkEdge edge = NetworkEdge.builder()
-                .source(routerNode)
-                .destination(nextHopNode)
-                .properties(edgeProps)
-                .active(true)
-                .build();
-
-        routerNode.addConnection(edge);
-        routerNode.setActive(true);
+        // Using the new connect method
+        boolean connected = routerNode.connect(nextHopRouter, edgeProps);
+        assertThat(connected).isTrue();
     }
 
     @Test
-    @DisplayName("Should update and find route")
+    @DisplayName("Should update and find route when next hop is connected")
     void shouldUpdateAndFindRoute() {
+        // Given
+        setupValidNextHopConnection();
+
         // When
         routerNode.updateRoute(destination, nextHop, metric);
 
@@ -63,6 +74,17 @@ class RouterRouteTest extends RouterNodeTest {
                     assertThat(r.getMetric()).isEqualTo(metric);
                     assertThat(r.isValid()).isTrue();
                 });
+    }
+
+    @Test
+    @DisplayName("Should not find route when next hop is not connected")
+    void shouldNotFindRouteWithoutConnection() {
+        // When
+        routerNode.updateRoute(destination, nextHop, metric);
+
+        // Then
+        Optional<RouteInfo> route = routerNode.findRoute(destination);
+        assertThat(route).isEmpty();
     }
 
     @Test

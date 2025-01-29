@@ -1,6 +1,7 @@
 package com.coffeecode.domain.node;
 
 import com.coffeecode.domain.model.NetworkIdentity;
+import com.coffeecode.domain.properties.EdgeProperties;
 import com.coffeecode.domain.properties.NodeProperties;
 
 public interface NetworkNode {
@@ -15,4 +16,6 @@ public interface NetworkNode {
     boolean canAcceptConnection();
 
     boolean canInitiateConnection();
+
+    boolean connect(NetworkNode target, EdgeProperties props);
 }
