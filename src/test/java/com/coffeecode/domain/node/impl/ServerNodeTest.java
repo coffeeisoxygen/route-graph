@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.node.base.BaseNodeTest;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 class ServerNodeTest extends BaseNodeTest {
@@ -29,7 +29,7 @@ class ServerNodeTest extends BaseNodeTest {
     @Test
     void shouldCreateServerWithValidProperties() {
         assertNotNull(serverNode.getIdentity());
-        assertEquals(NodeType.SERVER, serverNode.getType());
+        assertEquals(NetNodeType.SERVER, serverNode.getType());
         assertTrue(serverNode.isActive());
     }
 
@@ -39,7 +39,7 @@ class ServerNodeTest extends BaseNodeTest {
         assertTrue(serverNode.addRequest());
 
         // Fill to capacity
-        for(int i = 1; i < properties.getCapacity(); i++) {
+        for (int i = 1; i < properties.getCapacity(); i++) {
             serverNode.addRequest();
         }
 

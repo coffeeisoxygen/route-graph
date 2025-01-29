@@ -8,33 +8,33 @@ import java.util.Optional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.node.base.NetNode;
 
 @Component
 @Scope("prototype")
 public class DefaultConnectionManager implements ConnectionManager {
-    private final List<Edge> connections;
-    private final Node owner;
+    private final List<NetEdge> connections;
+    private final NetNode owner;
 
-    public DefaultConnectionManager(Node owner) {
+    public DefaultConnectionManager(NetNode owner) {
         this.owner = owner;
         this.connections = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
-    public List<Edge> getConnections() {
+    public List<NetEdge> getConnections() {
         return Collections.unmodifiableList(connections);
     }
 
     @Override
-    public synchronized void addConnection(Edge edge) {
+    public synchronized void addConnection(NetEdge edge) {
         validateConnection(edge);
         connections.add(edge);
     }
 
     @Override
-    public synchronized void removeConnection(Edge edge) {
+    public synchronized void removeConnection(NetEdge edge) {
         connections.remove(edge);
     }
 
@@ -43,7 +43,7 @@ public class DefaultConnectionManager implements ConnectionManager {
         return connections.size();
     }
 
-    private void validateConnection(Edge edge) {
+    private void validateConnection(NetEdge edge) {
         if (!edge.isValid()) {
             throw new IllegalArgumentException("Invalid edge configuration");
         }
@@ -56,19 +56,19 @@ public class DefaultConnectionManager implements ConnectionManager {
     }
 
     @Override
-    public synchronized boolean hasConnection(Edge edge) {
+    public synchronized boolean hasConnection(NetEdge edge) {
         return connections.contains(edge);
     }
 
     @Override
-    public synchronized Optional<Edge> findConnection(Node target) {
+    public synchronized Optional<NetEdge> findConnection(NetNode target) {
         return connections.stream()
                 .filter(edge -> edge.getDestination().equals(target))
                 .findFirst();
     }
 
     @Override
-    public synchronized boolean isConnectedTo(Node target) {
+    public synchronized boolean isConnectedTo(NetNode target) {
         return connections.stream()
                 .anyMatch(edge -> edge.getDestination().equals(target));
     }

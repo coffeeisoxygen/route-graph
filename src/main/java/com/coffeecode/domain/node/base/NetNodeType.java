@@ -10,7 +10,7 @@ import lombok.Getter;
  * Represents node types in the network with associated metadata.
  */
 @Getter
-public enum NodeType {
+public enum NetNodeType {
     ROUTER("Router", "Network routing device", 1000),
     CLIENT("Client", "End-user device", 100),
     SERVER("Server", "Service provider", 500);
@@ -19,7 +19,7 @@ public enum NodeType {
     private final String description;
     private final int defaultCapacity;
 
-    NodeType(String displayName, String description, int defaultCapacity) {
+    NetNodeType(String displayName, String description, int defaultCapacity) {
         this.displayName = displayName;
         this.description = description;
         this.defaultCapacity = defaultCapacity;

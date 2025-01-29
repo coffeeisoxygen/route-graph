@@ -6,8 +6,8 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
 import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.node.base.Node;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.base.NetNode;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.impl.ClientNode;
 import com.coffeecode.domain.node.impl.RouterNode;
 import com.coffeecode.domain.node.impl.ServerNode;
@@ -16,7 +16,7 @@ import com.coffeecode.domain.node.properties.RouterNodeProperties;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 @Component
-public class DefaultNodeFactory implements NodeFactory {
+public class DefaultNodeFactory implements NetNodeFactory {
     private final ConnectionManager connectionManager;
 
     public DefaultNodeFactory(ConnectionManager connectionManager) {
@@ -24,32 +24,32 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
-    public Node createRouter(RouterNodeProperties props) {
+    public NetNode createRouter(RouterNodeProperties props) {
         validateProperties(props);
         return new RouterNode(props, connectionManager);
     }
 
     @Override
-    public Node createClient(ClientNodeProperties props) {
+    public NetNode createClient(ClientNodeProperties props) {
         validateProperties(props);
         return new ClientNode(props, connectionManager);
     }
 
     @Override
-    public Node createServer(ServerNodeProperties props) {
+    public NetNode createServer(ServerNodeProperties props) {
         validateProperties(props);
         return new ServerNode(props, connectionManager);
     }
 
     @Override
-    public List<Node> createBatch(NodeType type, int count, Object properties) {
+    public List<NetNode> createBatch(NetNodeType type, int count, Object properties) {
         validateBatchParameters(type, count, properties);
         return IntStream.range(0, count)
                 .mapToObj(i -> createNode(type, properties))
                 .toList();
     }
 
-    private Node createNode(NodeType type, Object properties) {
+    private NetNode createNode(NetNodeType type, Object properties) {
         return switch (type) {
             case ROUTER -> createRouter((RouterNodeProperties) properties);
             case CLIENT -> createClient((ClientNodeProperties) properties);
@@ -63,7 +63,7 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
-    private void validateBatchParameters(NodeType type, int count, Object properties) {
+    private void validateBatchParameters(NetNodeType type, int count, Object properties) {
         if (type == null) {
             throw new IllegalArgumentException("Node type cannot be null");
         }
@@ -74,11 +74,11 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     // private void validateRouterProperties(RouterNodeProperties props) {
-    //     if (props.getRoutingCapacity() <= 0) {
-    //         throw new IllegalArgumentException("Routing capacity must be positive");
-    //     }
-    //     if (props.getBufferSize() <= 0) {
-    //         throw new IllegalArgumentException("Buffer size must be positive");
-    //     }
+    // if (props.getRoutingCapacity() <= 0) {
+    // throw new IllegalArgumentException("Routing capacity must be positive");
+    // }
+    // if (props.getBufferSize() <= 0) {
+    // throw new IllegalArgumentException("Buffer size must be positive");
+    // }
     // }
 }

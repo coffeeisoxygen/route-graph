@@ -13,13 +13,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.node.base.Node;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.base.NetNode;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultNodeFactoryTest {
-    @Mock private ConnectionManager connectionManager;
+    @Mock
+    private ConnectionManager connectionManager;
     private DefaultNodeFactory factory;
 
     @BeforeEach
@@ -30,32 +31,32 @@ class DefaultNodeFactoryTest {
     @Test
     void shouldCreateRouter() {
         RouterNodeProperties props = RouterNodeProperties.builder()
-            .routingCapacity(1000)
-            .bufferSize(1024.0)
-            .build();
+                .routingCapacity(1000)
+                .bufferSize(1024.0)
+                .build();
 
-        Node router = factory.createRouter(props);
+        NetNode router = factory.createRouter(props);
 
         assertNotNull(router);
-        assertEquals(NodeType.ROUTER, router.getType());
+        assertEquals(NetNodeType.ROUTER, router.getType());
     }
 
     @Test
     void shouldCreateBatchNodes() {
         RouterNodeProperties props = RouterNodeProperties.builder()
-            .routingCapacity(1000)
-            .bufferSize(1024.0)
-            .build();
+                .routingCapacity(1000)
+                .bufferSize(1024.0)
+                .build();
 
-        List<Node> nodes = factory.createBatch(NodeType.ROUTER, 3, props);
+        List<NetNode> nodes = factory.createBatch(NetNodeType.ROUTER, 3, props);
 
         assertEquals(3, nodes.size());
-        nodes.forEach(node -> assertEquals(NodeType.ROUTER, node.getType()));
+        nodes.forEach(node -> assertEquals(NetNodeType.ROUTER, node.getType()));
     }
 
     @Test
     void shouldValidateProperties() {
         assertThrows(IllegalArgumentException.class,
-            () -> factory.createRouter(null));
+                () -> factory.createRouter(null));
     }
 }

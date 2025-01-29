@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.node.base.BaseNodeTest;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 
 class RouterNodeTest extends BaseNodeTest {
@@ -30,7 +30,7 @@ class RouterNodeTest extends BaseNodeTest {
     @Test
     void shouldCreateRouterWithValidProperties() {
         assertNotNull(routerNode.getIdentity());
-        assertEquals(NodeType.ROUTER, routerNode.getType());
+        assertEquals(NetNodeType.ROUTER, routerNode.getType());
         assertTrue(routerNode.isActive());
     }
 

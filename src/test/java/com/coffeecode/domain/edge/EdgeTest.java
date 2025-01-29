@@ -15,19 +15,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.edge.properties.EdgeProperties;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.properties.NetEdgeProperties;
+import com.coffeecode.domain.node.base.NetNode;
 
 @ExtendWith(MockitoExtension.class)
 class EdgeTest {
     @Mock
-    private Node source;
+    private NetNode source;
     @Mock
-    private Node destination;
+    private NetNode destination;
     @Mock
-    private EdgeProperties properties;
+    private NetEdgeProperties properties;
 
-    private Edge edge;
+    private NetEdge edge;
     private Identity identity;
 
     @BeforeEach
@@ -39,7 +39,7 @@ class EdgeTest {
         lenient().when(source.isActive()).thenReturn(true);
         lenient().when(destination.isActive()).thenReturn(true);
 
-        edge = Edge.builder()
+        edge = NetEdge.builder()
                 .identity(identity)
                 .source(source)
                 .destination(destination)
@@ -82,7 +82,7 @@ class EdgeTest {
         assertFalse(edge.isConnected());
 
         // Test when edge is inactive
-        edge = Edge.builder()
+        edge = NetEdge.builder()
                 .identity(identity)
                 .source(source)
                 .destination(destination)
@@ -95,7 +95,7 @@ class EdgeTest {
     @Test
     void shouldValidateRequiredFields() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Edge.builder()
+            NetEdge.builder()
                     .identity(null)
                     .source(source)
                     .destination(destination)
@@ -104,7 +104,7 @@ class EdgeTest {
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Edge.builder()
+            NetEdge.builder()
                     .identity(identity)
                     .source(null)
                     .destination(destination)

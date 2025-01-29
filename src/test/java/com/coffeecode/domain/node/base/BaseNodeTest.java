@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.edge.NetEdge;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class BaseNodeTest {
@@ -16,7 +16,7 @@ public abstract class BaseNodeTest {
     protected ConnectionManager connectionManager;
 
     @Mock
-    protected Edge mockEdge;
+    protected NetEdge mockEdge;
 
     @BeforeEach
     void setUp() {

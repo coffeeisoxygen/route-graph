@@ -1,24 +1,24 @@
 package com.coffeecode.domain.node.impl;
 
-import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
-import com.coffeecode.domain.node.base.NodeType;
-import com.coffeecode.domain.node.properties.ClientNodeProperties;
-
-import lombok.Getter;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.connection.ConnectionManager;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.node.base.NetNode;
+import com.coffeecode.domain.node.base.NetNodeType;
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
+
+import lombok.Getter;
 
 @Component
 @Scope("prototype")
 @Getter
-public class ClientNode implements Node {
+public class ClientNode implements NetNode {
     private final Identity identity;
     private final ConnectionManager connectionManager;
     private final ClientNodeProperties properties;
@@ -26,7 +26,7 @@ public class ClientNode implements Node {
     private boolean active;
 
     public ClientNode(ClientNodeProperties props, ConnectionManager connectionManager) {
-        this.identity = Identity.create(NodeType.CLIENT.getNamePrefix());
+        this.identity = Identity.create(NetNodeType.CLIENT.getNamePrefix());
         this.connectionManager = connectionManager;
         this.properties = props;
         this.currentUsage = new AtomicReference<>(0.0);
@@ -34,22 +34,22 @@ public class ClientNode implements Node {
     }
 
     @Override
-    public NodeType getType() {
-        return NodeType.CLIENT;
+    public NetNodeType getType() {
+        return NetNodeType.CLIENT;
     }
 
     @Override
-    public List<Edge> getConnections() {
+    public List<NetEdge> getConnections() {
         return connectionManager.getConnections();
     }
 
     @Override
-    public void addConnection(Edge edge) {
+    public void addConnection(NetEdge edge) {
         connectionManager.addConnection(edge);
     }
 
     @Override
-    public void removeConnection(Edge edge) {
+    public void removeConnection(NetEdge edge) {
         connectionManager.removeConnection(edge);
     }
 

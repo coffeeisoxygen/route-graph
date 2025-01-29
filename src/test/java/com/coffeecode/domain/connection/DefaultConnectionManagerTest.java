@@ -11,14 +11,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.node.base.NetNode;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultConnectionManagerTest {
-    @Mock private Node owner;
-    @Mock private Node otherNode;
-    @Mock private Edge edge;
+    @Mock
+    private NetNode owner;
+    @Mock
+    private NetNode otherNode;
+    @Mock
+    private NetEdge edge;
 
     private DefaultConnectionManager manager;
 

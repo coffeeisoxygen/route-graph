@@ -3,16 +3,16 @@ package com.coffeecode.service.topology;
 import java.util.List;
 import java.util.Optional;
 
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NetNode;
 
 public interface NetworkTopologyService {
-    void addNode(Node node);
+    void addNode(NetNode node);
 
     void connect(String sourceId, String destId, double bandwidth, double latency);
 
-    List<Node> getNeighbors(String nodeId);
+    List<NetNode> getNeighbors(String nodeId);
 
-    Optional<Node> getNode(String id);
+    Optional<NetNode> getNode(String id);
 
     boolean isConnected(String sourceId, String destId);
 }

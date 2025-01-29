@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.coffeecode.domain.node.base.BaseNodeTest;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 
 class ClientNodeTest extends BaseNodeTest {
@@ -29,7 +29,7 @@ class ClientNodeTest extends BaseNodeTest {
     @Test
     void shouldCreateClientWithValidProperties() {
         assertNotNull(clientNode.getIdentity());
-        assertEquals(NodeType.CLIENT, clientNode.getType());
+        assertEquals(NetNodeType.CLIENT, clientNode.getType());
         assertTrue(clientNode.isActive());
     }
 
@@ -52,6 +52,6 @@ class ClientNodeTest extends BaseNodeTest {
     @Test
     void shouldRejectExcessiveTransmission() {
         assertThrows(IllegalArgumentException.class,
-            () -> clientNode.recordTransmission(150.0));
+                () -> clientNode.recordTransmission(150.0));
     }
 }

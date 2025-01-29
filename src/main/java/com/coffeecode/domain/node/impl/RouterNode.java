@@ -1,16 +1,19 @@
 package com.coffeecode.domain.node.impl;
 
-import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
-import com.coffeecode.domain.node.base.NodeType;
-import com.coffeecode.domain.node.properties.RouterNodeProperties;
-import lombok.Getter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.connection.ConnectionManager;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.node.base.NetNode;
+import com.coffeecode.domain.node.base.NetNodeType;
+import com.coffeecode.domain.node.properties.RouterNodeProperties;
+
+import lombok.Getter;
 
 /**
  * Router node implementation.
@@ -19,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 @Scope("prototype")
 @Getter
-public class RouterNode implements Node {
+public class RouterNode implements NetNode {
     private final Identity identity;
     private final ConnectionManager connectionManager;
     private final RouterNodeProperties properties;
@@ -27,7 +30,7 @@ public class RouterNode implements Node {
     private boolean active;
 
     public RouterNode(RouterNodeProperties props, ConnectionManager connectionManager) {
-        this.identity = Identity.create(NodeType.ROUTER.getNamePrefix());
+        this.identity = Identity.create(NetNodeType.ROUTER.getNamePrefix());
         this.properties = props;
         this.connectionManager = connectionManager;
         this.currentRoutes = new AtomicInteger(0);
@@ -35,23 +38,23 @@ public class RouterNode implements Node {
     }
 
     @Override
-    public NodeType getType() {
-        return NodeType.ROUTER;
+    public NetNodeType getType() {
+        return NetNodeType.ROUTER;
     }
 
     @Override
-    public List<Edge> getConnections() {
+    public List<NetEdge> getConnections() {
         return connectionManager.getConnections();
     }
 
     @Override
-    public void addConnection(Edge edge) {
+    public void addConnection(NetEdge edge) {
         connectionManager.validateMaxConnections(properties.getRoutingCapacity());
         connectionManager.addConnection(edge);
     }
 
     @Override
-    public void removeConnection(Edge edge) {
+    public void removeConnection(NetEdge edge) {
         connectionManager.removeConnection(edge);
     }
 

@@ -2,14 +2,14 @@ package com.coffeecode.service.routing;
 
 import java.util.List;
 
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NetNode;
 
 public interface RoutingStrategy {
-    List<Node> findPath(Node source, Node destination);
+    List<NetNode> findPath(NetNode source, NetNode destination);
 
-    double calculatePathCost(List<Node> path);
+    double calculatePathCost(List<NetNode> path);
 
-    boolean isValidPath(List<Node> path);
+    boolean isValidPath(List<NetNode> path);
 
     String getAlgorithmName();
 }

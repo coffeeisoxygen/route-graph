@@ -3,9 +3,9 @@ package com.coffeecode.domain.node.base;
 import java.util.List;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.edge.NetEdge;
 
-public interface Node {
+public interface NetNode {
     /**
      * Gets the identity of this node
      *
@@ -18,7 +18,7 @@ public interface Node {
      *
      * @return NodeType enum value
      */
-    NodeType getType();
+    NetNodeType getType();
 
     /**
      * Checks if node is active
@@ -39,7 +39,7 @@ public interface Node {
      *
      * @return Unmodifiable List of edges
      */
-    List<Edge> getConnections();
+    List<NetEdge> getConnections();
 
     /**
      * Adds new connection to this node
@@ -47,14 +47,14 @@ public interface Node {
      * @param edge Edge to add
      * @throws IllegalArgumentException if edge is invalid
      */
-    void addConnection(Edge edge);
+    void addConnection(NetEdge edge);
 
     /**
      * Removes connection from this node
      *
      * @param edge Edge to remove
      */
-    void removeConnection(Edge edge);
+    void removeConnection(NetEdge edge);
 
     /**
      * Gets the properties specific to this node type

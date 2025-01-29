@@ -3,23 +3,23 @@ package com.coffeecode.domain.connection;
 import java.util.List;
 import java.util.Optional;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.node.base.NetNode;
 
 public interface ConnectionManager {
-    List<Edge> getConnections();
+    List<NetEdge> getConnections();
 
-    void addConnection(Edge edge);
+    void addConnection(NetEdge edge);
 
-    void removeConnection(Edge edge);
+    void removeConnection(NetEdge edge);
 
-    boolean hasConnection(Edge edge);
+    boolean hasConnection(NetEdge edge);
 
     int getConnectionCount();
 
-    Optional<Edge> findConnection(Node target);
+    Optional<NetEdge> findConnection(NetNode target);
 
-    boolean isConnectedTo(Node target);
+    boolean isConnectedTo(NetNode target);
 
     void validateMaxConnections(int maxConnections);
 }

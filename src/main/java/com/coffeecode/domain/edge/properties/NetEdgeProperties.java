@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class EdgeProperties {
+public class NetEdgeProperties {
     @Positive
     private final Double bandwidth; // Required bandwidth in Mbps
     @PositiveOrZero

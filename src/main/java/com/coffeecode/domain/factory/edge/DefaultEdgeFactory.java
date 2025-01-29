@@ -6,18 +6,18 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.coffeecode.domain.common.Identity;
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.edge.properties.EdgeProperties;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.edge.properties.NetEdgeProperties;
+import com.coffeecode.domain.node.base.NetNode;
 
 @Component
-public class DefaultEdgeFactory implements EdgeFactory {
+public class DefaultEdgeFactory implements NetEdgeFactory {
 
     @Override
-    public Edge createEdge(Node source, Node target, EdgeProperties props) {
+    public NetEdge createEdge(NetNode source, NetNode target, NetEdgeProperties props) {
         validateEdgeCreation(source, target, props);
         validateEdgeRules(source, target, props);
-        Edge edge = Edge.builder()
+        NetEdge edge = NetEdge.builder()
                 .identity(Identity.create("edge")) // Add identity creation
                 .source(source)
                 .destination(target)
@@ -28,7 +28,7 @@ public class DefaultEdgeFactory implements EdgeFactory {
         return edge;
     }
 
-    private void validateEdgeCreation(Node source, Node target, EdgeProperties props) {
+    private void validateEdgeCreation(NetNode source, NetNode target, NetEdgeProperties props) {
         if (props == null) {
             throw new IllegalArgumentException("Edge properties cannot be null");
         }
@@ -43,7 +43,7 @@ public class DefaultEdgeFactory implements EdgeFactory {
         }
     }
 
-    private void validateEdgeRules(Node source, Node target, EdgeProperties props) {
+    private void validateEdgeRules(NetNode source, NetNode target, NetEdgeProperties props) {
         // Connection rules
         if (source.equals(target)) {
             throw new IllegalArgumentException("Self-connections not allowed");
@@ -62,16 +62,17 @@ public class DefaultEdgeFactory implements EdgeFactory {
     }
 
     @Override
-    public List<Edge> createBidirectional(Node nodeA, Node nodeB, EdgeProperties props) {
-        List<Edge> edges = new ArrayList<>();
+    public List<NetEdge> createBidirectional(NetNode nodeA, NetNode nodeB,
+            NetEdgeProperties props) {
+        List<NetEdge> edges = new ArrayList<>();
         edges.add(createEdge(nodeA, nodeB, props));
         edges.add(createEdge(nodeB, nodeA, props));
         return edges;
     }
 
     @Override
-    public List<Edge> connectAll(List<Node> nodes, EdgeProperties props) {
-        List<Edge> edges = new ArrayList<>();
+    public List<NetEdge> connectAll(List<NetNode> nodes, NetEdgeProperties props) {
+        List<NetEdge> edges = new ArrayList<>();
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = i + 1; j < nodes.size(); j++) {
                 edges.addAll(createBidirectional(nodes.get(i), nodes.get(j), props));

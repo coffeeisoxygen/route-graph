@@ -13,18 +13,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.edge.properties.EdgeProperties;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.edge.NetEdge;
+import com.coffeecode.domain.edge.properties.NetEdgeProperties;
+import com.coffeecode.domain.node.base.NetNode;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultEdgeFactoryTest {
     @Mock
-    private Node sourceNode;
+    private NetNode sourceNode;
     @Mock
-    private Node targetNode;
+    private NetNode targetNode;
     @Mock
-    private EdgeProperties properties;
+    private NetEdgeProperties properties;
 
     private DefaultEdgeFactory factory;
 
@@ -43,7 +43,7 @@ class DefaultEdgeFactoryTest {
     @Test
     void shouldCreateEdge() {
         // When
-        Edge edge = factory.createEdge(sourceNode, targetNode, properties);
+        NetEdge edge = factory.createEdge(sourceNode, targetNode, properties);
 
         // Then
         assertNotNull(edge);

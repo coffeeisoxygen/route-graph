@@ -7,23 +7,24 @@ import org.springframework.context.annotation.Scope;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.connection.DefaultConnectionManager;
 import com.coffeecode.domain.factory.edge.DefaultEdgeFactory;
-import com.coffeecode.domain.factory.edge.EdgeFactory;
+import com.coffeecode.domain.factory.edge.NetEdgeFactory;
 import com.coffeecode.domain.factory.node.DefaultNodeFactory;
-import com.coffeecode.domain.factory.node.NodeFactory;
-import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.factory.node.NetNodeFactory;
+import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
+
 @Configuration
 public class NetworkConfig {
 
     @Bean
-    public NodeFactory nodeFactory(ConnectionManager connectionManager) {
+    public NetNodeFactory nodeFactory(ConnectionManager connectionManager) {
         return new DefaultNodeFactory(connectionManager);
     }
 
     @Bean
-    public EdgeFactory edgeFactory() {
+    public NetEdgeFactory edgeFactory() {
         return new DefaultEdgeFactory();
     }
 
@@ -31,7 +32,7 @@ public class NetworkConfig {
     @Scope("prototype")
     public RouterNodeProperties defaultRouterProperties() {
         return RouterNodeProperties.builder()
-                .routingCapacity(NodeType.ROUTER.getDefaultCapacity())
+                .routingCapacity(NetNodeType.ROUTER.getDefaultCapacity())
                 .bufferSize(1024.0)
                 .supportsQos(true)
                 .build();
@@ -42,7 +43,7 @@ public class NetworkConfig {
     public ClientNodeProperties defaultClientProperties() {
         return ClientNodeProperties.builder()
                 .dataRate(100.0)
-                .maxBandwidth((double) NodeType.CLIENT.getDefaultCapacity())
+                .maxBandwidth((double) NetNodeType.CLIENT.getDefaultCapacity())
                 .build();
     }
 
@@ -50,7 +51,7 @@ public class NetworkConfig {
     @Scope("prototype")
     public ServerNodeProperties defaultServerProperties() {
         return ServerNodeProperties.builder()
-                .capacity(NodeType.SERVER.getDefaultCapacity())
+                .capacity(NetNodeType.SERVER.getDefaultCapacity())
                 .processingPower(1000.0)
                 .maxConnections(100)
                 .build();
