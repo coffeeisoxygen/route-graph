@@ -103,6 +103,9 @@ public class RouterNode implements NetworkNode {
     }
 
     private void validateRouteUpdate(NetworkIdentity destination, NetworkIdentity nextHop, double metric) {
+        if (!isActive()) {
+            throw new IllegalStateException("Router is not active");
+        }
         if (destination == null || nextHop == null) {
             throw new IllegalArgumentException("Destination and nextHop cannot be null");
         }
@@ -121,7 +124,8 @@ public class RouterNode implements NetworkNode {
         long currentTime = System.currentTimeMillis();
         long routeAge = currentTime - route.getTimestamp();
 
-        return routeAge <= ROUTE_EXPIRY_MS &&
+        return isActive() &&
+                routeAge <= ROUTE_EXPIRY_MS &&
                 isNodeReachable(route.getNextHop());
     }
 
@@ -136,15 +140,23 @@ public class RouterNode implements NetworkNode {
                 .orElse(MetricsSnapshot.empty());
     }
 
-    private boolean isRouteActive(RouteInfo route) {
-        long currentTime = System.currentTimeMillis();
-        long routeAge = currentTime - route.getTimestamp();
-        return routeAge <= ROUTE_EXPIRY_MS &&
-                isNodeReachable(route.getNextHop());
-    }
+    // private boolean isRouteActive(RouteInfo route) {
+    // long currentTime = System.currentTimeMillis();
+    // long routeAge = currentTime - route.getTimestamp();
+    // return routeAge <= ROUTE_EXPIRY_MS &&
+    // isNodeReachable(route.getNextHop());
+    // }
 
     private boolean isNodeReachable(NetworkIdentity nodeId) {
-        return components.getConnections().isNodeReachable(nodeId);
+        if (!isActive() || nodeId == null) {
+            return false;
+        }
+
+        return components.getConnections()
+                .getConnections()
+                .stream()
+                .filter(NetworkEdge::isActive)
+                .anyMatch(edge -> edge.getDestination().getIdentity().equals(nodeId));
     }
 
     @Override
