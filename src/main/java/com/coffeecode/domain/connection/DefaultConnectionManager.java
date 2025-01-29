@@ -43,7 +43,7 @@ public class DefaultConnectionManager implements ConnectionManager {
         return connections.size();
     }
 
-    public void validateConnection(Edge edge) {
+    private void validateConnection(Edge edge) {
         if (!edge.isValid()) {
             throw new IllegalArgumentException("Invalid edge configuration");
         }
