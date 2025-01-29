@@ -73,12 +73,4 @@ public class DefaultNodeFactory implements NetNodeFactory {
         validateProperties(properties);
     }
 
-    // private void validateRouterProperties(RouterNodeProperties props) {
-    // if (props.getRoutingCapacity() <= 0) {
-    // throw new IllegalArgumentException("Routing capacity must be positive");
-    // }
-    // if (props.getBufferSize() <= 0) {
-    // throw new IllegalArgumentException("Buffer size must be positive");
-    // }
-    // }
 }

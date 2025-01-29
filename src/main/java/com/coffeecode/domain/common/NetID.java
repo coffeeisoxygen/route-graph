@@ -1,28 +1,29 @@
 package com.coffeecode.domain.common;
 
 import java.util.UUID;
+
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
 @Builder
-public class Identity {
+public class NetID {
     @NonNull
     UUID id;
     @NonNull
     String name;
     String description;
 
-    public static Identity create(String type) {
-        return Identity.builder()
+    public static NetID create(String type) {
+        return NetID.builder()
                 .id(UUID.randomUUID())
                 .name(NameGenerator.generateName(type))
                 .build();
     }
 
-    public static Identity create(String type, String description) {
-        return Identity.builder()
+    public static NetID create(String type, String description) {
+        return NetID.builder()
                 .id(UUID.randomUUID())
                 .name(NameGenerator.generateName(type))
                 .description(description)

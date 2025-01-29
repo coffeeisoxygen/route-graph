@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.edge.NetEdge;
 import com.coffeecode.domain.node.base.NetNode;
 
@@ -38,9 +38,9 @@ class NetPathFinderTest {
         pathFinder = new NetPathFinder(graph);
 
         // Setup test nodes
-        lenient().when(sourceNode.getIdentity()).thenReturn(Identity.create("source"));
-        lenient().when(middleNode.getIdentity()).thenReturn(Identity.create("middle"));
-        lenient().when(targetNode.getIdentity()).thenReturn(Identity.create("target"));
+        lenient().when(sourceNode.getIdentity()).thenReturn(NetID.create("source"));
+        lenient().when(middleNode.getIdentity()).thenReturn(NetID.create("middle"));
+        lenient().when(targetNode.getIdentity()).thenReturn(NetID.create("target"));
 
         // Setup test edges
         lenient().when(edge1.getSource()).thenReturn(sourceNode);

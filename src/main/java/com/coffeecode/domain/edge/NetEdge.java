@@ -1,6 +1,6 @@
 package com.coffeecode.domain.edge;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.edge.properties.NetEdgeProperties;
 import com.coffeecode.domain.node.base.NetNode;
 
@@ -12,7 +12,7 @@ import lombok.NonNull;
 @Builder
 public class NetEdge {
     @NonNull
-    private final Identity identity;
+    private final NetID identity;
     @NonNull
     private final NetNode source;
     @NonNull

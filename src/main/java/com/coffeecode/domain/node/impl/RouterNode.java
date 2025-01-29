@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.edge.NetEdge;
 import com.coffeecode.domain.node.base.NetNode;
@@ -23,14 +23,14 @@ import lombok.Getter;
 @Scope("prototype")
 @Getter
 public class RouterNode implements NetNode {
-    private final Identity identity;
+    private final NetID identity;
     private final ConnectionManager connectionManager;
     private final RouterNodeProperties properties;
     private final AtomicInteger currentRoutes;
     private boolean active;
 
     public RouterNode(RouterNodeProperties props, ConnectionManager connectionManager) {
-        this.identity = Identity.create(NetNodeType.ROUTER.getNamePrefix());
+        this.identity = NetID.create(NetNodeType.ROUTER.getNamePrefix());
         this.properties = props;
         this.connectionManager = connectionManager;
         this.currentRoutes = new AtomicInteger(0);

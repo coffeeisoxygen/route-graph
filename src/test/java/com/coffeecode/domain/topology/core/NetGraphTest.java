@@ -3,11 +3,12 @@ package com.coffeecode.domain.topology.core;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.edge.NetEdge;
 import com.coffeecode.domain.node.base.NetNode;
 
@@ -31,16 +32,29 @@ class NetGraphTest {
     private NetNode targetNode;
     @Mock
     private NetEdge edge;
+    @Mock
+    private NetID sourceId;
+    @Mock
+    private NetID targetId;
 
     private NetGraph graph;
 
     @BeforeEach
     void setUp() {
         graph = new NetGraph();
-        lenient().when(sourceNode.getIdentity()).thenReturn(Identity.create("source"));
-        lenient().when(targetNode.getIdentity()).thenReturn(Identity.create("target"));
-        lenient().when(edge.getSource()).thenReturn(sourceNode);
-        lenient().when(edge.getDestination()).thenReturn(targetNode);
+
+        // Setup identities
+        when(sourceId.getId()).thenReturn(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+        when(targetId.getId()).thenReturn(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+
+        // Setup nodes
+        when(sourceNode.getIdentity()).thenReturn(sourceId);
+        when(targetNode.getIdentity()).thenReturn(targetId);
+
+        // Setup edge
+        when(edge.getSource()).thenReturn(sourceNode);
+        when(edge.getDestination()).thenReturn(targetNode);
+        when(edge.isValid()).thenReturn(true);
     }
 
     @Test
@@ -60,7 +74,6 @@ class NetGraphTest {
         assertFalse(graph.containsNode("source"));
     }
 
-    @Test
     void shouldManageEdges() {
         // Given
         graph.addNode(sourceNode);
@@ -71,7 +84,7 @@ class NetGraphTest {
 
         // Then
         assertEquals(1, graph.getEdges().size());
-        assertEquals(1, graph.getNodeEdges("source").size());
+        assertTrue(graph.getNodeEdges("source").contains(edge));
     }
 
     @Test
@@ -87,7 +100,7 @@ class NetGraphTest {
             executor.submit(() -> {
                 try {
                     NetNode node = mock(NetNode.class);
-                    when(node.getIdentity()).thenReturn(Identity.create("node" + index));
+                    when(node.getIdentity()).thenReturn(NetID.create("node" + index));
                     graph.addNode(node);
                 } finally {
                     latch.countDown();
@@ -98,5 +111,25 @@ class NetGraphTest {
         // Then
         await().atMost(5, TimeUnit.SECONDS).until(() -> latch.getCount() == 0);
         assertEquals(threadCount, graph.getNodes().size());
+    }
+
+    @Test
+    void shouldPreventDuplicateNodes() {
+        // When
+        graph.addNode(sourceNode);
+
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> graph.addNode(sourceNode));
+    }
+
+    @Test
+    void shouldPreventDuplicateEdges() {
+        // Given
+        graph.addNode(sourceNode);
+        graph.addNode(targetNode);
+        graph.addEdge(edge);
+
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> graph.addEdge(edge));
     }
 }

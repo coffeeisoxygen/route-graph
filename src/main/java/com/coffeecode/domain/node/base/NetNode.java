@@ -2,7 +2,7 @@ package com.coffeecode.domain.node.base;
 
 import java.util.List;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.edge.NetEdge;
 
 public interface NetNode {
@@ -11,7 +11,7 @@ public interface NetNode {
      *
      * @return Identity containing id, name and description
      */
-    Identity getIdentity();
+    NetID getIdentity();
 
     /**
      * Gets the type of this node

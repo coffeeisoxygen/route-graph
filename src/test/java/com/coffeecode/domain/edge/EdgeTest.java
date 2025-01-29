@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.common.NetID;
 import com.coffeecode.domain.edge.properties.NetEdgeProperties;
 import com.coffeecode.domain.node.base.NetNode;
 
@@ -28,11 +28,11 @@ class EdgeTest {
     private NetEdgeProperties properties;
 
     private NetEdge edge;
-    private Identity identity;
+    private NetID identity;
 
     @BeforeEach
     void setUp() {
-        identity = Identity.create("edge");
+        identity = NetID.create("edge");
         // Use lenient() for setup stubs that might not be used in all tests
         lenient().when(properties.isValid()).thenReturn(true);
         lenient().when(properties.calculateWeight()).thenReturn(10.0);
