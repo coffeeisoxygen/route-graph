@@ -1,5 +1,6 @@
 package com.coffeecode.domain.edge;
 
+import com.coffeecode.domain.edge.properties.EdgeProperties;
 import com.coffeecode.domain.node.model.Node;
 
 import lombok.Builder;
@@ -10,37 +11,41 @@ import lombok.NonNull;
 @Builder
 public class Edge {
     @NonNull
-    private Node source;
+    private final Node source;
     @NonNull
-    private Node destination;
-    private double bandwidth;
-    private double latency;
+    private final Node destination;
+    @NonNull
+    private final EdgeProperties properties;
     private boolean active;
 
     public boolean isValid() {
         return source != null &&
                 destination != null &&
-                bandwidth > 0 &&
-                latency >= 0;
+                properties != null &&
+                properties.isValid();
     }
 
     public double getWeight() {
-        return (1 / bandwidth) * latency;
+        return (1 / properties.getBandwidth()) * properties.getLatency();
     }
 
     public boolean isConnected() {
         return active && source.isActive() && destination.isActive();
     }
 
+    public double getBandwidth() {
+        return properties.getBandwidth();
+    }
+
+    public double getLatency() {
+        return properties.getLatency();
+    }
+
     public boolean isActive() {
-
         return active;
-
     }
 
     public void setActive(boolean active) {
-
         this.active = active;
-
     }
 }

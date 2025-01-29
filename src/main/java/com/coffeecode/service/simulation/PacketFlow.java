@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.coffeecode.domain.node.model.Node;
 import com.coffeecode.domain.packet.Packet;
+import com.coffeecode.domain.packet.PacketStatus;
 import com.coffeecode.infrastructure.monitoring.NetworkMonitor;
 import com.coffeecode.service.routing.RoutingStrategy;
 
@@ -34,7 +35,7 @@ public class PacketFlow {
             return;
         }
 
-        packet.setStatus(Packet.PacketStatus.IN_TRANSIT);
+        packet.setStatus(PacketStatus.IN_TRANSIT);
         packetQueue.offer(packet);
         monitor.recordPacketTransmission(packet.getSize());
     }
@@ -64,7 +65,7 @@ public class PacketFlow {
 
     private void deliverPacket(Packet packet) {
         if (packet.getDestination().isActive()) {
-            packet.setStatus(Packet.PacketStatus.DELIVERED);
+            packet.setStatus(PacketStatus.DELIVERED);
             processedPackets.incrementAndGet();
             double latency = calculateLatency(packet);
             double bandwidth = calculateBandwidth(packet);
@@ -92,7 +93,7 @@ public class PacketFlow {
     }
 
     private void handleFailedPacket(Packet packet) {
-        packet.setStatus(Packet.PacketStatus.FAILED);
+        packet.setStatus(PacketStatus.FAILED);
         failedPackets.incrementAndGet();
         if (monitor != null) {
             monitor.recordFailedDelivery();

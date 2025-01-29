@@ -13,6 +13,7 @@ import com.coffeecode.domain.node.model.Node;
 import com.coffeecode.domain.topology.NetworkTopology;
 import com.coffeecode.infrastructure.validation.NetworkValidator;
 import com.coffeecode.infrastructure.validation.ValidationError;
+import com.coffeecode.infrastructure.validation.exception.NetworkValidationException;
 
 import lombok.Getter;
 
@@ -31,10 +32,10 @@ public class NetworkTopologyServiceImpl implements NetworkTopologyService, Netwo
 
     @Override
     public void addNode(Node node) {
-        if (node == null || nodes.containsKey(node.getId())) {
+        if (node == null || nodes.containsKey(node.getId().toString())) {
             throw new IllegalArgumentException("Invalid node or duplicate ID");
         }
-        nodes.put(node.getId(), node);
+        nodes.put(node.getId().toString(), node);
         validateState();
     }
 
@@ -92,15 +93,20 @@ public class NetworkTopologyServiceImpl implements NetworkTopologyService, Netwo
     @Override
     public boolean isConnected(String sourceId, String destId) {
         return edges.stream()
-                .anyMatch(e -> e.getSource().getId().equals(sourceId)
-                        && e.getDestination().getId().equals(destId)
+                .anyMatch(e -> e.getSource().getId().toString().equals(sourceId)
+                        && e.getDestination().getId().toString().equals(destId)
                         && e.isConnected());
     }
 
+    // Add proper exception handling
     private void validateState() {
-        List<ValidationError> errors = validator.validate(this);
-        if (!validator.isValid(this)) {
-            throw new IllegalStateException("Invalid network state: " + errors);
+        try {
+            List<ValidationError> errors = validator.validate(this);
+            if (!validator.isValid(this)) {
+                throw new NetworkValidationException("INVALID_STATE", "Invalid network state: " + errors);
+            }
+        } catch (Exception e) {
+            throw new NetworkValidationException("VALIDATION_ERROR", e.getMessage());
         }
     }
 }
