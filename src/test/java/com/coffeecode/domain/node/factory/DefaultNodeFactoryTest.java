@@ -11,11 +11,13 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coffeecode.domain.node.base.Node;
-import com.coffeecode.domain.node.base.NodeType;
-import com.coffeecode.domain.node.impl.ClientNode;
-import com.coffeecode.domain.node.impl.RouterNode;
-import com.coffeecode.domain.node.impl.ServerNode;
+import com.coffeecode.domain.entities.node.base.Node;
+import com.coffeecode.domain.entities.node.base.NodeType;
+import com.coffeecode.domain.entities.node.impl.ClientNode;
+import com.coffeecode.domain.entities.node.impl.RouterNode;
+import com.coffeecode.domain.entities.node.impl.ServerNode;
+import com.coffeecode.domain.factory.node.DefaultNodeFactory;
+import com.coffeecode.domain.factory.node.NodeFactory;
 
 class DefaultNodeFactoryTest {
 

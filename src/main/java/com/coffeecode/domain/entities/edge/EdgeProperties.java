@@ -1,4 +1,4 @@
-package com.coffeecode.domain.edge.properties;
+package com.coffeecode.domain.entities.edge;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
@@ -29,5 +29,9 @@ public class EdgeProperties {
                 && (packetLoss == null || (packetLoss >= 0 && packetLoss <= 100))
                 && (mtu == null || mtu > 0)
                 && (cost == null || cost >= 0);
+    }
+
+    public double calculateWeight() {
+        return cost != null ? cost : latency;
     }
 }

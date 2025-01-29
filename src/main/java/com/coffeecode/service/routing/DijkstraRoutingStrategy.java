@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.entities.edge.Edge;
+import com.coffeecode.domain.entities.node.base.Node;
 
 import lombok.Getter;
 

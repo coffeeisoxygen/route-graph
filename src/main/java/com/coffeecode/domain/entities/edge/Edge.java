@@ -1,7 +1,7 @@
-package com.coffeecode.domain.edge;
+package com.coffeecode.domain.entities.edge;
 
-import com.coffeecode.domain.edge.properties.EdgeProperties;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.common.Identity;
+import com.coffeecode.domain.entities.node.base.Node;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +10,8 @@ import lombok.NonNull;
 @Getter
 @Builder
 public class Edge {
+    @NonNull
+    private final Identity identity;
     @NonNull
     private final Node source;
     @NonNull
@@ -25,27 +27,11 @@ public class Edge {
                 properties.isValid();
     }
 
-    public double getWeight() {
-        return (1 / properties.getBandwidth()) * properties.getLatency();
-    }
-
     public boolean isConnected() {
         return active && source.isActive() && destination.isActive();
     }
 
-    public double getBandwidth() {
-        return properties.getBandwidth();
-    }
-
-    public double getLatency() {
-        return properties.getLatency();
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
+    public double getWeight() {
+        return properties.calculateWeight();
     }
 }

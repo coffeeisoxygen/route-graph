@@ -3,7 +3,7 @@ package com.coffeecode.service.topology;
 import java.util.List;
 import java.util.Optional;
 
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.entities.node.base.Node;
 
 public interface NetworkTopologyService {
     void addNode(Node node);

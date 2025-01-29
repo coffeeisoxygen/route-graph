@@ -3,8 +3,8 @@ package com.coffeecode.infrastructure.fault;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.entities.edge.Edge;
+import com.coffeecode.domain.entities.node.base.Node;
 
 import lombok.Getter;
 
