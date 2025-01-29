@@ -1,77 +1,25 @@
 package com.coffeecode.domain.connection;
 
-import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.base.Node;
-import lombok.Getter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
+import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.base.Node;
 
-/**
- * Manages node connections in the network.
- * Thread-safe implementation for connection operations.
- */
-@Component
-@Getter
-public class ConnectionManager {
-    private final List<Edge> connections;
-    private final Node owner;
+public interface ConnectionManager {
+    List<Edge> getConnections();
 
-    public ConnectionManager(Node owner) {
-        this.owner = owner;
-        this.connections = Collections.synchronizedList(new ArrayList<>());
-    }
+    void addConnection(Edge edge);
 
-    public List<Edge> getConnections() {
-        return Collections.unmodifiableList(connections);
-    }
+    void removeConnection(Edge edge);
 
-    public synchronized void addConnection(Edge edge) {
-        validateConnection(edge);
-        connections.add(edge);
-    }
+    boolean hasConnection(Edge edge);
 
-    public synchronized void removeConnection(Edge edge) {
-        connections.remove(edge);
-    }
+    int getConnectionCount();
 
-    private void validateConnection(Edge edge) {
-        if (!edge.isValid()) {
-            throw new IllegalArgumentException("Invalid edge configuration");
-        }
-        if (edge.getSource() != owner && edge.getDestination() != owner) {
-            throw new IllegalArgumentException("Edge must connect to this node");
-        }
-        if (connections.contains(edge)) {
-            throw new IllegalArgumentException("Connection already exists");
-        }
-    }
+    Optional<Edge> findConnection(Node target);
 
-    public synchronized boolean hasConnection(Edge edge) {
-        return connections.contains(edge);
-    }
+    boolean isConnectedTo(Node target);
 
-    public synchronized int getConnectionCount() {
-        return connections.size();
-    }
-
-    public synchronized Optional<Edge> findConnection(Node target) {
-        return connections.stream()
-                .filter(edge -> edge.getDestination().equals(target))
-                .findFirst();
-    }
-
-    public synchronized boolean isConnectedTo(Node target) {
-        return connections.stream()
-                .anyMatch(edge -> edge.getDestination().equals(target));
-    }
-
-    public synchronized void validateMaxConnections(int maxConnections) {
-        if (maxConnections > 0 && connections.size() >= maxConnections) {
-            throw new IllegalStateException("Maximum connections limit reached");
-        }
-    }
+    void validateMaxConnections(int maxConnections);
 }
