@@ -6,6 +6,7 @@ import com.coffeecode.domain.edge.NetworkEdge;
 import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.node.NetworkNode;
 import com.coffeecode.domain.node.router.component.RouterComponents;
+import com.coffeecode.domain.node.router.model.MetricsSnapshot;
 import com.coffeecode.domain.node.router.model.RouteInfo;
 import com.coffeecode.domain.properties.NodeProperties;
 
@@ -91,8 +92,18 @@ public class RouterNode implements NetworkNode {
 
         if (route.isValid()) {
             components.getRoutes().updateRoute(destination, route);
-            components.getMetrics().updateMetrics(destination, metric);
+            components.getMetrics().updateMetric(destination, metric);
         }
+    }
+
+    public MetricsSnapshot getMetricsFor(NetworkIdentity target) {
+        if (!active || target == null) {
+            return MetricsSnapshot.empty();
+        }
+
+        return components.getMetrics()
+                .getMetricsFor(target)
+                .orElse(MetricsSnapshot.empty());
     }
 
     private boolean isRouteActive(RouteInfo route) {

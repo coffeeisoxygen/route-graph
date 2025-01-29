@@ -6,10 +6,9 @@ import lombok.Value;
 public class MetricsSnapshot {
     double average;
     int sampleCount;
-    double latestValue;
+    long timestamp;
 
-    // Add validation
-    public boolean isValid() {
-        return sampleCount >= 0 && !Double.isNaN(average);
+    public static MetricsSnapshot empty() {
+        return new MetricsSnapshot(0.0, 0, System.currentTimeMillis());
     }
 }

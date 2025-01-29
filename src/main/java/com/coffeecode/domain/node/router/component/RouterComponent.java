@@ -19,7 +19,7 @@ public interface RouterComponent {
 
     /**
      * Check if component is active and operational.
-     * 
+     *
      * @return true if component is active, false otherwise
      */
     boolean isActive();

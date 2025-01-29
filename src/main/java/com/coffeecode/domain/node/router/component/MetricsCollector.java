@@ -1,20 +1,44 @@
 package com.coffeecode.domain.node.router.component;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.coffeecode.domain.model.NetworkIdentity;
-import com.coffeecode.domain.node.router.model.NetworkMetrics;
+import com.coffeecode.domain.node.router.model.MetricsSnapshot;
 
 import lombok.Getter;
 
 @Getter
 public class MetricsCollector implements RouterComponent {
-    private final Map<NetworkIdentity, NetworkMetrics> metrics;
+    private static final int WINDOW_SIZE = 10;
+    private final Map<NetworkIdentity, MetricsWindow> metricsWindows;
     private volatile boolean active;
 
     public MetricsCollector() {
-        this.metrics = new ConcurrentHashMap<>();
+        this.metricsWindows = new ConcurrentHashMap<>();
+        this.active = true;
+    }
+
+    public Optional<MetricsSnapshot> getMetricsFor(NetworkIdentity target) {
+        if (!active || target == null) {
+            return Optional.empty();
+        }
+
+        MetricsWindow window = metricsWindows.get(target);
+        if (window == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(window.getSnapshot());
+    }
+
+    public void updateMetric(NetworkIdentity target, double metric) {
+        if (!active || target == null)
+            return;
+
+        metricsWindows.computeIfAbsent(target, k -> new MetricsWindow(WINDOW_SIZE))
+                .addMetric(metric);
     }
 
     @Override
@@ -24,19 +48,12 @@ public class MetricsCollector implements RouterComponent {
 
     @Override
     public void clear() {
-        metrics.clear();
+        metricsWindows.clear();
         active = false;
     }
 
     @Override
     public boolean isActive() {
         return active;
-    }
-
-    public void updateMetrics(NetworkIdentity id, double value) {
-        if (!active)
-            return;
-        metrics.computeIfAbsent(id, k -> new NetworkMetrics())
-                .updateMetric(value);
     }
 }

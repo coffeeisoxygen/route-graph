@@ -63,7 +63,7 @@ public class NetworkMetrics {
             return new MetricsSnapshot(
                     getAverageMetric(),
                     samples.size(),
-                    samples.isEmpty() ? 0 : samples.peek().getValue());
+                    samples.isEmpty() ? 0 : samples.peek().getTimestamp());
         } finally {
             lock.readLock().unlock();
         }
