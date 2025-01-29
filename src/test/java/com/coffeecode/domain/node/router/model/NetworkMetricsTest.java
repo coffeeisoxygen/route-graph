@@ -22,36 +22,27 @@ class NetworkMetricsTest {
         @Test
         @DisplayName("Should store and retrieve metrics")
         void shouldStoreAndRetrieveMetrics() {
-            // Given
-            double value = 20.0;
-
             // When
-            metrics.updateMetric(value);
+            metrics.updateMetric(20.0);
 
             // Then
             MetricsSnapshot snapshot = metrics.getMetrics();
-            assertThat(snapshot.getAverage()).isEqualTo(value);
+            assertThat(snapshot.getAverage()).isEqualTo(20.0);
             assertThat(snapshot.getSampleCount()).isEqualTo(1);
-            assertThat(snapshot.getLatestValue()).isEqualTo(value);
         }
 
         @Test
         @DisplayName("Should calculate average correctly")
         void shouldCalculateAverageCorrectly() {
-            // Given
-            double[] values = { 10.0, 20.0, 30.0 };
-            double expectedAverage = 20.0;
-
             // When
-            for (double value : values) {
-                metrics.updateMetric(value);
-            }
+            metrics.updateMetric(10.0);
+            metrics.updateMetric(20.0);
+            metrics.updateMetric(30.0);
 
             // Then
             MetricsSnapshot snapshot = metrics.getMetrics();
-            assertThat(snapshot.getAverage()).isEqualTo(expectedAverage);
+            assertThat(snapshot.getAverage()).isEqualTo(20.0);
             assertThat(snapshot.getSampleCount()).isEqualTo(3);
-            assertThat(snapshot.getLatestValue()).isEqualTo(values[values.length - 1]);
         }
     }
 

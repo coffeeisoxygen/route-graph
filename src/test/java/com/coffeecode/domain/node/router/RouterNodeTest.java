@@ -107,11 +107,11 @@ class RouterNodeTest {
             // Then
             Optional<RouteInfo> route = routerNode.findRoute(destination);
             assertThat(route)
-                .isPresent()
-                .hasValueSatisfying(r -> {
-                    assertThat(r.getNextHop()).isEqualTo(nextHopNode.getIdentity());
-                    assertThat(r.getMetric()).isEqualTo(metric);
-                });
+                    .isPresent()
+                    .hasValueSatisfying(r -> {
+                        assertThat(r.getNextHop()).isEqualTo(nextHopNode.getIdentity());
+                        assertThat(r.getMetric()).isEqualTo(metric);
+                    });
         }
 
         @Test
@@ -144,14 +144,14 @@ class RouterNodeTest {
 
         private NetworkEdge createEdge(RouterNode source, RouterNode target) {
             return NetworkEdge.builder()
-                .source(source)
-                .destination(target)
-                .properties(EdgeProperties.builder()
-                    .bandwidth(100.0)
-                    .latency(10.0)
-                    .build())
-                .active(true)
-                .build();
+                    .source(source)
+                    .destination(target)
+                    .properties(EdgeProperties.builder()
+                            .bandwidth(100.0)
+                            .latency(10.0)
+                            .build())
+                    .active(true)
+                    .build();
         }
     }
 
