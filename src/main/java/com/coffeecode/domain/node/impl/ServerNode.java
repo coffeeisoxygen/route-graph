@@ -7,22 +7,28 @@ import com.coffeecode.domain.node.base.NodeType;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 import lombok.Getter;
-import java.util.ArrayList;
-import java.util.Collections;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.coffeecode.domain.common.connection.ConnectionManager;
+
+@Component
+@Scope("prototype")
 @Getter
 public class ServerNode implements Node {
     private final Identity identity;
-    private final List<Edge> connections;
+    private final ConnectionManager connectionManager;
     private final ServerNodeProperties properties;
     private final AtomicInteger currentLoad;
     private boolean active;
 
-    public ServerNode(ServerNodeProperties props) {
+    public ServerNode(ServerNodeProperties props, ConnectionManager connectionManager) {
         this.identity = Identity.create(NodeType.SERVER.getNamePrefix());
-        this.connections = new ArrayList<>();
+        this.connectionManager = connectionManager;
         this.properties = props;
         this.currentLoad = new AtomicInteger(0);
         this.active = true;
@@ -35,23 +41,18 @@ public class ServerNode implements Node {
 
     @Override
     public List<Edge> getConnections() {
-        return Collections.unmodifiableList(connections);
+        return connectionManager.getConnections();
     }
 
     @Override
     public void addConnection(Edge edge) {
-        if (!edge.isValid()) {
-            throw new IllegalArgumentException("Invalid edge configuration");
-        }
-        if (edge.getSource() != this && edge.getDestination() != this) {
-            throw new IllegalArgumentException("Edge must connect to this node");
-        }
-        connections.add(edge);
+        connectionManager.validateMaxConnections(properties.getMaxConnections());
+        connectionManager.addConnection(edge);
     }
 
     @Override
     public void removeConnection(Edge edge) {
-        connections.remove(edge);
+        connectionManager.removeConnection(edge);
     }
 
     @Override

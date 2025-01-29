@@ -7,23 +7,30 @@ import com.coffeecode.domain.node.base.NodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 
 import lombok.Getter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import com.coffeecode.domain.common.connection.ConnectionManager;
+
+@Component
+@Scope("prototype")
 @Getter
 public class ClientNode implements Node {
     private final Identity identity;
-    private final List<Edge> connections;
+    private final ConnectionManager connectionManager;
     private final ClientNodeProperties properties;
-    private double currentUsage;
+    private final AtomicReference<Double> currentUsage;
     private boolean active;
 
-    public ClientNode(ClientNodeProperties props) {
+    public ClientNode(ClientNodeProperties props, ConnectionManager connectionManager) {
         this.identity = Identity.create(NodeType.CLIENT.getNamePrefix());
-        this.connections = new ArrayList<>();
+        this.connectionManager = connectionManager;
         this.properties = props;
-        this.currentUsage = 0;
+        this.currentUsage = new AtomicReference<>(0.0);
         this.active = true;
     }
 
@@ -34,23 +41,17 @@ public class ClientNode implements Node {
 
     @Override
     public List<Edge> getConnections() {
-        return Collections.unmodifiableList(connections);
+        return connectionManager.getConnections();
     }
 
     @Override
     public void addConnection(Edge edge) {
-        if (!edge.isValid()) {
-            throw new IllegalArgumentException("Invalid edge configuration");
-        }
-        if (edge.getSource() != this && edge.getDestination() != this) {
-            throw new IllegalArgumentException("Edge must connect to this node");
-        }
-        connections.add(edge);
+        connectionManager.addConnection(edge);
     }
 
     @Override
     public void removeConnection(Edge edge) {
-        connections.remove(edge);
+        connectionManager.removeConnection(edge);
     }
 
     @Override
@@ -62,17 +63,17 @@ public class ClientNode implements Node {
     }
 
     public synchronized boolean canTransmit(double dataSize) {
-        return (currentUsage + dataSize) <= properties.getDataRate();
+        return (currentUsage.get() + dataSize) <= properties.getDataRate();
     }
 
     public synchronized void recordTransmission(double dataSize) {
         if (!canTransmit(dataSize)) {
             throw new IllegalArgumentException("Transmission would exceed capacity");
         }
-        currentUsage += dataSize;
+        currentUsage.updateAndGet(v -> v + dataSize);
     }
 
     public synchronized void resetUsage() {
-        currentUsage = 0;
+        currentUsage.set(0.0);
     }
 }

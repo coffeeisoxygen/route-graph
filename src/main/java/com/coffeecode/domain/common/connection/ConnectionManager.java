@@ -6,11 +6,15 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Component;
 
 /**
  * Manages node connections in the network.
  * Thread-safe implementation for connection operations.
  */
+@Component
 @Getter
 public class ConnectionManager {
     private final List<Edge> connections;
@@ -52,5 +56,22 @@ public class ConnectionManager {
 
     public synchronized int getConnectionCount() {
         return connections.size();
+    }
+
+    public synchronized Optional<Edge> findConnection(Node target) {
+        return connections.stream()
+                .filter(edge -> edge.getDestination().equals(target))
+                .findFirst();
+    }
+
+    public synchronized boolean isConnectedTo(Node target) {
+        return connections.stream()
+                .anyMatch(edge -> edge.getDestination().equals(target));
+    }
+
+    public synchronized void validateMaxConnections(int maxConnections) {
+        if (maxConnections > 0 && connections.size() >= maxConnections) {
+            throw new IllegalStateException("Maximum connections limit reached");
+        }
     }
 }
