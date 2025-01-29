@@ -82,4 +82,19 @@ class DefaultEdgeFactoryTest {
         assertThrows(IllegalArgumentException.class,
                 () -> factory.createEdge(sourceNode, targetNode, properties));
     }
+
+    @Test
+    void shouldValidateNullValues() {
+        // Test null properties
+        assertThrows(IllegalArgumentException.class,
+                () -> factory.createEdge(sourceNode, targetNode, null));
+
+        // Test null source
+        assertThrows(IllegalArgumentException.class,
+                () -> factory.createEdge(null, targetNode, properties));
+
+        // Test null target
+        assertThrows(IllegalArgumentException.class,
+                () -> factory.createEdge(sourceNode, null, properties));
+    }
 }

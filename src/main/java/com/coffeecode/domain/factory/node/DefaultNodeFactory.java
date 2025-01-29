@@ -1,5 +1,10 @@
 package com.coffeecode.domain.factory.node;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.springframework.stereotype.Component;
+
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.node.base.Node;
 import com.coffeecode.domain.node.base.NodeType;
@@ -9,11 +14,6 @@ import com.coffeecode.domain.node.impl.ServerNode;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;
-
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.IntStream;
 
 @Component
 public class DefaultNodeFactory implements NodeFactory {
@@ -72,4 +72,13 @@ public class DefaultNodeFactory implements NodeFactory {
         }
         validateProperties(properties);
     }
+
+    // private void validateRouterProperties(RouterNodeProperties props) {
+    //     if (props.getRoutingCapacity() <= 0) {
+    //         throw new IllegalArgumentException("Routing capacity must be positive");
+    //     }
+    //     if (props.getBufferSize() <= 0) {
+    //         throw new IllegalArgumentException("Buffer size must be positive");
+    //     }
+    // }
 }

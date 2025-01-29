@@ -2,7 +2,7 @@
 
 ## **The Goal**
 
-- **Purpose:** Create an application to simulate data flow in a network based on graph topology.
+- **Purpose:** Create an application to simulate and animate in GUI for data flow in a network based on graph topology.
 - **Key Functions:**
   1. Generate network nodes (routers, servers, and clients) in bulk or small network or singel node step by step
   2. Simulate data packet transmission between nodes.

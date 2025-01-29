@@ -1,3 +1,4 @@
+package com.coffeecode.infrastructure.packet;
 // package com.coffeecode.domain.packet;
 
 // import java.time.LocalDateTime;

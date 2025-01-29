@@ -1,4 +1,4 @@
-package com.coffeecode.domain.packet;
+package com.coffeecode.infrastructure.packet;
 
 public enum PacketPriority {
     LOW,

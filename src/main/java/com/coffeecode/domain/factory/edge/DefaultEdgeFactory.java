@@ -1,12 +1,14 @@
 package com.coffeecode.domain.factory.edge;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.coffeecode.domain.common.Identity;
 import com.coffeecode.domain.edge.Edge;
 import com.coffeecode.domain.edge.properties.EdgeProperties;
 import com.coffeecode.domain.node.base.Node;
-
-import org.springframework.stereotype.Component;
-import java.util.List;
-import java.util.ArrayList;
 
 @Component
 public class DefaultEdgeFactory implements EdgeFactory {
@@ -14,7 +16,9 @@ public class DefaultEdgeFactory implements EdgeFactory {
     @Override
     public Edge createEdge(Node source, Node target, EdgeProperties props) {
         validateEdgeCreation(source, target, props);
+        validateEdgeRules(source, target, props);
         Edge edge = Edge.builder()
+                .identity(Identity.create("edge")) // Add identity creation
                 .source(source)
                 .destination(target)
                 .properties(props)
@@ -25,6 +29,9 @@ public class DefaultEdgeFactory implements EdgeFactory {
     }
 
     private void validateEdgeCreation(Node source, Node target, EdgeProperties props) {
+        if (props == null) {
+            throw new IllegalArgumentException("Edge properties cannot be null");
+        }
         if (!props.isValid()) {
             throw new IllegalArgumentException("Invalid edge properties");
         }
@@ -33,6 +40,24 @@ public class DefaultEdgeFactory implements EdgeFactory {
         }
         if (!source.isActive() || !target.isActive()) {
             throw new IllegalArgumentException("Both nodes must be active");
+        }
+    }
+
+    private void validateEdgeRules(Node source, Node target, EdgeProperties props) {
+        // Connection rules
+        if (source.equals(target)) {
+            throw new IllegalArgumentException("Self-connections not allowed");
+        }
+
+        // Capacity checks
+        // if (!source.canInitiateConnection()) {
+        // throw new IllegalArgumentException("Source node cannot initiate
+        // connections");
+        // }
+
+        // Property validation
+        if (props.getBandwidth() <= 0 || props.getLatency() < 0) {
+            throw new IllegalArgumentException("Invalid edge metrics");
         }
     }
 
