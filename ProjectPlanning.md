@@ -4,7 +4,7 @@
 
 - **Purpose:** Create an application to simulate and animate in GUI for data flow in a network based on graph topology.
 - **Key Functions:**
-  1. Generate network nodes (routers, servers, and clients) in bulk or small network or singel node step by step
+  1. Generate network nodes (routers, servers, and clients) in batch or small network or singel node step by step
   2. Simulate data packet transmission between nodes.
   3. Calculate the shortest path and optimize network efficiency based on bandwidth and latency.
   4. Test fault tolerance by disabling nodes or connections.
@@ -142,7 +142,6 @@
 ---
 
 This structured project outline should provide a clear and actionable roadmap for developing your network topology simulation in Java. Let me know if you need assistance in any specific phase!
-
 
 1. Graph Data Structure
    - Node storage

@@ -48,19 +48,6 @@
       <artifactId>jcl-over-slf4j</artifactId>
       <version>${slf4jjcl.version}</version>
     </dependency>
-    <!-- anotasi pakai ini  -->
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>6.2.0.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish</groupId>
-      <artifactId>jakarta.el</artifactId>
-      <version>3.0.3</version>
-    </dependency>
-
-
     <!-- Test Dependencies -->
     <!-- Junit -->
     <dependency>
@@ -143,6 +130,7 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- graphstream -->
