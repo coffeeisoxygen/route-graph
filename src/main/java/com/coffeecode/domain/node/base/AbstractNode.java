@@ -1,10 +1,11 @@
-package com.coffeecode.domain.node.model;
+package com.coffeecode.domain.node.base;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.properties.BaseNodeProperties;
 
 import lombok.Getter;
 
@@ -15,6 +16,8 @@ import lombok.Getter;
 @Getter
 public abstract class AbstractNode implements Node {
     private final UUID id;
+    private final String name;
+    private final String description;
     private final List<Edge> edges;
     private boolean active;
     private final NodeType type;
@@ -24,11 +27,13 @@ public abstract class AbstractNode implements Node {
      *
      * @param type NodeType of this node
      */
-    protected AbstractNode(NodeType type) {
-        this.id = UUID.randomUUID();
-        this.type = type;
+    protected AbstractNode(BaseNodeProperties props) {
+        this.id = props.getId();
+        this.name = props.getName();
+        this.description = props.getDescription();
+        this.type = props.getType();
         this.edges = new ArrayList<>();
-        this.active = true; // default values
+        this.active = true;
     }
 
     /**

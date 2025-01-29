@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node.model;
+package com.coffeecode.domain.node.impl;
 
 import java.util.List;
 import java.util.UUID;
@@ -6,6 +6,8 @@ import java.util.UUID;
 import javax.validation.constraints.Positive;
 
 import com.coffeecode.domain.edge.Edge;
+import com.coffeecode.domain.node.base.AbstractNode;
+import com.coffeecode.domain.node.base.NodeType;
 
 import lombok.Getter;
 

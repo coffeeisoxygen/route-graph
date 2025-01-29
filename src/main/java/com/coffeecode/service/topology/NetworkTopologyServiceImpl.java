@@ -9,7 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.coffeecode.domain.edge.Edge;
-import com.coffeecode.domain.node.model.Node;
+import com.coffeecode.domain.node.base.Node;
 import com.coffeecode.domain.topology.NetworkTopology;
 import com.coffeecode.infrastructure.validation.NetworkValidator;
 import com.coffeecode.infrastructure.validation.ValidationError;

@@ -7,29 +7,31 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.node.model.ClientNode;
-import com.coffeecode.domain.node.model.Node;
-import com.coffeecode.domain.node.model.NodeType;
-import com.coffeecode.domain.node.model.RouterNode;
-import com.coffeecode.domain.node.model.ServerNode;
-import com.coffeecode.domain.node.properties.NodeProperties;
+import com.coffeecode.domain.node.base.Node;
+import com.coffeecode.domain.node.base.NodeType;
+import com.coffeecode.domain.node.properties.BaseNodeProperties;
+import com.coffeecode.domain.node.properties.ClientNodeProperties;
+import com.coffeecode.domain.node.properties.RouterNodeProperties;
+import com.coffeecode.domain.node.properties.ServerNodeProperties;
 
 @Component
 public class DefaultNodeFactory implements NodeFactory {
 
     @Override
-    public Node createNode(NodeType type, String id, Map<String, Object> properties) {
-        NodeProperties nodeProps = createProperties(properties);
-
-        return switch (type) {
-            case CLIENT -> new ClientNode(id, nodeProps.getDataRate());
-            case SERVER -> new ServerNode(id, nodeProps.getCapacity(),
-                    nodeProps.getProcessingPower());
-            case ROUTER -> new RouterNode(id, nodeProps.getRoutingCapacity());
-        };
-    }
-
-    @Override
+    public Node createNode(BaseNodeProperties props) {
+        return switch (props.getType()) {
+            case CLIENT -> createClientNode((ClientNodeProperties) props);
+                        case SERVER -> createServerNode((ServerNodeProperties) props);
+                        case ROUTER -> createRouterNode((RouterNodeProperties) props);
+                    };
+                }
+            
+                private Object createClientNode(ClientNodeProperties props) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'createClientNode'");
+                }
+            
+                @Override
     public List<Node> createNodes(NodeType type, int count, Map<String, Object> properties) {
         return IntStream.range(0, count)
                 .mapToObj(i -> createNode(type, UUID.randomUUID().toString(), properties))

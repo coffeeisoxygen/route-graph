@@ -1,4 +1,4 @@
-package com.coffeecode.domain.node.model;
+package com.coffeecode.domain.node.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -69,9 +69,16 @@ public interface Node {
     void batchProcess(List<Edge> edges);
 
     /**
-     * Checks if the node is valid
+     * Gets the name of this node
      *
-     * @return true if node is valid, false otherwise
+     * @return Name of the node
      */
-    boolean isValid();
+    String getName();
+
+    /**
+     * Gets the description of this node
+     *
+     * @return Description of the node
+     */
+    String getDescription();
 }

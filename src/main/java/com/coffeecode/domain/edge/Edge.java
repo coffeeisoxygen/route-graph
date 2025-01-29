@@ -1,7 +1,7 @@
 package com.coffeecode.domain.edge;
 
 import com.coffeecode.domain.edge.properties.EdgeProperties;
-import com.coffeecode.domain.node.model.Node;
+import com.coffeecode.domain.node.base.Node;
 
 import lombok.Builder;
 import lombok.Getter;
