@@ -3,6 +3,8 @@ package com.coffeecode.domain.properties;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.coffeecode.domain.model.NodeType;
+
 import lombok.Value;
 
 @Value

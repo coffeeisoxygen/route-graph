@@ -4,6 +4,7 @@ import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.node.NetworkNode;
 import com.coffeecode.domain.properties.NodeProperties;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
