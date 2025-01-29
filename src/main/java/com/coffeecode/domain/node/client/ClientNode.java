@@ -4,6 +4,7 @@ import com.coffeecode.domain.edge.NetworkEdge;
 import com.coffeecode.domain.model.NetworkIdentity;
 import com.coffeecode.domain.node.NetworkNode;
 import com.coffeecode.domain.node.client.component.ClientComponents;
+import com.coffeecode.domain.node.client.model.RequestType;
 import com.coffeecode.domain.properties.EdgeProperties;
 import com.coffeecode.domain.properties.NodeProperties;
 
@@ -63,11 +64,11 @@ public class ClientNode implements NetworkNode {
     @Override
     public boolean canInitiateConnection() {
         return isActive() &&
-               components.getConnections().getConnectionCount() < properties.getMaxConnections();
+                components.getConnections().getConnectionCount() < properties.getMaxConnections();
     }
 
     public boolean connect(NetworkNode target, EdgeProperties props) {
-        if (!canInitiateConnection() || !target.canAcceptConnection()) {
+        if (!canInitiateConnection() || !target.canAcceptConnection() || !props.isValid()) {
             return false;
         }
 
@@ -78,5 +79,22 @@ public class ClientNode implements NetworkNode {
                 .build();
 
         return components.getConnections().addConnection(edge);
+    }
+
+    public boolean queueRequest(NetworkIdentity target, RequestType type) {
+        if (!isActive() || !isConnectedTo(target)) {
+            return false;
+        }
+        return components.getRequests().queueRequest(target, type);
+    }
+
+    private boolean isConnectedTo(NetworkIdentity target) {
+        return components.getConnections()
+                .getConnections()
+                .stream()
+                .filter(NetworkEdge::isActive)
+                .anyMatch(edge -> edge.getDestination()
+                        .getIdentity()
+                        .equals(target));
     }
 }
