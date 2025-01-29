@@ -1,82 +1,41 @@
 package com.coffeecode.domain.node.impl;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.validation.constraints.Positive;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.common.NetID;
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.edge.NetEdge;
-import com.coffeecode.domain.node.base.NetNode;
-import com.coffeecode.domain.node.base.NetNodeType;
-import com.coffeecode.domain.node.properties.RouterNodeProperties;
+import com.coffeecode.domain.node.base.AbstractNetNode;
 
 import lombok.Getter;
 
-/**
- * Router node implementation.
- * Handles packet routing and maintains routing table.
- */
 @Component
 @Scope("prototype")
 @Getter
-public class RouterNode implements NetNode {
-    private final NetID identity;
-    private final ConnectionManager connectionManager;
-    private final RouterNodeProperties properties;
+public class RouterNode extends AbstractNetNode {
+    @Positive
+    private final int routingCapacity;
+    @Positive
+    private final double bufferSize;
+    private final boolean supportsQos;
     private final AtomicInteger currentRoutes;
-    private boolean active;
 
-    public RouterNode(RouterNodeProperties props, ConnectionManager connectionManager) {
-        this.identity = NetID.create(NetNodeType.ROUTER.getNamePrefix());
-        this.properties = props;
-        this.connectionManager = connectionManager;
+    public RouterNode(int routingCapacity, double bufferSize, boolean supportsQos,
+            Integer maxConnections, ConnectionManager connectionManager) {
+        super(NetNodeType.ROUTER, maxConnections, connectionManager);
+        this.routingCapacity = routingCapacity;
+        this.bufferSize = bufferSize;
+        this.supportsQos = supportsQos;
         this.currentRoutes = new AtomicInteger(0);
-        this.active = true;
     }
 
     @Override
-    public NetNodeType getType() {
-        return NetNodeType.ROUTER;
-    }
-
-    @Override
-    public List<NetEdge> getConnections() {
-        return connectionManager.getConnections();
-    }
-
-    @Override
-    public void addConnection(NetEdge edge) {
-        connectionManager.validateMaxConnections(properties.getRoutingCapacity());
-        connectionManager.addConnection(edge);
-    }
-
-    @Override
-    public void removeConnection(NetEdge edge) {
-        connectionManager.removeConnection(edge);
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public boolean canAddRoute() {
-        return currentRoutes.get() < properties.getRoutingCapacity();
-    }
-
-    public boolean addRoute() {
-        return currentRoutes.get() < properties.getRoutingCapacity() &&
-                currentRoutes.incrementAndGet() <= properties.getRoutingCapacity();
-    }
-
-    public void removeRoute() {
-        currentRoutes.updateAndGet(routes -> Math.max(0, routes - 1));
-    }
-
-    public double getBufferUtilization() {
-        return (connectionManager.getConnectionCount() * 100.0) / properties.getRoutingCapacity();
+    public boolean isValid() {
+        return super.isValid() &&
+                routingCapacity > 0 && bufferSize > 0;
     }
 }

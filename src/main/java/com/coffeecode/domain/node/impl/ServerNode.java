@@ -1,78 +1,43 @@
 package com.coffeecode.domain.node.impl;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.coffeecode.domain.common.NetID;
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
-import com.coffeecode.domain.edge.NetEdge;
-import com.coffeecode.domain.node.base.NetNode;
-import com.coffeecode.domain.node.base.NetNodeType;
-import com.coffeecode.domain.node.properties.ServerNodeProperties;
+import com.coffeecode.domain.node.base.AbstractNetNode;
 
 import lombok.Getter;
 
 @Component
 @Scope("prototype")
 @Getter
-public class ServerNode implements NetNode {
-    private final NetID identity;
-    private final ConnectionManager connectionManager;
-    private final ServerNodeProperties properties;
+public class ServerNode extends AbstractNetNode {
+    @NotNull
+    @Positive
+    private final Integer capacity;
+    @NotNull
+    @Positive
+    private final Double processingPower;
     private final AtomicInteger currentLoad;
-    private boolean active;
 
-    public ServerNode(ServerNodeProperties props, ConnectionManager connectionManager) {
-        this.identity = NetID.create(NetNodeType.SERVER.getNamePrefix());
-        this.connectionManager = connectionManager;
-        this.properties = props;
+    public ServerNode(Integer capacity, Double processingPower,
+            Integer maxConnections, ConnectionManager connectionManager) {
+        super(NetNodeType.SERVER, maxConnections, connectionManager);
+        this.capacity = capacity;
+        this.processingPower = processingPower;
         this.currentLoad = new AtomicInteger(0);
-        this.active = true;
     }
 
     @Override
-    public NetNodeType getType() {
-        return NetNodeType.SERVER;
-    }
-
-    @Override
-    public List<NetEdge> getConnections() {
-        return connectionManager.getConnections();
-    }
-
-    @Override
-    public void addConnection(NetEdge edge) {
-        connectionManager.validateMaxConnections(properties.getMaxConnections());
-        connectionManager.addConnection(edge);
-    }
-
-    @Override
-    public void removeConnection(NetEdge edge) {
-        connectionManager.removeConnection(edge);
-    }
-
-    @Override
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public boolean canHandleRequest() {
-        return currentLoad.get() < properties.getCapacity();
-    }
-
-    public boolean addRequest() {
-        return currentLoad.get() < properties.getCapacity() &&
-                currentLoad.incrementAndGet() <= properties.getCapacity();
-    }
-
-    public void completeRequest() {
-        currentLoad.updateAndGet(load -> Math.max(0, load - 1));
-    }
-
-    public double getLoadPercentage() {
-        return (currentLoad.get() * 100.0) / properties.getCapacity();
+    public boolean isValid() {
+        return super.isValid() &&
+                capacity != null && capacity > 0 &&
+                processingPower != null && processingPower > 0;
     }
 }

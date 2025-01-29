@@ -9,8 +9,8 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.node.base.BaseNodeTest;
-import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 
 class RouterNodeTest extends BaseNodeTest {

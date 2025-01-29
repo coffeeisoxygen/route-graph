@@ -4,13 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.connection.DefaultConnectionManager;
 import com.coffeecode.domain.factory.edge.DefaultEdgeFactory;
 import com.coffeecode.domain.factory.edge.NetEdgeFactory;
 import com.coffeecode.domain.factory.node.DefaultNodeFactory;
 import com.coffeecode.domain.factory.node.NetNodeFactory;
-import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 import com.coffeecode.domain.node.properties.ServerNodeProperties;

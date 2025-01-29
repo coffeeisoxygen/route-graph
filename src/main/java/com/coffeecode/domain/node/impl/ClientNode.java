@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.coffeecode.domain.common.NetID;
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.edge.NetEdge;
 import com.coffeecode.domain.node.base.NetNode;
-import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.ClientNodeProperties;
 
 import lombok.Getter;

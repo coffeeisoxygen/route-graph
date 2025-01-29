@@ -5,9 +5,9 @@ import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.node.base.NetNode;
-import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.impl.ClientNode;
 import com.coffeecode.domain.node.impl.RouterNode;
 import com.coffeecode.domain.node.impl.ServerNode;

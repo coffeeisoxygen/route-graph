@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.coffeecode.domain.common.NetNodeType;
 import com.coffeecode.domain.connection.ConnectionManager;
 import com.coffeecode.domain.node.base.NetNode;
-import com.coffeecode.domain.node.base.NetNodeType;
 import com.coffeecode.domain.node.properties.RouterNodeProperties;
 
 @ExtendWith(MockitoExtension.class)
